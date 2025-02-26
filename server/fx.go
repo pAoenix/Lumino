@@ -9,5 +9,6 @@ var Module = fx.Options(
 		NewTransactionServer,
 		NewUserServer,
 		NewCategoryServer,
+		NewAccountBookServer,
 	),
 )

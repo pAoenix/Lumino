@@ -7,5 +7,6 @@ var Module = fx.Options(
 		NewTransactionService,
 		NewUserService,
 		NewCategoryService,
+		NewAccountBookService,
 	),
 )

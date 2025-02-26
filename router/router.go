@@ -21,6 +21,7 @@ type Router struct {
 	TransactionServer *server.TransactionServer
 	UserServer        *server.UserServer
 	CategoryServer    *server.CategoryServer
+	AccountBookServer *server.AccountBookServer
 }
 
 // Handler -
@@ -49,6 +50,11 @@ func (r *Router) Handler() http.Handler {
 	{
 		category.POST("", r.CategoryServer.Register)
 		category.GET("", r.CategoryServer.Get)
+	}
+
+	accountBook := e.Group("api/v1/account-book")
+	{
+		accountBook.GET("", r.AccountBookServer.Get)
 	}
 
 	return e

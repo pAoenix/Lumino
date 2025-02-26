@@ -8,5 +8,6 @@ var Module = fx.Options(
 		NewTransactionStore,
 		NewUserStore,
 		NewCategoryStore,
+		NewAccountBookStore,
 	),
 )
