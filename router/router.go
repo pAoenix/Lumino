@@ -40,10 +40,14 @@ func (r *Router) Handler() http.Handler {
 	{
 		transaction.POST("", r.TransactionServer.Register)
 		transaction.GET("", r.TransactionServer.Get)
+		transaction.PUT("", r.TransactionServer.Modify)
+		transaction.DELETE("", r.TransactionServer.Delete)
 	}
 	user := e.Group("api/v1/user")
 	{
 		user.POST("", r.UserServer.Register)
+		user.PUT("", r.UserServer.Modify)
+		user.GET("", r.UserServer.Get)
 	}
 
 	category := e.Group("api/v1/category")
@@ -55,6 +59,10 @@ func (r *Router) Handler() http.Handler {
 	accountBook := e.Group("api/v1/account-book")
 	{
 		accountBook.GET("", r.AccountBookServer.Get)
+		accountBook.POST("", r.AccountBookServer.Register)
+		accountBook.POST("", r.AccountBookServer.Merge)
+		accountBook.PUT("", r.AccountBookServer.Modify)
+		accountBook.DELETE("", r.AccountBookServer.Delete)
 	}
 
 	return e

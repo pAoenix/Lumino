@@ -16,5 +16,15 @@ func NewUserStore(db *DB) *UserStore {
 
 // Register -
 func (s *UserStore) Register(User *model.User) error {
-	return s.db.Create(User).Error
+	return s.db.Model(model.User{}).Create(User).Error
+}
+
+// Modify -
+func (s *UserStore) Modify(User *model.User) error {
+	return s.db.Model(model.User{}).Updates(User).Error
+}
+
+// Get -
+func (s *UserStore) Get(User *model.User) error {
+	return s.db.Model(model.User{}).Where(User).Find(User).Error
 }

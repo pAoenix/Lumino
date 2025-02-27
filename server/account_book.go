@@ -34,6 +34,21 @@ func (s *AccountBookServer) Register(c *gin.Context) {
 	return
 }
 
+// Merge -
+func (s *AccountBookServer) Merge(c *gin.Context) {
+	req := model.MergeAccountBookReq{}
+	if err := c.ShouldBind(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if err := s.AccountBookService.Merge(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
+	return
+}
+
 // Get -
 func (s *AccountBookServer) Get(c *gin.Context) {
 	req := model.AccountBookReq{}
@@ -46,5 +61,35 @@ func (s *AccountBookServer) Get(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, resp)
 	}
+	return
+}
+
+// Modify -
+func (s *AccountBookServer) Modify(c *gin.Context) {
+	req := model.AccountBook{}
+	if err := c.ShouldBind(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if err := s.AccountBookService.Modify(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
+	return
+}
+
+// Delete -
+func (s *AccountBookServer) Delete(c *gin.Context) {
+	req := model.AccountBook{}
+	if err := c.ShouldBind(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if err := s.AccountBookService.Delete(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
 	return
 }

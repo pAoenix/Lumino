@@ -48,3 +48,33 @@ func (s *TransactionServer) Get(c *gin.Context) {
 	}
 	return
 }
+
+// Modify -
+func (s *TransactionServer) Modify(c *gin.Context) {
+	req := model.Transaction{}
+	if err := c.ShouldBind(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if err := s.TransactionService.Modify(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
+	return
+}
+
+// Delete -
+func (s *TransactionServer) Delete(c *gin.Context) {
+	req := model.Transaction{}
+	if err := c.ShouldBind(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if err := s.TransactionService.Delete(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
+	return
+}

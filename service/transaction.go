@@ -26,3 +26,13 @@ func (s *TransactionService) Register(transaction *model.Transaction) error {
 func (s *TransactionService) Get(transactionReq *model.TransactionReq) (resp []model.Transaction, err error) {
 	return s.TransactionStore.Get(transactionReq)
 }
+
+// Modify -
+func (s *TransactionService) Modify(transaction *model.Transaction) error {
+	return s.TransactionStore.Modify(transaction)
+}
+
+// Delete -
+func (s *TransactionService) Delete(transaction *model.Transaction) error {
+	return s.TransactionStore.Delete(transaction)
+}

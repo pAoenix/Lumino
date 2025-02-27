@@ -21,3 +21,13 @@ func NewUserService(UserStore *store.UserStore) *UserService {
 func (s *UserService) Register(User *model.User) error {
 	return s.UserStore.Register(User)
 }
+
+// Modify -
+func (s *UserService) Modify(User *model.User) error {
+	return s.UserStore.Modify(User)
+}
+
+// Get -
+func (s *UserService) Get(User *model.User) error {
+	return s.UserStore.Get(User)
+}

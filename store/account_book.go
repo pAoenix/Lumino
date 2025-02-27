@@ -21,9 +21,30 @@ func (s *AccountBookStore) Register(accountBook *model.AccountBook) error {
 
 // Get -
 func (s *AccountBookStore) Get(accountBookReq *model.AccountBookReq) (resp []model.AccountBook, err error) {
-	if s.db.Where(accountBookReq).Find(&resp).Error != nil {
+	sort := "id desc"
+	if accountBookReq.SortType == 0 {
+		sort = "id"
+	}
+	if s.db.Order(sort).Where(accountBookReq).Find(&resp).Error != nil {
 		return nil, err
 	} else {
 		return
 	}
+}
+
+// Modify -
+func (s *AccountBookStore) Modify(accountBookReq *model.AccountBook) error {
+	return s.db.Where(accountBookReq).Updates(&accountBookReq).Error
+}
+
+// Delete -
+func (s *AccountBookStore) Delete(accountBookReq *model.AccountBook) error {
+	return s.db.Where(accountBookReq).Delete(&accountBookReq).Error
+}
+
+// Merge -
+func (s *AccountBookStore) Merge(mergeAccountBookReq *model.MergeAccountBookReq) error {
+	return s.db.Model(&model.Transaction{}).
+		Where("account_book_id = ?", mergeAccountBookReq.MergedAccountBookID).
+		Update("account_book_id", mergeAccountBookReq.MergeAccountBookID).Error
 }

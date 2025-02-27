@@ -27,3 +27,13 @@ func (s *TransactionStore) Get(transactionReq *model.TransactionReq) (resp []mod
 		return
 	}
 }
+
+// Modify -
+func (s *TransactionStore) Modify(transaction *model.Transaction) error {
+	return s.db.Updates(transaction).Error
+}
+
+// Delete -
+func (s *TransactionStore) Delete(transaction *model.Transaction) error {
+	return s.db.Delete(transaction).Error
+}
