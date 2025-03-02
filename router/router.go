@@ -54,6 +54,7 @@ func (r *Router) Handler() http.Handler {
 	{
 		category.POST("", r.CategoryServer.Register)
 		category.GET("", r.CategoryServer.Get)
+		category.GET("", r.CategoryServer.Modify)
 	}
 
 	accountBook := e.Group("api/v1/account-book")
