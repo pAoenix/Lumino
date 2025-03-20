@@ -28,3 +28,11 @@ func (s *UserStore) Modify(User *model.User) error {
 func (s *UserStore) Get(User *model.User) error {
 	return s.db.Model(model.User{}).Where(User).Find(User).Error
 }
+
+// BatchGetByIDs -
+func (s *UserStore) BatchGetByIDs(userIDs []int) (users []model.User, err error) {
+	if err = s.db.Model(model.User{}).Where("id in ?", userIDs).Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return
+}

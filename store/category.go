@@ -15,15 +15,20 @@ func NewCategoryStore(db *DB) *CategoryStore {
 }
 
 // Register -
-func (s *CategoryStore) Register(Category *model.Category) error {
-	return s.db.Create(Category).Error
+func (s *CategoryStore) Register(category *model.Category) error {
+	return s.db.Model(&model.Category{}).Create(category).Error
 }
 
 // Get -
 func (s *CategoryStore) Get(categoryReq *model.CategoryReq) (resp []model.Category, err error) {
-	if s.db.Where(categoryReq).Find(&resp).Error != nil {
+	if s.db.Model(&model.Category{}).Where(categoryReq).Find(&resp).Error != nil {
 		return nil, err
 	} else {
 		return
 	}
+}
+
+// Modify -
+func (s *CategoryStore) Modify(category *model.Category) error {
+	return s.db.Model(&model.Category{}).Updates(category).Where("id = ?", category.Model.ID).Error
 }

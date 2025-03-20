@@ -3,23 +3,28 @@ package service
 import (
 	"Lumino/model"
 	"Lumino/store"
+	"gorm.io/gorm"
 )
 
 // TransactionService -
 type TransactionService struct {
 	TransactionStore *store.TransactionStore
+	AccountBookStore *store.AccountBookStore
 }
 
 // NewTransactionService -
-func NewTransactionService(TransactionStore *store.TransactionStore) *TransactionService {
+func NewTransactionService(transactionStore *store.TransactionStore, accountBookStore *store.AccountBookStore) *TransactionService {
 	return &TransactionService{
-		TransactionStore: TransactionStore,
+		TransactionStore: transactionStore,
+		AccountBookStore: accountBookStore,
 	}
 }
 
 // Register -
 func (s *TransactionService) Register(transaction *model.Transaction) error {
-	return s.TransactionStore.Register(transaction)
+	if err := s.TransactionStore.Register(transaction); err != nil {
+		return err
+	}
 }
 
 // Get -

@@ -26,3 +26,8 @@ func (s *CategoryService) Register(Category *model.Category) error {
 func (s *CategoryService) Get(categoryReq *model.CategoryReq) (resp []model.Category, err error) {
 	return s.CategoryStore.Get(categoryReq)
 }
+
+// Modify -
+func (s *CategoryService) Modify(Category *model.Category) error {
+	return s.CategoryStore.Modify(Category)
+}

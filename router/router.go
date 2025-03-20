@@ -22,6 +22,7 @@ type Router struct {
 	UserServer        *server.UserServer
 	CategoryServer    *server.CategoryServer
 	AccountBookServer *server.AccountBookServer
+	FriendServer      *server.FriendServer
 }
 
 // Handler -
@@ -48,6 +49,12 @@ func (r *Router) Handler() http.Handler {
 		user.POST("", r.UserServer.Register)
 		user.PUT("", r.UserServer.Modify)
 		user.GET("", r.UserServer.Get)
+	}
+
+	friend := e.Group("api/v1/friend")
+	{
+		friend.POST("invite", r.FriendServer.Invite)
+		friend.DELETE("", r.FriendServer.Delete)
 	}
 
 	category := e.Group("api/v1/category")

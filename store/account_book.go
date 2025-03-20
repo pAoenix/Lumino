@@ -25,7 +25,7 @@ func (s *AccountBookStore) Get(accountBookReq *model.AccountBookReq) (resp []mod
 	if accountBookReq.SortType == 0 {
 		sort = "id"
 	}
-	if s.db.Order(sort).Where(accountBookReq).Find(&resp).Error != nil {
+	if s.db.Order(sort).Where("? = any(user_id)", accountBookReq.UserId).Find(&resp).Error != nil {
 		return nil, err
 	} else {
 		return
@@ -34,7 +34,7 @@ func (s *AccountBookStore) Get(accountBookReq *model.AccountBookReq) (resp []mod
 
 // Modify -
 func (s *AccountBookStore) Modify(accountBookReq *model.AccountBook) error {
-	return s.db.Where(accountBookReq).Updates(&accountBookReq).Error
+	return s.db.Where("id = ?", accountBookReq.ID).Updates(&accountBookReq).Error
 }
 
 // Delete -

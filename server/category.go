@@ -54,3 +54,18 @@ func (s *CategoryServer) Get(c *gin.Context) {
 	}
 	return
 }
+
+// Modify -
+func (s *CategoryServer) Modify(c *gin.Context) {
+	req := model.Category{}
+	if err := c.ShouldBind(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if err := s.CategoryService.Modify(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
+	return
+}

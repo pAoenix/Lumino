@@ -14,7 +14,7 @@ type Transaction struct {
 	UserId        uint      // 账户id
 	CategoryId    uint      //关联消费场景分类ID
 	Description   string    //注释
-	AccountBookID int       // 对应的账本id
+	AccountBookID uint      // 对应的账本id
 }
 
 type TransactionReq struct {
