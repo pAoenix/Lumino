@@ -10,19 +10,19 @@ const SpendingType = 1
 // Transaction 交易记录
 type Transaction struct {
 	Model
-	Type           int       // 类型:收入/支出
-	Amount         float64   // 交易数额
-	Date           time.Time // 日期
-	UserID         uint      // 记录账户id
-	CategoryID     uint      // 关联消费场景分类ID
-	Description    string    // 注释
-	AccountBookID  uint      // 对应的账本id
-	RelatedUserIDs []uint    `gorm:"type:json"` // 涉及那些人
+	Type           int       `json:"type" form:"type"`                                          // 类型:收入/支出
+	Amount         float64   `json:"amount" form:"amount"`                                      // 交易数额
+	Date           time.Time `json:"date" form:"date"`                                          // 日期
+	UserID         uint      `json:"user_id" form:"user_id"`                                    // 记录账户id
+	CategoryID     uint      `json:"category_id" form:"category_id"`                            // 关联消费场景分类ID
+	Description    string    `json:"description" form:"description"`                            // 注释
+	AccountBookID  uint      `json:"account_book_id" form:"account_book_id"`                    // 对应的账本id
+	RelatedUserIDs []uint    `json:"related_user_ids" form:"related_user_ids" gorm:"type:json"` // 涉及那些人
 }
 
 type TransactionReq struct {
-	UserID        uint       // 账户id
-	AccountBookID uint       // 对应的账本id
-	BeginTime     *time.Time // 起始时间
-	EndTime       *time.Time // 结束时间
+	UserID        uint       `json:"user_id" form:"user_id"`                 // 账户id
+	AccountBookID uint       `json:"account_book_id" form:"account_book_id"` // 对应的账本id
+	BeginTime     *time.Time `json:"begin_time" form:"begin_time"`           // 起始时间
+	EndTime       *time.Time `json:"end_time" form:"end_time"`               // 结束时间
 }
