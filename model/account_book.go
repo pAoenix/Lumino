@@ -6,7 +6,7 @@ import "gorm.io/gorm"
 type AccountBook struct {
 	gorm.Model
 	CreatorID int     // 创建人
-	UserID    []int   // 账单用户列表
+	UserID    []int   `gorm:"type:json"` // 账单用户列表
 	Name      string  // 账本名称
 	Spending  float64 // 账本花费
 	Income    float64 // 账本收入

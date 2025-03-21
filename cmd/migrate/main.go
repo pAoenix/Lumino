@@ -30,4 +30,10 @@ func main() {
 	if err := db.AutoMigrate(model.Category{}); err != nil {
 		fmt.Println(err)
 	}
+	if err := db.AutoMigrate(model.Account{}); err != nil {
+		fmt.Println(err)
+	}
+	if err := db.AutoMigrate(model.AccountBook{}); err != nil {
+		fmt.Println(err)
+	}
 }
