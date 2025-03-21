@@ -1,7 +1,6 @@
 package model
 
 import (
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -10,7 +9,7 @@ const SpendingType = 1
 
 // Transaction 交易记录
 type Transaction struct {
-	gorm.Model
+	Model
 	Type           int       // 类型:收入/支出
 	Amount         float64   // 交易数额
 	Date           time.Time // 日期

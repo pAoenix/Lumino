@@ -1,10 +1,8 @@
 package model
 
-import "gorm.io/gorm"
-
 // AccountBook -
 type AccountBook struct {
-	gorm.Model
+	Model
 	CreatorID int     // 创建人
 	UserID    []int   `gorm:"type:json"` // 账单用户列表
 	Name      string  // 账本名称
@@ -21,7 +19,7 @@ type AccountBookReq struct {
 
 // MergeAccountBookReq -
 type MergeAccountBookReq struct {
-	gorm.Model
+	Model
 	MergeAccountBookID  uint // 合并的账本id  A
 	MergedAccountBookID uint // 被合并的账本id B -> A，B的记录全部合入到A
 }

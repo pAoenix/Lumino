@@ -4,7 +4,6 @@ import (
 	"Lumino/common"
 	"Lumino/model"
 	"Lumino/store"
-	"gorm.io/gorm"
 )
 
 // AccountBookService -
@@ -41,7 +40,7 @@ func (s *AccountBookService) Get(accountBookReq *model.AccountBookReq) (resp mod
 	resp.AccountBooks = accountBookList
 
 	// 计算默认账本
-	user := &model.User{Model: gorm.Model{ID: accountBookReq.UserID}}
+	user := &model.User{Model: model.Model{ID: accountBookReq.UserID}}
 	err = s.UserStore.Get(user)
 	if err != nil {
 		return
