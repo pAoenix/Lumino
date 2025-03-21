@@ -9,5 +9,6 @@ var Module = fx.Options(
 		NewCategoryService,
 		NewAccountBookService,
 		NewFriendService,
+		NewAccountService,
 	),
 )

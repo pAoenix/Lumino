@@ -23,6 +23,7 @@ type Router struct {
 	CategoryServer    *server.CategoryServer
 	AccountBookServer *server.AccountBookServer
 	FriendServer      *server.FriendServer
+	AccountServer     *server.AccountServer
 }
 
 // Handler -
@@ -74,6 +75,13 @@ func (r *Router) Handler() http.Handler {
 		accountBook.DELETE("", r.AccountBookServer.Delete)
 	}
 
+	account := e.Group("/api/v1/account")
+	{
+		account.POST("", r.AccountServer.Register)
+		account.PUT("", r.AccountServer.Modify)
+		account.GET("", r.AccountServer.Get)
+		account.DELETE("", r.AccountServer.Delete)
+	}
 	return e
 }
 

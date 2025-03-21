@@ -11,5 +11,6 @@ var Module = fx.Options(
 		NewCategoryServer,
 		NewAccountBookServer,
 		NewFriendServer,
+		NewAccountServer,
 	),
 )
