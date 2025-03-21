@@ -18,12 +18,12 @@ type Transaction struct {
 	CategoryID     uint      // 关联消费场景分类ID
 	Description    string    // 注释
 	AccountBookID  uint      // 对应的账本id
-	RelatedUserIDs []uint    // 涉及那些人
+	RelatedUserIDs []uint    `gorm:"type:json"` // 涉及那些人
 }
 
 type TransactionReq struct {
 	UserID        uint       // 账户id
-	AccountBookID int        // 对应的账本id
+	AccountBookID uint       // 对应的账本id
 	BeginTime     *time.Time // 起始时间
 	EndTime       *time.Time // 结束时间
 }

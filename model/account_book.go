@@ -22,13 +22,13 @@ type AccountBookReq struct {
 // MergeAccountBookReq -
 type MergeAccountBookReq struct {
 	gorm.Model
-	MergeAccountBookID  int // 合并的账本id  A
-	MergedAccountBookID int // 被合并的账本id B -> A，B的记录全部合入到A
+	MergeAccountBookID  uint // 合并的账本id  A
+	MergedAccountBookID uint // 被合并的账本id B -> A，B的记录全部合入到A
 }
 
 // AccountBookResp -
 type AccountBookResp struct {
 	AccountBooks         []AccountBook //账本列表
 	Users                []User        // 涉及的用户信息
-	DefaultAccountBookID int           // 默认版本id
+	DefaultAccountBookID uint          // 默认版本id
 }

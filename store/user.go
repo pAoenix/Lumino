@@ -15,18 +15,18 @@ func NewUserStore(db *DB) *UserStore {
 }
 
 // Register -
-func (s *UserStore) Register(User *model.User) error {
-	return s.db.Model(model.User{}).Create(User).Error
+func (s *UserStore) Register(user *model.User) error {
+	return s.db.Model(model.User{}).Create(user).Error
 }
 
 // Modify -
-func (s *UserStore) Modify(User *model.User) error {
-	return s.db.Model(model.User{}).Updates(User).Error
+func (s *UserStore) Modify(user *model.User) error {
+	return s.db.Model(model.User{}).Updates(user).Error
 }
 
 // Get -
-func (s *UserStore) Get(User *model.User) error {
-	return s.db.Model(model.User{}).Where(User).Find(User).Error
+func (s *UserStore) Get(user *model.User) error {
+	return s.db.Model(model.User{}).Where(user).Find(user).Error
 }
 
 // BatchGetByIDs -
