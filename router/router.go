@@ -53,7 +53,7 @@ func (r *Router) Handler() http.Handler {
 
 	friend := e.Group("api/v1/friend")
 	{
-		friend.POST("invite", r.FriendServer.Invite)
+		friend.POST("/invite", r.FriendServer.Invite)
 		friend.DELETE("", r.FriendServer.Delete)
 	}
 
@@ -61,7 +61,7 @@ func (r *Router) Handler() http.Handler {
 	{
 		category.POST("", r.CategoryServer.Register)
 		category.GET("", r.CategoryServer.Get)
-		category.GET("", r.CategoryServer.Modify)
+		category.PUT("", r.CategoryServer.Modify)
 	}
 
 	accountBook := e.Group("api/v1/account-book")
@@ -69,7 +69,7 @@ func (r *Router) Handler() http.Handler {
 		accountBook.GET(":id", r.AccountBookServer.GetByID)
 		accountBook.GET("", r.AccountBookServer.Get)
 		accountBook.POST("", r.AccountBookServer.Register)
-		accountBook.POST("", r.AccountBookServer.Merge)
+		accountBook.POST("/merge", r.AccountBookServer.Merge)
 		accountBook.PUT("", r.AccountBookServer.Modify)
 		accountBook.DELETE("", r.AccountBookServer.Delete)
 	}
