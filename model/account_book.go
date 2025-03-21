@@ -8,8 +8,8 @@ type AccountBook struct {
 	CreatorID int     // 创建人
 	UserId    []int   // 账单用户列表
 	Name      string  // 账本名称
-	expenses  float64 // 账本花费
-	income    float64 // 账本收入
+	Spending  float64 // 账本花费
+	Income    float64 // 账本收入
 }
 
 // AccountBookReq -

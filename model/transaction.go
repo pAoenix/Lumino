@@ -5,11 +5,14 @@ import (
 	"time"
 )
 
+const IncomeType = 0
+const SpendingType = 1
+
 // Transaction 交易记录
 type Transaction struct {
 	gorm.Model
 	Type          int       // 类型:收入/支出
-	Amount        float32   //交易数额
+	Amount        float64   //交易数额
 	Date          time.Time //日期
 	UserId        uint      // 账户id
 	CategoryId    uint      //关联消费场景分类ID

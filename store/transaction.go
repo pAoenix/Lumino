@@ -1,6 +1,9 @@
 package store
 
-import "Lumino/model"
+import (
+	"Lumino/model"
+	"gorm.io/gorm/clause"
+)
 
 // TransactionStore -
 type TransactionStore struct {
@@ -16,7 +19,32 @@ func NewTransactionStore(db *DB) *TransactionStore {
 
 // Register -
 func (s *TransactionStore) Register(transaction *model.Transaction) error {
-	return s.db.Create(transaction).Error
+	tx := s.db.Begin()
+	accountBook := model.AccountBook{}
+	// 加锁
+	if err := tx.Model(model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ?", transaction.AccountBookID).
+		First(&accountBook).Error; err != nil {
+		tx.Rollback() // 回滚事务
+	}
+	// 新建交易记录
+	if err := s.db.Model(&model.Transaction{}).Create(transaction).Error; err != nil {
+		tx.Rollback() // 回滚事务
+		return err
+	}
+	// 更新账本数值
+	if transaction.Type == model.IncomeType {
+		if err := s.db.Model(&model.AccountBook{}).Update("income", accountBook.Income+transaction.Amount).Error; err != nil {
+			tx.Rollback() // 回滚事务
+			return err
+		}
+	} else {
+		if err := s.db.Model(&model.AccountBook{}).Update("spending", accountBook.Spending+transaction.Amount).Error; err != nil {
+			tx.Rollback() // 回滚事务
+			return err
+		}
+	}
+	return tx.Commit().Error
 }
 
 // Get -
