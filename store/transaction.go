@@ -49,7 +49,7 @@ func (s *TransactionStore) Register(transaction *model.Transaction) error {
 
 // Get -
 func (s *TransactionStore) Get(transactionReq *model.TransactionReq) (resp []model.Transaction, err error) {
-	if s.db.Where(transactionReq).Find(&resp).Error != nil {
+	if s.db.Model(&model.Transaction{}).Where(transactionReq).Find(&resp).Error != nil {
 		return nil, err
 	} else {
 		return
@@ -58,10 +58,10 @@ func (s *TransactionStore) Get(transactionReq *model.TransactionReq) (resp []mod
 
 // Modify -
 func (s *TransactionStore) Modify(transaction *model.Transaction) error {
-	return s.db.Updates(transaction).Error
+	return s.db.Model(&model.Transaction{}).Updates(transaction).Error
 }
 
 // Delete -
 func (s *TransactionStore) Delete(transaction *model.Transaction) error {
-	return s.db.Delete(transaction).Error
+	return s.db.Model(&model.Transaction{}).Delete(transaction).Error
 }

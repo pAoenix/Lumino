@@ -11,16 +11,17 @@ const SpendingType = 1
 // Transaction 交易记录
 type Transaction struct {
 	gorm.Model
-	Type          int       // 类型:收入/支出
-	Amount        float64   //交易数额
-	Date          time.Time //日期
-	UserId        uint      // 账户id
-	CategoryId    uint      //关联消费场景分类ID
-	Description   string    //注释
-	AccountBookID uint      // 对应的账本id
+	Type           int       // 类型:收入/支出
+	Amount         float64   // 交易数额
+	Date           time.Time // 日期
+	UserID         uint      // 记录账户id
+	CategoryID     uint      // 关联消费场景分类ID
+	Description    string    // 注释
+	AccountBookID  uint      // 对应的账本id
+	RelatedUserIDs []uint    // 涉及那些人
 }
 
 type TransactionReq struct {
-	UserId        uint // 账户id
+	UserID        uint // 账户id
 	AccountBookID int  // 对应的账本id
 }

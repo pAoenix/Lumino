@@ -6,7 +6,7 @@ import "gorm.io/gorm"
 type AccountBook struct {
 	gorm.Model
 	CreatorID int     // 创建人
-	UserId    []int   // 账单用户列表
+	UserID    []int   // 账单用户列表
 	Name      string  // 账本名称
 	Spending  float64 // 账本花费
 	Income    float64 // 账本收入
@@ -14,7 +14,7 @@ type AccountBook struct {
 
 // AccountBookReq -
 type AccountBookReq struct {
-	UserId   uint // 用户
+	UserID   uint // 用户
 	SortType int  // 排序模式  0: 创建时间升序，1:创建时间降序
 }
 
