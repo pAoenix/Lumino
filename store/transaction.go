@@ -49,7 +49,14 @@ func (s *TransactionStore) Register(transaction *model.Transaction) error {
 
 // Get -
 func (s *TransactionStore) Get(transactionReq *model.TransactionReq) (resp []model.Transaction, err error) {
-	if s.db.Model(&model.Transaction{}).Where(transactionReq).Find(&resp).Error != nil {
+	sql := s.db.Model(&model.Transaction{})
+	if transactionReq.BeginTime != nil {
+		sql.Where("date >= ", &transactionReq.BeginTime)
+	}
+	if transactionReq.EndTime != nil {
+		sql.Where("date <= ", &transactionReq.EndTime)
+	}
+	if sql.Where(transactionReq).Find(&resp).Error != nil {
 		return nil, err
 	} else {
 		return

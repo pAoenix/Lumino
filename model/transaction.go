@@ -22,6 +22,8 @@ type Transaction struct {
 }
 
 type TransactionReq struct {
-	UserID        uint // 账户id
-	AccountBookID int  // 对应的账本id
+	UserID        uint       // 账户id
+	AccountBookID int        // 对应的账本id
+	BeginTime     *time.Time // 起始时间
+	EndTime       *time.Time // 结束时间
 }

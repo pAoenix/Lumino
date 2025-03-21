@@ -1,6 +1,7 @@
 package server
 
 import (
+	"Lumino/common"
 	"Lumino/model"
 	"Lumino/service"
 	"github.com/gin-gonic/gin"
@@ -56,6 +57,19 @@ func (s *AccountBookServer) Get(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
+	if resp, err := s.AccountBookService.Get(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, resp)
+	}
+	return
+}
+
+// GetByID -
+func (s *AccountBookServer) GetByID(c *gin.Context) {
+	accountBookID := c.Param("id")
+	abID, _ := common.String2Uint(accountBookID)
+	req := model.AccountBookReq{ID: abID}
 	if resp, err := s.AccountBookService.Get(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 	} else {

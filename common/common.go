@@ -1,5 +1,10 @@
 package common
 
+import (
+	"fmt"
+	"strconv"
+)
+
 // ContainsInt 判断一个int是否在int数组中
 func ContainsInt(arr []int, target int) bool {
 	for _, value := range arr {
@@ -8,4 +13,17 @@ func ContainsInt(arr []int, target int) bool {
 		}
 	}
 	return false
+}
+
+// String2Uint -
+func String2Uint(str string) (uint, error) {
+	u64, err := strconv.ParseUint(str, 10, 64)
+	if err != nil {
+		fmt.Println("转换失败:", err)
+		return 0, err
+	}
+
+	// 2. 将uint64转换为uint
+	u := uint(u64)
+	return u, nil
 }

@@ -41,7 +41,7 @@ func (s *AccountBookService) Get(accountBookReq *model.AccountBookReq) (resp mod
 	resp.AccountBooks = accountBookList
 
 	// 计算默认账本
-	user := &model.User{Model: gorm.Model{ID: accountBookReq.UserId}}
+	user := &model.User{Model: gorm.Model{ID: accountBookReq.UserID}}
 	err = s.UserStore.Get(user)
 	if err != nil {
 		return
@@ -50,7 +50,7 @@ func (s *AccountBookService) Get(accountBookReq *model.AccountBookReq) (resp mod
 	// 计算涉及的用户信息
 	var userIDs []int
 	for _, abl := range accountBookList {
-		for _, userID := range abl.UserId {
+		for _, userID := range abl.UserID {
 			if !common.ContainsInt(userIDs, userID) {
 				userIDs = append(userIDs, userID)
 			}

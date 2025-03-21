@@ -66,6 +66,7 @@ func (r *Router) Handler() http.Handler {
 
 	accountBook := e.Group("api/v1/account-book")
 	{
+		accountBook.GET(":id", r.AccountBookServer.GetByID)
 		accountBook.GET("", r.AccountBookServer.Get)
 		accountBook.POST("", r.AccountBookServer.Register)
 		accountBook.POST("", r.AccountBookServer.Merge)

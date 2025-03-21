@@ -15,6 +15,7 @@ type AccountBook struct {
 // AccountBookReq -
 type AccountBookReq struct {
 	UserID   uint // 用户
+	ID       uint // 账本id
 	SortType int  // 排序模式  0: 创建时间升序，1:创建时间降序
 }
 
