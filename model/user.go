@@ -3,7 +3,7 @@ package model
 // User 用户账户
 type User struct {
 	Model
-	Name                 string             `json:"Name"`                            //账号名称，昵称
+	Name                 string             `form:"name" json:"name"`                //账号名称，昵称
 	DefaultAccountBookID uint               `json:"default_account_book_id"`         // 默认账本id
 	Balance              float64            `json:"balance"`                         // 余额
 	BalanceDetail        map[string]float64 `json:"balance_detail" gorm:"type:json"` // 余额详情

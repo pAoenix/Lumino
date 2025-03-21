@@ -28,6 +28,6 @@ func (s *UserService) Modify(User *model.User) error {
 }
 
 // Get -
-func (s *UserService) Get(User *model.User) error {
+func (s *UserService) Get(User *model.User) (users []model.User, err error) {
 	return s.UserStore.Get(User)
 }

@@ -56,10 +56,11 @@ func (s *UserServer) Get(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	if err := s.UserService.Get(&req); err != nil {
+	if users, err := s.UserService.Get(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
+	} else {
+		c.JSON(http.StatusOK, users)
 	}
-	c.JSON(http.StatusOK, req)
 	return
 }
