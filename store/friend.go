@@ -30,6 +30,10 @@ func (s *FriendStore) Invite(friend *model.Friend) error {
 	if user.ID != 0 {
 		return errors.New("你已存在该好友")
 	}
+	err = s.db.Model(&model.User{}).Where("id = ?", friend.Invitee).Find(&user).Error
+	if user.ID == 0 {
+		return errors.New("邀请用户不存在")
+	}
 	return s.db.Model(&model.User{}).
 		Where("id = ?", friend.Inviter).
 		Update("friend", gorm.Expr("array_append(friend, ?)", friend.Invitee)).
