@@ -26,6 +26,7 @@ func (s *TransactionStore) Register(transaction *model.Transaction) error {
 		Where("id = ?", transaction.AccountBookID).
 		First(&accountBook).Error; err != nil {
 		tx.Rollback() // 回滚事务
+		return err
 	}
 	// 新建交易记录
 	if err := s.db.Model(&model.Transaction{}).Create(transaction).Error; err != nil {

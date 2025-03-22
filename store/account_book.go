@@ -1,6 +1,9 @@
 package store
 
-import "Lumino/model"
+import (
+	"Lumino/model"
+	"gorm.io/gorm/clause"
+)
 
 // AccountBookStore -
 type AccountBookStore struct {
@@ -44,7 +47,49 @@ func (s *AccountBookStore) Delete(accountBookReq *model.AccountBook) error {
 
 // Merge -
 func (s *AccountBookStore) Merge(mergeAccountBookReq *model.MergeAccountBookReq) error {
-	return s.db.Model(&model.Transaction{}).
+	tx := s.db.Begin()
+	// 账本加锁
+	accountBook := model.AccountBook{}
+	if err := tx.Model(model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ?", mergeAccountBookReq.MergeAccountBookID).
+		First(&accountBook).Error; err != nil {
+		tx.Rollback() // 回滚事务
+		return err
+	}
+	// 更新账本数值
+	var transactions []model.Transaction
+	if err := tx.Model(&model.Transaction{}).Select("*").Where("account_book_id = ?", mergeAccountBookReq.MergedAccountBookID).Find(&transactions).Error; err != nil {
+		tx.Rollback() // 回滚事务
+		return err
+	}
+	income := 0.
+	spending := 0.
+	for _, transaction := range transactions {
+		if transaction.Type == model.IncomeType {
+			income += transaction.Amount
+		} else {
+			spending += transaction.Amount
+		}
+	}
+	if err := tx.Model(&model.AccountBook{}).Where("id = ?", accountBook.ID).
+		Select("spending", "income").
+		Updates(model.AccountBook{Spending: accountBook.Spending + spending, Income: accountBook.Income + income}).
+		Error; err != nil {
+		tx.Rollback() // 回滚事务
+		return err
+	}
+	// 合并账本交易明细
+	if err := tx.Model(&model.Transaction{}).
 		Where("account_book_id = ?", mergeAccountBookReq.MergedAccountBookID).
-		Update("account_book_id", mergeAccountBookReq.MergeAccountBookID).Error
+		Update("account_book_id", mergeAccountBookReq.MergeAccountBookID).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	// 删除账本
+	if err := tx.Model(model.AccountBook{}).
+		Delete(&model.AccountBook{Model: model.Model{ID: mergeAccountBookReq.MergedAccountBookID}}).
+		Error; err != nil {
+		return err
+	}
+	return tx.Commit().Error
 }

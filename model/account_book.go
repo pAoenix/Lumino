@@ -21,7 +21,6 @@ type AccountBookReq struct {
 
 // MergeAccountBookReq -
 type MergeAccountBookReq struct {
-	Model
 	MergeAccountBookID  uint `json:"merge_account_book_id" form:"merge_account_book_id"`   // 合并的账本id  A
 	MergedAccountBookID uint `json:"merged_account_book_id" form:"merged_account_book_id"` // 被合并的账本id B -> A，B的记录全部合入到A
 }
