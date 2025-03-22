@@ -24,7 +24,7 @@ func (s *UserStore) Register(user *model.User) error {
 
 // Modify -
 func (s *UserStore) Modify(user *model.User) error {
-	return s.db.Model(model.User{}).Where("id = ", user.ID).Updates(user).Error
+	return s.db.Model(model.User{}).Where("id = ?", user.ID).Updates(user).Error
 }
 
 // Get -

@@ -54,8 +54,9 @@ func (s *AccountBookService) Get(accountBookReq *model.AccountBookReq) (resp mod
 	var userIDs []int
 	for _, abl := range accountBookList {
 		for _, userID := range abl.UserID {
-			if !common.ContainsInt(userIDs, userID) {
-				userIDs = append(userIDs, userID)
+			userIDint := int(userID)
+			if !common.ContainsInt(userIDs, userIDint) {
+				userIDs = append(userIDs, userIDint)
 			}
 		}
 	}

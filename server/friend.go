@@ -27,6 +27,10 @@ func (s *FriendServer) Invite(c *gin.Context) {
 		return
 	}
 	if err := s.FriendService.Invite(&req); err != nil {
+		if err.Error() == "你已存在该好友" {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			return
+		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
