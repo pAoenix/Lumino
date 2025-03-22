@@ -53,7 +53,7 @@ func (s *AccountBookService) Get(accountBookReq *model.AccountBookReq) (resp mod
 	// 计算涉及的用户信息
 	var userIDs []int
 	for _, abl := range accountBookList {
-		for _, userID := range abl.UserID {
+		for _, userID := range abl.UserIDs {
 			userIDint := int(userID)
 			if !common.ContainsInt(userIDs, userIDint) {
 				userIDs = append(userIDs, userIDint)

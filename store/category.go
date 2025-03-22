@@ -30,5 +30,5 @@ func (s *CategoryStore) Get(categoryReq *model.CategoryReq) (resp []model.Catego
 
 // Modify -
 func (s *CategoryStore) Modify(category *model.Category) error {
-	return s.db.Model(&model.Category{}).Updates(category).Where("id = ?", category.Model.ID).Error
+	return s.db.Model(&model.Category{}).Where("id = ?", category.Model.ID).Updates(category).Error
 }
