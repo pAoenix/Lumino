@@ -19,8 +19,8 @@ func NewCategoryServer(CategoryService *service.CategoryService) *CategoryServer
 	}
 }
 
-// Register 注册新的账单类型
-// @Summary      注册新的账单类型
+// Register 注册新的图标类型
+// @Summary      注册新的图标类型
 // tags category
 // @Success      200
 // @Failure      400
