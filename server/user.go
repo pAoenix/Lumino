@@ -30,7 +30,7 @@ func (s *UserServer) Register(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusOK, req)
 	return
 }
 
@@ -45,7 +45,7 @@ func (s *UserServer) Modify(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusOK, req)
 	return
 }
 
