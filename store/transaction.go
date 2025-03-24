@@ -29,18 +29,20 @@ func (s *TransactionStore) Register(transaction *model.Transaction) error {
 		return err
 	}
 	// 新建交易记录
-	if err := s.db.Model(&model.Transaction{}).Create(transaction).Error; err != nil {
+	if err := tx.Model(&model.Transaction{}).Create(transaction).Error; err != nil {
 		tx.Rollback() // 回滚事务
 		return err
 	}
 	// 更新账本数值
 	if transaction.Type == model.IncomeType {
-		if err := s.db.Model(&model.AccountBook{}).Update("income", accountBook.Income+transaction.Amount).Error; err != nil {
+		if err := tx.Model(&model.AccountBook{}).
+			Where("id = ?", accountBook.ID).
+			Update("income", accountBook.Income+transaction.Amount).Error; err != nil {
 			tx.Rollback() // 回滚事务
 			return err
 		}
 	} else {
-		if err := s.db.Model(&model.AccountBook{}).Update("spending", accountBook.Spending+transaction.Amount).Error; err != nil {
+		if err := tx.Model(&model.AccountBook{}).Update("spending", accountBook.Spending+transaction.Amount).Error; err != nil {
 			tx.Rollback() // 回滚事务
 			return err
 		}
