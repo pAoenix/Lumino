@@ -108,7 +108,7 @@ func (s *TransactionStore) Modify(transaction *model.Transaction) error {
 		if tmpTransaction.Type == model.IncomeType {
 			if err := tx.Model(&model.AccountBook{}).
 				Where("id = ?", accountBook.ID).
-				Update("spending", accountBook.Income-tmpTransaction.Amount).
+				Update("income", accountBook.Income-tmpTransaction.Amount).
 				Update("spending", accountBook.Spending+transaction.Amount).Error; err != nil {
 				tx.Rollback() // 回滚事务
 				return err
@@ -160,7 +160,7 @@ func (s *TransactionStore) Delete(transaction *model.Transaction) error {
 	} else {
 		if err := tx.Model(&model.AccountBook{}).
 			Where("id = ?", accountBook.ID).
-			Update("income", accountBook.Spending-tmpTransaction.Amount).Error; err != nil {
+			Update("spending", accountBook.Spending-tmpTransaction.Amount).Error; err != nil {
 			tx.Rollback() // 回滚事务
 			return err
 		}
