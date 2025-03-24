@@ -86,18 +86,41 @@ func (s *TransactionStore) Modify(transaction *model.Transaction) error {
 	}
 	// 更新后的交易信息入账
 	if transaction.Type == model.IncomeType {
-		if err := tx.Model(&model.AccountBook{}).
-			Where("id = ?", accountBook.ID).
-			Update("income", accountBook.Income+transaction.Amount).Error; err != nil {
-			tx.Rollback() // 回滚事务
-			return err
+		// 如果修改前后都是收入
+		if tmpTransaction.Type == model.IncomeType {
+			if err := tx.Model(&model.AccountBook{}).
+				Where("id = ?", accountBook.ID).
+				Update("income", accountBook.Income+transaction.Amount-tmpTransaction.Amount).Error; err != nil {
+				tx.Rollback() // 回滚事务
+				return err
+			}
+		} else { // 如果支出变收入
+			if err := tx.Model(&model.AccountBook{}).
+				Where("id = ?", accountBook.ID).
+				Update("spending", accountBook.Income-tmpTransaction.Amount).
+				Update("income", accountBook.Income+transaction.Amount).Error; err != nil {
+				tx.Rollback() // 回滚事务
+				return err
+			}
 		}
 	} else {
-		if err := tx.Model(&model.AccountBook{}).
-			Where("id = ?", accountBook.ID).
-			Update("spending", accountBook.Spending+transaction.Amount).Error; err != nil {
-			tx.Rollback() // 回滚事务
-			return err
+		// 收入变支出
+		if tmpTransaction.Type == model.IncomeType {
+			if err := tx.Model(&model.AccountBook{}).
+				Where("id = ?", accountBook.ID).
+				Update("spending", accountBook.Income-tmpTransaction.Amount).
+				Update("spending", accountBook.Spending+transaction.Amount).Error; err != nil {
+				tx.Rollback() // 回滚事务
+				return err
+			}
+		} else {
+			// 一直是支出
+			if err := tx.Model(&model.AccountBook{}).
+				Where("id = ?", accountBook.ID).
+				Update("spending", accountBook.Spending+transaction.Amount-tmpTransaction.Amount).Error; err != nil {
+				tx.Rollback() // 回滚事务
+				return err
+			}
 		}
 	}
 	// 交易信息更新
