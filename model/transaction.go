@@ -14,7 +14,7 @@ type Transaction struct {
 	Type           int           `json:"type" form:"type"`                                               // 类型:收入/支出
 	Amount         float64       `json:"amount" form:"amount"`                                           // 交易数额
 	Date           time.Time     `json:"date" form:"date"`                                               // 日期
-	UserID         uint          `json:"user_id" form:"user_id"`                                         // 记录账户id
+	CreatorID      uint          `json:"creator_id" form:"creator_id"`                                   // 记录账户id
 	CategoryID     uint          `json:"category_id" form:"category_id"`                                 // 关联消费场景分类ID
 	Description    string        `json:"description" form:"description"`                                 // 注释
 	AccountBookID  uint          `json:"account_book_id" form:"account_book_id"`                         // 对应的账本id

@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"github.com/lib/pq"
 	"strconv"
 )
 
@@ -26,4 +27,13 @@ func String2Uint(str string) (uint, error) {
 	// 2. 将uint64转换为uint
 	u := uint(u64)
 	return u, nil
+}
+
+// ConvertArrayToIntSlice -
+func ConvertArrayToIntSlice(int32Array pq.Int32Array) []int {
+	intSlice := make([]int, len(int32Array))
+	for i, v := range int32Array {
+		intSlice[i] = int(v)
+	}
+	return intSlice
 }

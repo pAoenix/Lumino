@@ -59,6 +59,9 @@ func (s *TransactionStore) Get(transactionReq *model.TransactionReq) (resp []mod
 	if transactionReq.EndTime != nil {
 		sql.Where("date <= ?", &transactionReq.EndTime)
 	}
+	if transactionReq.UserID != 0 {
+		sql.Where("? = ANY(related_user_ids)", &transactionReq.UserID)
+	}
 	if sql.Where("account_book_id = ?", transactionReq.AccountBookID).Find(&resp).Error != nil {
 		return nil, err
 	} else {
