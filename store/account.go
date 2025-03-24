@@ -21,7 +21,7 @@ func (s *AccountStore) Register(account *model.Account) error {
 
 // Modify -
 func (s *AccountStore) Modify(account *model.Account) error {
-	return s.db.Model(model.Account{}).Where(account).Updates(account).Error
+	return s.db.Model(model.Account{}).Where("id = ?", account.ID).Updates(account).Error
 }
 
 // Get -
