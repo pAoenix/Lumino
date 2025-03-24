@@ -56,11 +56,12 @@ func (s *AccountServer) Get(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	if err := s.AccountService.Get(&req); err != nil {
+	if resp, err := s.AccountService.Get(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
+	} else {
+		c.JSON(http.StatusOK, resp)
 	}
-	c.JSON(http.StatusOK, req)
 	return
 }
 

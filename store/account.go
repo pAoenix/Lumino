@@ -15,21 +15,24 @@ func NewAccountStore(db *DB) *AccountStore {
 }
 
 // Register -
-func (s *AccountStore) Register(Account *model.Account) error {
-	return s.db.Model(model.Account{}).Create(Account).Error
+func (s *AccountStore) Register(account *model.Account) error {
+	return s.db.Model(model.Account{}).Create(account).Error
 }
 
 // Modify -
-func (s *AccountStore) Modify(Account *model.Account) error {
-	return s.db.Model(model.Account{}).Updates(Account).Error
+func (s *AccountStore) Modify(account *model.Account) error {
+	return s.db.Model(model.Account{}).Where(account).Updates(account).Error
 }
 
 // Get -
-func (s *AccountStore) Get(Account *model.Account) error {
-	return s.db.Model(model.Account{}).Where(Account).Find(Account).Error
+func (s *AccountStore) Get(accountReq *model.Account) (account []model.Account, err error) {
+	if err = s.db.Model(model.Account{}).Where(accountReq).Find(&account).Error; err != nil {
+		return []model.Account{}, err
+	}
+	return
 }
 
 // Delete -
-func (s *AccountStore) Delete(Account *model.Account) error {
-	return s.db.Model(model.Account{}).Delete(Account).Error
+func (s *AccountStore) Delete(account *model.Account) error {
+	return s.db.Model(model.Account{}).Delete(account).Error
 }

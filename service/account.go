@@ -28,7 +28,7 @@ func (s *AccountService) Modify(Account *model.Account) error {
 }
 
 // Get -
-func (s *AccountService) Get(Account *model.Account) error {
+func (s *AccountService) Get(Account *model.Account) (account []model.Account, err error) {
 	return s.AccountStore.Get(Account)
 }
 
