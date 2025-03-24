@@ -54,12 +54,12 @@ func (s *TransactionStore) Register(transaction *model.Transaction) error {
 func (s *TransactionStore) Get(transactionReq *model.TransactionReq) (resp []model.Transaction, err error) {
 	sql := s.db.Model(&model.Transaction{})
 	if transactionReq.BeginTime != nil {
-		sql.Where("date >= ", &transactionReq.BeginTime)
+		sql.Where("date >= ?", &transactionReq.BeginTime)
 	}
 	if transactionReq.EndTime != nil {
-		sql.Where("date <= ", &transactionReq.EndTime)
+		sql.Where("date <= ?", &transactionReq.EndTime)
 	}
-	if sql.Where(transactionReq).Find(&resp).Error != nil {
+	if sql.Where("account_book_id = ?", transactionReq.AccountBookID).Find(&resp).Error != nil {
 		return nil, err
 	} else {
 		return
