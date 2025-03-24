@@ -68,10 +68,84 @@ func (s *TransactionStore) Get(transactionReq *model.TransactionReq) (resp []mod
 
 // Modify -
 func (s *TransactionStore) Modify(transaction *model.Transaction) error {
-	return s.db.Model(&model.Transaction{}).Updates(transaction).Error
+	tx := s.db.Begin()
+	accountBook := model.AccountBook{}
+	// 加锁
+	if err := tx.Model(model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ?", transaction.AccountBookID).
+		First(&accountBook).Error; err != nil {
+		tx.Rollback() // 回滚事务
+		return err
+	}
+	// 更新账本数值
+	tmpTransaction := model.Transaction{}
+	if err := tx.Model(&model.Transaction{}).
+		Select("*").Where("id = ?", transaction.ID).Find(&tmpTransaction).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	// 更新后的交易信息入账
+	if transaction.Type == model.IncomeType {
+		if err := tx.Model(&model.AccountBook{}).
+			Where("id = ?", accountBook.ID).
+			Update("income", accountBook.Income+transaction.Amount).Error; err != nil {
+			tx.Rollback() // 回滚事务
+			return err
+		}
+	} else {
+		if err := tx.Model(&model.AccountBook{}).
+			Where("id = ?", accountBook.ID).
+			Update("spending", accountBook.Spending+transaction.Amount).Error; err != nil {
+			tx.Rollback() // 回滚事务
+			return err
+		}
+	}
+	// 交易信息更新
+	if err := tx.Model(&model.Transaction{}).Where("id = ?", transaction.ID).Updates(transaction).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit().Error
 }
 
 // Delete -
 func (s *TransactionStore) Delete(transaction *model.Transaction) error {
-	return s.db.Model(&model.Transaction{}).Delete(transaction).Error
+	tx := s.db.Begin()
+	accountBook := model.AccountBook{}
+	// 加锁
+	if err := tx.Model(model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ?", transaction.AccountBookID).
+		First(&accountBook).Error; err != nil {
+		tx.Rollback() // 回滚事务
+		return err
+	}
+	// 更新账本数值
+	tmpTransaction := model.Transaction{}
+	if err := tx.Model(&model.Transaction{}).
+		Select("*").Where("id = ?", transaction.ID).Find(&tmpTransaction).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	// 把修改前的信息，从账本退去
+	if tmpTransaction.Type == model.IncomeType {
+		if err := tx.Model(&model.AccountBook{}).
+			Where("id = ?", accountBook.ID).
+			Update("income", accountBook.Income-tmpTransaction.Amount).Error; err != nil {
+			tx.Rollback() // 回滚事务
+			return err
+		}
+	} else {
+		if err := tx.Model(&model.AccountBook{}).
+			Where("id = ?", accountBook.ID).
+			Update("income", accountBook.Spending-tmpTransaction.Amount).Error; err != nil {
+			tx.Rollback() // 回滚事务
+			return err
+		}
+	}
+
+	if err := tx.Model(&model.Transaction{}).Where("id = ?", transaction.ID).Delete(transaction).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit().Error
 }
