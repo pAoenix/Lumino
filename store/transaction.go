@@ -80,7 +80,7 @@ func (s *TransactionStore) Modify(transaction *model.Transaction) error {
 	// 更新账本数值
 	tmpTransaction := model.Transaction{}
 	if err := tx.Model(&model.Transaction{}).
-		Select("*").Where("id = ?", transaction.ID).Find(&tmpTransaction).Error; err != nil {
+		Select("*").Where("id = ?", transaction.ID).First(&tmpTransaction).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -145,7 +145,7 @@ func (s *TransactionStore) Delete(transaction *model.Transaction) error {
 	// 更新账本数值
 	tmpTransaction := model.Transaction{}
 	if err := tx.Model(&model.Transaction{}).
-		Select("*").Where("id = ?", transaction.ID).Find(&tmpTransaction).Error; err != nil {
+		Select("*").Where("id = ?", transaction.ID).First(&tmpTransaction).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
