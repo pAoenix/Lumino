@@ -1,8 +1,0 @@
-env: local
-
-postgresql:
-  dbname: kitchen_universe_dev
-  host: 127.0.0.1
-  post: 5000
-  username: ku_dev
-  passwd: 123456
