@@ -1,13 +1,12 @@
-env: local
+env: dev
 port: 8080
 
 postgres:
   dbname: lumino_dev
-  host: 127.0.0.1
-#  host: host.docker.internal
-  port: 5433
+  host: pgm-2ze3795emd629opy-l9.pg.rds.aliyuncs.com
+  port: 5432
   user: postgres
-  passwd: 6666
+  passwd: Zmalqp78
   maxOpenConns: 50
 
 
