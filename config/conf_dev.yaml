@@ -1,8 +1,17 @@
-env: local
+env: dev
+port: 8080
 
-postgresql:
-  dbname: kitchen_universe_dev
-  host: 127.0.0.1
-  post: 5000
-  username: ku_dev
-  passwd: 123456
+postgres:
+  dbname: lumino_dev
+  host: pgm-2ze3795emd629opy-l9.pg.rds.aliyuncs.com
+  port: 5432
+  user: postgres
+  passwd: Zmalqp78
+  maxOpenConns: 50
+
+
+gracefulShutdown:
+  timeoutSeconds: 30
+
+log:
+  level: info
