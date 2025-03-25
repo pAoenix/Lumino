@@ -20,12 +20,15 @@ func NewCategoryServer(CategoryService *service.CategoryService) *CategoryServer
 }
 
 // Register 注册新的图标类型
-// @Summary      注册新的图标类型
+//
+//	@Summary	注册新的图标类型
+//
 // tags category
-// @Success      200
-// @Failure      400
-// @Failure      500
-// @Router       /api/v1/register [post]
+//
+//	@Success	200
+//	@Failure	400
+//	@Failure	500
+//	@Router		/api/v1/register [post]
 func (s *CategoryServer) Register(c *gin.Context) {
 	req := model.Category{}
 	if err := c.ShouldBind(&req); err != nil {

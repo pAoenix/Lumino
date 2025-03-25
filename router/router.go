@@ -2,6 +2,7 @@ package router
 
 import (
 	"Lumino/common/logger"
+	"Lumino/docs"
 	"Lumino/router/middleware"
 	"Lumino/server"
 	"Lumino/store"
@@ -35,8 +36,8 @@ func (r *Router) Handler() http.Handler {
 	e.Use(middleware.Log(logger.Logger))
 	e.Use(middleware.DB(r.DB))
 	e.GET("api/v1/health", r.HealthServer.Health)
-
-	e.GET("api/v1/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	docs.SwaggerInfo.BasePath = ""
+	e.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	transaction := e.Group("api/v1/transaction")
 	{
