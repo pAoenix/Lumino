@@ -1,0 +1,36 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "lumino 记账本服务",
+        "title": "Lumino",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "182.92.152.108:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/api/v1/register": {
+            "post": {
+                "summary": "注册新的图标类型",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
