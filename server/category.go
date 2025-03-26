@@ -19,16 +19,14 @@ func NewCategoryServer(CategoryService *service.CategoryService) *CategoryServer
 	}
 }
 
-// Register 注册新的图标类型
-//
-//	@Summary	注册新的图标类型
-//
-// tags category
-//
-//	@Success	200
-//	@Failure	400
-//	@Failure	500
-//	@Router		/api/v1/register [post]
+// Register 注册图标
+// @Summary	注册图标
+// @Tags 图标
+// @Param        category  body      model.Category  true  "图标信息"
+// @Success	204
+// @Failure	400 {string}  string      "请求体异常"
+// @Failure	500 {string}  string      "服务端异常"
+// @Router		/api/v1/category [post]
 func (s *CategoryServer) Register(c *gin.Context) {
 	req := model.Category{}
 	if err := c.ShouldBind(&req); err != nil {
@@ -44,6 +42,13 @@ func (s *CategoryServer) Register(c *gin.Context) {
 }
 
 // Get -
+// @Summary	获取图标
+// @Tags 图标
+// @Param        category  query      model.CategoryReq  true  "图标请求"
+// @Success	200  {object} []model.Category "图标结果"
+// @Failure	400  {string}  string      "请求体异常"
+// @Failure	500  {string}  string      "服务端异常"
+// @Router		/api/v1/category [get]
 func (s *CategoryServer) Get(c *gin.Context) {
 	req := model.CategoryReq{}
 	if err := c.ShouldBind(&req); err != nil {
@@ -59,6 +64,13 @@ func (s *CategoryServer) Get(c *gin.Context) {
 }
 
 // Modify -
+// @Summary	修改图标
+// @Tags 图标
+// @Param        category  body      model.Category  true  "图标信息"
+// @Success	204
+// @Failure	400  {string}  string      "请求体异常"
+// @Failure	500  {string}  string      "服务端异常"
+// @Router		/api/v1/category [put]
 func (s *CategoryServer) Modify(c *gin.Context) {
 	req := model.Category{}
 	if err := c.ShouldBind(&req); err != nil {

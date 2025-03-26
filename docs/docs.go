@@ -15,19 +15,651 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/register": {
-            "post": {
-                "summary": "注册新的图标类型",
+        "/api/v1/account": {
+            "get": {
+                "tags": [
+                    "账户"
+                ],
+                "summary": "获取账户",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "name": "balance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "created_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2025-03-26T00:00:00Z",
+                        "name": "deleted_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "icon",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "updated_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建人",
+                        "name": "user_id",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "账户结果",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Account"
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Bad Request"
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
+                }
+            },
+            "put": {
+                "tags": [
+                    "账户"
+                ],
+                "summary": "修改账户",
+                "parameters": [
+                    {
+                        "description": "账户信息",
+                        "name": "account",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Account"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "账户"
+                ],
+                "summary": "注册账户",
+                "parameters": [
+                    {
+                        "description": "账户信息",
+                        "name": "account",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Account"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "账户"
+                ],
+                "summary": "删除账户",
+                "parameters": [
+                    {
+                        "description": "账户信息",
+                        "name": "account",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Account"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/account-book": {
+            "get": {
+                "tags": [
+                    "账本"
+                ],
+                "summary": "获取账本",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "账本id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "排序模式  0: 创建时间升序，1:创建时间降序",
+                        "name": "sort_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用户",
+                        "name": "user_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "账本结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBookResp"
+                        }
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "账本"
+                ],
+                "summary": "注册账本",
+                "parameters": [
+                    {
+                        "description": "账本信息",
+                        "name": "account_book",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBook"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/account-book/:id": {
+            "get": {
+                "tags": [
+                    "账本"
+                ],
+                "summary": "获取账本",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "uint",
+                        "description": "账本id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "账本结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBookResp"
+                        }
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/account-book/merge": {
+            "post": {
+                "tags": [
+                    "账本"
+                ],
+                "summary": "合并账本",
+                "parameters": [
+                    {
+                        "description": "账本id信息",
+                        "name": "account_book",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.MergeAccountBookReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/category": {
+            "get": {
+                "tags": [
+                    "图标"
+                ],
+                "summary": "获取图标",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "user_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "图标结果",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Category"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "图标"
+                ],
+                "summary": "修改图标",
+                "parameters": [
+                    {
+                        "description": "图标信息",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Category"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "图标"
+                ],
+                "summary": "注册图标",
+                "parameters": [
+                    {
+                        "description": "图标信息",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Category"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Account": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2025-03-26T00:00:00Z"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "创建人",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.AccountBook": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "creator_id": {
+                    "description": "创建人,binding:\"required\"",
+                    "type": "integer"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2025-03-26T00:00:00Z"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "income": {
+                    "description": "账本收入",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "账本名称",
+                    "type": "string"
+                },
+                "spending": {
+                    "description": "账本花费",
+                    "type": "number"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_ids": {
+                    "description": "账单用户列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "model.AccountBookResp": {
+            "type": "object",
+            "properties": {
+                "account_books": {
+                    "description": "账本列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.AccountBook"
+                    }
+                },
+                "default_account_book_id": {
+                    "description": "默认版本id",
+                    "type": "integer"
+                },
+                "users": {
+                    "description": "涉及的用户信息",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                }
+            }
+        },
+        "model.Category": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2025-03-26T00:00:00Z"
+                },
+                "icon": {
+                    "description": "类别图标的本地地址",
+                    "type": "string"
+                },
+                "icon_download_url": {
+                    "description": "类别图标的对象存储下载地址",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "分类名称的中文示意",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "用户id",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.MergeAccountBookReq": {
+            "type": "object",
+            "properties": {
+                "merge_account_book_id": {
+                    "description": "合并的账本id  A",
+                    "type": "integer"
+                },
+                "merged_account_book_id": {
+                    "description": "被合并的账本id B -\u003e A，B的记录全部合入到A",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "description": "余额",
+                    "type": "number"
+                },
+                "balance_detail": {
+                    "description": "余额详情",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number"
+                    }
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "default_account_book_id": {
+                    "description": "默认账本id",
+                    "type": "integer"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2025-03-26T00:00:00Z"
+                },
+                "friend": {
+                    "description": "朋友列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "icon": {
+                    "description": "用户头像的对象存储地址",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "账号名称，昵称",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         }

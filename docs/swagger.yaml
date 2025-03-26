@@ -1,4 +1,142 @@
 basePath: /api/v1
+definitions:
+  model.Account:
+    properties:
+      balance:
+        type: number
+      created_at:
+        type: string
+      deleted_at:
+        example: "2025-03-26T00:00:00Z"
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      type:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        description: 创建人
+        type: integer
+    type: object
+  model.AccountBook:
+    properties:
+      created_at:
+        type: string
+      creator_id:
+        description: 创建人,binding:"required"
+        type: integer
+      deleted_at:
+        example: "2025-03-26T00:00:00Z"
+        type: string
+      id:
+        type: integer
+      income:
+        description: 账本收入
+        type: number
+      name:
+        description: 账本名称
+        type: string
+      spending:
+        description: 账本花费
+        type: number
+      updated_at:
+        type: string
+      user_ids:
+        description: 账单用户列表
+        items:
+          type: integer
+        type: array
+    type: object
+  model.AccountBookResp:
+    properties:
+      account_books:
+        description: 账本列表
+        items:
+          $ref: '#/definitions/model.AccountBook'
+        type: array
+      default_account_book_id:
+        description: 默认版本id
+        type: integer
+      users:
+        description: 涉及的用户信息
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+    type: object
+  model.Category:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        example: "2025-03-26T00:00:00Z"
+        type: string
+      icon:
+        description: 类别图标的本地地址
+        type: string
+      icon_download_url:
+        description: 类别图标的对象存储下载地址
+        type: string
+      id:
+        type: integer
+      name:
+        description: 分类名称的中文示意
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        description: 用户id
+        type: integer
+    type: object
+  model.MergeAccountBookReq:
+    properties:
+      merge_account_book_id:
+        description: 合并的账本id  A
+        type: integer
+      merged_account_book_id:
+        description: 被合并的账本id B -> A，B的记录全部合入到A
+        type: integer
+    type: object
+  model.User:
+    properties:
+      balance:
+        description: 余额
+        type: number
+      balance_detail:
+        additionalProperties:
+          type: number
+        description: 余额详情
+        type: object
+      created_at:
+        type: string
+      default_account_book_id:
+        description: 默认账本id
+        type: integer
+      deleted_at:
+        example: "2025-03-26T00:00:00Z"
+        type: string
+      friend:
+        description: 朋友列表
+        items:
+          type: integer
+        type: array
+      icon:
+        description: 用户头像的对象存储地址
+        type: string
+      id:
+        type: integer
+      name:
+        description: 账号名称，昵称
+        type: string
+      updated_at:
+        type: string
+    type: object
 host: 182.92.152.108:8080
 info:
   contact: {}
@@ -6,16 +144,295 @@ info:
   title: Lumino
   version: "1.0"
 paths:
-  /api/v1/register:
-    post:
+  /api/v1/account:
+    delete:
+      parameters:
+      - description: 账户信息
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/model.Account'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 删除账户
+      tags:
+      - 账户
+    get:
+      parameters:
+      - in: query
+        name: balance
+        type: number
+      - in: query
+        name: created_at
+        type: string
+      - example: "2025-03-26T00:00:00Z"
+        in: query
+        name: deleted_at
+        type: string
+      - in: query
+        name: description
+        type: string
+      - in: query
+        name: icon
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: type
+        type: integer
+      - in: query
+        name: updated_at
+        type: string
+      - description: 创建人
+        in: query
+        name: user_id
+        type: integer
       responses:
         "200":
-          description: OK
+          description: 账户结果
+          schema:
+            items:
+              $ref: '#/definitions/model.Account'
+            type: array
         "400":
-          description: Bad Request
+          description: 请求体异常
+          schema:
+            type: string
         "500":
-          description: Internal Server Error
-      summary: 注册新的图标类型
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 获取账户
+      tags:
+      - 账户
+    post:
+      parameters:
+      - description: 账户信息
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/model.Account'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 注册账户
+      tags:
+      - 账户
+    put:
+      parameters:
+      - description: 账户信息
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/model.Account'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 修改账户
+      tags:
+      - 账户
+  /api/v1/account-book:
+    get:
+      parameters:
+      - description: 账本id
+        in: query
+        name: id
+        type: integer
+      - description: '排序模式  0: 创建时间升序，1:创建时间降序'
+        in: query
+        name: sort_type
+        type: integer
+      - description: 用户
+        in: query
+        name: user_id
+        type: integer
+      responses:
+        "200":
+          description: 账本结果
+          schema:
+            $ref: '#/definitions/model.AccountBookResp'
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 获取账本
+      tags:
+      - 账本
+    post:
+      parameters:
+      - description: 账本信息
+        in: body
+        name: account_book
+        required: true
+        schema:
+          $ref: '#/definitions/model.AccountBook'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 注册账本
+      tags:
+      - 账本
+  /api/v1/account-book/:id:
+    get:
+      parameters:
+      - description: 账本id
+        format: uint
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: 账本结果
+          schema:
+            $ref: '#/definitions/model.AccountBookResp'
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 获取账本
+      tags:
+      - 账本
+  /api/v1/account-book/merge:
+    post:
+      parameters:
+      - description: 账本id信息
+        in: body
+        name: account_book
+        required: true
+        schema:
+          $ref: '#/definitions/model.MergeAccountBookReq'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 合并账本
+      tags:
+      - 账本
+  /api/v1/category:
+    get:
+      parameters:
+      - description: 用户id
+        in: query
+        name: user_id
+        type: integer
+      responses:
+        "200":
+          description: 图标结果
+          schema:
+            items:
+              $ref: '#/definitions/model.Category'
+            type: array
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 获取图标
+      tags:
+      - 图标
+    post:
+      parameters:
+      - description: 图标信息
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/model.Category'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 注册图标
+      tags:
+      - 图标
+    put:
+      parameters:
+      - description: 图标信息
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/model.Category'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 修改图标
+      tags:
+      - 图标
 securityDefinitions:
   ApiKeyAuth:
     in: header
