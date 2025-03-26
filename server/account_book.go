@@ -107,6 +107,13 @@ func (s *AccountBookServer) GetByID(c *gin.Context) {
 }
 
 // Modify -
+// @Summary	修改账本
+// @Tags 账本
+// @Param        account_book  body      model.AccountBook  true  "账本信息"
+// @Success	204
+// @Failure	400 {string}  string      "请求体异常"
+// @Failure	500 {string}  string      "服务端异常"
+// @Router		/api/v1/account-book [put]
 func (s *AccountBookServer) Modify(c *gin.Context) {
 	req := model.AccountBook{}
 	if err := c.ShouldBind(&req); err != nil {
@@ -122,6 +129,13 @@ func (s *AccountBookServer) Modify(c *gin.Context) {
 }
 
 // Delete -
+// @Summary	删除账本
+// @Tags 账本
+// @Param        account_book  body      model.AccountBook  true  "账本信息"
+// @Success	204
+// @Failure	400 {string}  string      "请求体异常"
+// @Failure	500 {string}  string      "服务端异常"
+// @Router		/api/v1/account-book [delete]
 func (s *AccountBookServer) Delete(c *gin.Context) {
 	req := model.AccountBook{}
 	if err := c.ShouldBind(&req); err != nil {

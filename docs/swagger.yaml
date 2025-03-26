@@ -94,6 +94,15 @@ definitions:
         description: 用户id
         type: integer
     type: object
+  model.Friend:
+    properties:
+      invitee:
+        description: 被邀请人
+        type: integer
+      inviter:
+        description: 邀请人
+        type: integer
+    type: object
   model.MergeAccountBookReq:
     properties:
       merge_account_book_id:
@@ -103,6 +112,44 @@ definitions:
         description: 被合并的账本id B -> A，B的记录全部合入到A
         type: integer
     type: object
+  model.Transaction:
+    properties:
+      account_book_id:
+        description: 对应的账本id
+        type: integer
+      amount:
+        description: 交易数额
+        type: number
+      category_id:
+        description: 关联消费场景分类ID
+        type: integer
+      created_at:
+        type: string
+      creator_id:
+        description: 记录账户id
+        type: integer
+      date:
+        description: 日期
+        type: string
+      deleted_at:
+        example: "2025-03-26T00:00:00Z"
+        type: string
+      description:
+        description: 注释
+        type: string
+      id:
+        type: integer
+      related_user_ids:
+        description: 涉及那些人
+        items:
+          type: integer
+        type: array
+      type:
+        description: 类型:收入/支出
+        type: integer
+      updated_at:
+        type: string
+    type: object
   model.User:
     properties:
       balance:
@@ -111,7 +158,11 @@ definitions:
       balance_detail:
         additionalProperties:
           type: number
-        description: 余额详情
+        description: |-
+          BalanceDetail 余额详情
+          @swagger:type object
+          @additionalProperties type=number format=double
+          @example {"temperature":36.5,"humidity":0.42}
         type: object
       created_at:
         type: string
@@ -264,6 +315,28 @@ paths:
       tags:
       - 账户
   /api/v1/account-book:
+    delete:
+      parameters:
+      - description: 账本信息
+        in: body
+        name: account_book
+        required: true
+        schema:
+          $ref: '#/definitions/model.AccountBook'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 删除账本
+      tags:
+      - 账本
     get:
       parameters:
       - description: 账本id
@@ -314,6 +387,28 @@ paths:
           schema:
             type: string
       summary: 注册账本
+      tags:
+      - 账本
+    put:
+      parameters:
+      - description: 账本信息
+        in: body
+        name: account_book
+        required: true
+        schema:
+          $ref: '#/definitions/model.AccountBook'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 修改账本
       tags:
       - 账本
   /api/v1/account-book/:id:
@@ -433,6 +528,272 @@ paths:
       summary: 修改图标
       tags:
       - 图标
+  /api/v1/friend:
+    delete:
+      parameters:
+      - description: 删除信息
+        in: body
+        name: friend
+        required: true
+        schema:
+          $ref: '#/definitions/model.Friend'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 删除朋友
+      tags:
+      - 朋友
+  /api/v1/friend/invite:
+    post:
+      parameters:
+      - description: 邀请信息
+        in: body
+        name: friend
+        required: true
+        schema:
+          $ref: '#/definitions/model.Friend'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 邀请朋友
+      tags:
+      - 朋友
+  /api/v1/health:
+    get:
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 健康检查
+      tags:
+      - 健康检查
+  /api/v1/transaction:
+    delete:
+      parameters:
+      - description: 交易信息
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/model.Transaction'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 删除交易记录
+      tags:
+      - 交易记录
+    get:
+      parameters:
+      - description: 对应的账本id
+        in: query
+        name: account_book_id
+        type: integer
+      - description: 起始时间
+        in: query
+        name: begin_time
+        type: string
+      - description: 结束时间
+        in: query
+        name: end_time
+        type: string
+      - description: 账户id
+        in: query
+        name: user_id
+        type: integer
+      responses:
+        "200":
+          description: 交易记录
+          schema:
+            items:
+              $ref: '#/definitions/model.Transaction'
+            type: array
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 获取交易记录
+      tags:
+      - 交易记录
+    post:
+      parameters:
+      - description: 交易信息
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/model.Transaction'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 注册交易记录
+      tags:
+      - 交易记录
+    put:
+      parameters:
+      - description: 交易信息
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/model.Transaction'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 修改交易记录
+      tags:
+      - 交易记录
+  /api/v1/user:
+    get:
+      parameters:
+      - description: 余额
+        in: query
+        name: balance
+        type: number
+      - in: query
+        name: created_at
+        type: string
+      - description: 默认账本id
+        in: query
+        name: default_account_book_id
+        type: integer
+      - example: "2025-03-26T00:00:00Z"
+        in: query
+        name: deleted_at
+        type: string
+      - collectionFormat: csv
+        description: 朋友列表
+        in: query
+        items:
+          type: integer
+        name: friend
+        type: array
+      - description: 用户头像的对象存储地址
+        in: query
+        name: icon
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - description: 账号名称，昵称
+        in: query
+        name: name
+        type: string
+      - in: query
+        name: updated_at
+        type: string
+      responses:
+        "200":
+          description: 用户结果
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 获取用户信息
+      tags:
+      - 用户
+    post:
+      parameters:
+      - description: 用户信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      responses:
+        "200":
+          description: 注册结果
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 注册用户信息
+      tags:
+      - 用户
+    put:
+      parameters:
+      - description: 用户信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      responses:
+        "200":
+          description: 用户修改后结果
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 修改用户信息
+      tags:
+      - 用户
 securityDefinitions:
   ApiKeyAuth:
     in: header

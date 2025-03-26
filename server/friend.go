@@ -20,6 +20,13 @@ func NewFriendServer(friendService *service.FriendService) *FriendServer {
 }
 
 // Invite -
+// @Summary	邀请朋友
+// @Tags 朋友
+// @Param        friend  body      model.Friend  true  "邀请信息"
+// @Success	204
+// @Failure	400 {string}  string      "请求体异常"
+// @Failure	500 {string}  string      "服务端异常"
+// @Router		/api/v1/friend/invite [post]
 func (s *FriendServer) Invite(c *gin.Context) {
 	req := model.Friend{}
 	if err := c.ShouldBind(&req); err != nil {
@@ -39,6 +46,13 @@ func (s *FriendServer) Invite(c *gin.Context) {
 }
 
 // Delete -
+// @Summary	删除朋友
+// @Tags 朋友
+// @Param        friend  body      model.Friend  true  "删除信息"
+// @Success	204
+// @Failure	400 {string}  string      "请求体异常"
+// @Failure	500 {string}  string      "服务端异常"
+// @Router		/api/v1/friend [delete]
 func (s *FriendServer) Delete(c *gin.Context) {
 	req := model.Friend{}
 	if err := c.ShouldBind(&req); err != nil {

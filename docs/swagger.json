@@ -243,11 +243,79 @@
                     }
                 }
             },
+            "put": {
+                "tags": [
+                    "账本"
+                ],
+                "summary": "修改账本",
+                "parameters": [
+                    {
+                        "description": "账本信息",
+                        "name": "account_book",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBook"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "账本"
                 ],
                 "summary": "注册账本",
+                "parameters": [
+                    {
+                        "description": "账本信息",
+                        "name": "account_book",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBook"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "账本"
+                ],
+                "summary": "删除账本",
                 "parameters": [
                     {
                         "description": "账本信息",
@@ -458,6 +526,418 @@
                     }
                 }
             }
+        },
+        "/api/v1/friend": {
+            "delete": {
+                "tags": [
+                    "朋友"
+                ],
+                "summary": "删除朋友",
+                "parameters": [
+                    {
+                        "description": "删除信息",
+                        "name": "friend",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Friend"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/friend/invite": {
+            "post": {
+                "tags": [
+                    "朋友"
+                ],
+                "summary": "邀请朋友",
+                "parameters": [
+                    {
+                        "description": "邀请信息",
+                        "name": "friend",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Friend"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/health": {
+            "get": {
+                "tags": [
+                    "健康检查"
+                ],
+                "summary": "健康检查",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/transaction": {
+            "get": {
+                "tags": [
+                    "交易记录"
+                ],
+                "summary": "获取交易记录",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "对应的账本id",
+                        "name": "account_book_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "起始时间",
+                        "name": "begin_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "end_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "账户id",
+                        "name": "user_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "交易记录",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Transaction"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "交易记录"
+                ],
+                "summary": "修改交易记录",
+                "parameters": [
+                    {
+                        "description": "交易信息",
+                        "name": "transaction",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Transaction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "交易记录"
+                ],
+                "summary": "注册交易记录",
+                "parameters": [
+                    {
+                        "description": "交易信息",
+                        "name": "transaction",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Transaction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "交易记录"
+                ],
+                "summary": "删除交易记录",
+                "parameters": [
+                    {
+                        "description": "交易信息",
+                        "name": "transaction",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Transaction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user": {
+            "get": {
+                "tags": [
+                    "用户"
+                ],
+                "summary": "获取用户信息",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "余额",
+                        "name": "balance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "created_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "默认账本id",
+                        "name": "default_account_book_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2025-03-26T00:00:00Z",
+                        "name": "deleted_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "朋友列表",
+                        "name": "friend",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户头像的对象存储地址",
+                        "name": "icon",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账号名称，昵称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "updated_at",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "用户结果",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "用户"
+                ],
+                "summary": "修改用户信息",
+                "parameters": [
+                    {
+                        "description": "用户信息",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "用户修改后结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "用户"
+                ],
+                "summary": "注册用户信息",
+                "parameters": [
+                    {
+                        "description": "用户信息",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "注册结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -596,6 +1076,19 @@
                 }
             }
         },
+        "model.Friend": {
+            "type": "object",
+            "properties": {
+                "invitee": {
+                    "description": "被邀请人",
+                    "type": "integer"
+                },
+                "inviter": {
+                    "description": "邀请人",
+                    "type": "integer"
+                }
+            }
+        },
         "model.MergeAccountBookReq": {
             "type": "object",
             "properties": {
@@ -609,6 +1102,59 @@
                 }
             }
         },
+        "model.Transaction": {
+            "type": "object",
+            "properties": {
+                "account_book_id": {
+                    "description": "对应的账本id",
+                    "type": "integer"
+                },
+                "amount": {
+                    "description": "交易数额",
+                    "type": "number"
+                },
+                "category_id": {
+                    "description": "关联消费场景分类ID",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "creator_id": {
+                    "description": "记录账户id",
+                    "type": "integer"
+                },
+                "date": {
+                    "description": "日期",
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string",
+                    "example": "2025-03-26T00:00:00Z"
+                },
+                "description": {
+                    "description": "注释",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "related_user_ids": {
+                    "description": "涉及那些人",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "type": {
+                    "description": "类型:收入/支出",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "model.User": {
             "type": "object",
             "properties": {
@@ -617,7 +1163,7 @@
                     "type": "number"
                 },
                 "balance_detail": {
-                    "description": "余额详情",
+                    "description": "BalanceDetail 余额详情\n@swagger:type object\n@additionalProperties type=number format=double\n@example {\"temperature\":36.5,\"humidity\":0.42}",
                     "type": "object",
                     "additionalProperties": {
                         "type": "number"

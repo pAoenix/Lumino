@@ -2,7 +2,6 @@ package store
 
 import (
 	"Lumino/model"
-	"fmt"
 )
 
 // UserStore -
@@ -29,7 +28,6 @@ func (s *UserStore) Modify(user *model.User) error {
 
 // Get -
 func (s *UserStore) Get(user *model.User) (users []model.User, err error) {
-	fmt.Println(user)
 	if err = s.db.Model(model.User{}).Where(user).Find(&users).Error; err != nil {
 		return nil, err
 	}
