@@ -17,6 +17,11 @@ func NewHealthServer() *HealthServer {
 }
 
 // Health 健康检查
+// @Summary	健康检查
+// @Tags 健康检查
+// @Success	200
+// @Failure	500 {string}  string      "服务端异常"
+// @Router		/api/v1/health [get]
 func (s *HealthServer) Health(c *gin.Context) {
 	hostname, _ := os.Hostname()
 	c.JSON(http.StatusOK, gin.H{

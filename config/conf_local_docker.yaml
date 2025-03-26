@@ -3,7 +3,7 @@ port: 8080
 
 postgres:
   dbname: lumino_dev
-  host: 127.0.0.1
+  host: "host.docker.internal"
   port: 5433
   user: postgres
   passwd: 6666
