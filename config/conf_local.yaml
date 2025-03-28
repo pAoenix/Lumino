@@ -11,8 +11,7 @@ postgres:
 
 oss:
   bucket: lumino-dev
-  accessKey: -
-  secretKey: -
+
   region: cn-beijing
   profilePhotoDir: icon/profile_photo/
 
