@@ -13,7 +13,7 @@ oss:
   bucket: lumino-dev
 
   region: cn-beijing
-  profilePhotoDir: icon/profile_photo/
+
 
 
 gracefulShutdown:
