@@ -826,7 +826,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户头像的对象存储地址",
-                        "name": "icon",
+                        "name": "icon_url",
                         "in": "query"
                     },
                     {
@@ -836,7 +836,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "账号名称，昵称",
+                        "description": "账号名称，昵称，全局唯一",
                         "name": "name",
                         "in": "query"
                     },
@@ -921,6 +921,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.User"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "用户头像",
+                        "name": "icon_file",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1193,7 +1200,7 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
-                "icon": {
+                "icon_url": {
                     "description": "用户头像的对象存储地址",
                     "type": "string"
                 },
@@ -1201,7 +1208,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name": {
-                    "description": "账号名称，昵称",
+                    "description": "账号名称，昵称，全局唯一",
                     "type": "string"
                 },
                 "updated_at": {

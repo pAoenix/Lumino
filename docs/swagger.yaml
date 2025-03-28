@@ -177,13 +177,13 @@ definitions:
         items:
           type: integer
         type: array
-      icon:
+      icon_url:
         description: 用户头像的对象存储地址
         type: string
       id:
         type: integer
       name:
-        description: 账号名称，昵称
+        description: 账号名称，昵称，全局唯一
         type: string
       updated_at:
         type: string
@@ -716,12 +716,12 @@ paths:
         type: array
       - description: 用户头像的对象存储地址
         in: query
-        name: icon
+        name: icon_url
         type: string
       - in: query
         name: id
         type: integer
-      - description: 账号名称，昵称
+      - description: 账号名称，昵称，全局唯一
         in: query
         name: name
         type: string
@@ -754,6 +754,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/model.User'
+      - description: 用户头像
+        in: formData
+        name: icon_file
+        required: true
+        type: file
       responses:
         "200":
           description: 注册结果
