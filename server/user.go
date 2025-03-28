@@ -1,21 +1,25 @@
 package server
 
 import (
+	"Lumino/common"
 	"Lumino/model"
 	"Lumino/service"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"net/http"
 )
 
 // UserServer -
 type UserServer struct {
 	UserService *service.UserService
+	OssClient   *common.OssClient
 }
 
 // NewUserServer -
-func NewUserServer(UserService *service.UserService) *UserServer {
+func NewUserServer(userService *service.UserService, client *common.OssClient) *UserServer {
 	return &UserServer{
-		UserService: UserService,
+		UserService: userService,
+		OssClient:   client,
 	}
 }
 
@@ -31,6 +35,25 @@ func (s *UserServer) Register(c *gin.Context) {
 	req := model.User{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	// 获取上传的文件
+	fileHeader, err := c.FormFile("icon_file")
+	if err != nil {
+		c.JSON(400, gin.H{"error": "file required"})
+		return
+	}
+	// 2. 打开文件
+	file, err := fileHeader.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "打开文件失败: " + err.Error()})
+		return
+	}
+	// 3. 上传文件
+	defer file.Close()
+	req.IconUrl = viper.GetString("oss.profilePhotoDir") + req.Name + ".jpg"
+	if err := s.OssClient.UploadFile(req.IconUrl, file); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 	if err := s.UserService.Register(&req); err != nil {

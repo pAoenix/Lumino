@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Lumino/common"
 	"Lumino/common/logger"
 	"Lumino/config"
 	"Lumino/router"
@@ -47,6 +48,7 @@ func HttpServerLifetimeHook(lc fx.Lifecycle, srv *http.Server) {
 func main() {
 	config.LoadConfig()
 	app := fx.New(
+		common.Module,
 		store.Module,
 		service.Module,
 		server.Module,
