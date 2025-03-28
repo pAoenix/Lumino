@@ -9,11 +9,6 @@ postgres:
   passwd: 6666
   maxOpenConns: 50
 
-oss:
-  bucket: lumino-dev
-
-  region: cn-beijing
-
 
 
 gracefulShutdown:

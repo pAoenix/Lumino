@@ -9,10 +9,6 @@ postgres:
   passwd: Zmalqp78
   maxOpenConns: 50
 
-oss:
-  bucket: lumino-dev
-  region: cn-beijing
-
 
 gracefulShutdown:
   timeoutSeconds: 30
