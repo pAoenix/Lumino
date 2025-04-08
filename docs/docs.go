@@ -791,69 +791,17 @@ const docTemplate = `{
                 "summary": "获取用户信息",
                 "parameters": [
                     {
-                        "type": "number",
-                        "description": "余额",
-                        "name": "balance",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "created_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "默认账本id",
-                        "name": "default_account_book_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "2025-03-26T00:00:00Z",
-                        "name": "deleted_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "csv",
-                        "description": "朋友列表",
-                        "name": "friend",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户头像的对象存储地址",
-                        "name": "icon_url",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "账号名称，昵称，全局唯一",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "updated_at",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "用户结果",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.User"
-                            }
+                            "$ref": "#/definitions/model.User"
                         }
                     },
                     "400": {
@@ -882,8 +830,15 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.User"
+                            "$ref": "#/definitions/model.ModifyUser"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "用户头像",
+                        "name": "icon_file",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -950,6 +905,37 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "tags": [
+                    "用户"
+                ],
+                "summary": "删除用户信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         }
     },
@@ -998,7 +984,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "creator_id": {
-                    "description": "创建人,binding:\"required\"",
+                    "description": "创建人",
                     "type": "integer"
                 },
                 "deleted_at": {
@@ -1112,6 +1098,46 @@ const docTemplate = `{
                 "merged_account_book_id": {
                     "description": "被合并的账本id B -\u003e A，B的记录全部合入到A",
                     "type": "integer"
+                }
+            }
+        },
+        "model.ModifyUser": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "balance": {
+                    "description": "余额",
+                    "type": "number"
+                },
+                "balance_detail": {
+                    "description": "BalanceDetail 余额详情\n@swagger:type object\n@additionalProperties type=number format=double\n@example {\"temperature\":36.5,\"humidity\":0.42}",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number"
+                    }
+                },
+                "default_account_book_id": {
+                    "description": "默认账本id",
+                    "type": "integer"
+                },
+                "friend": {
+                    "description": "朋友列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "icon_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "账号名称，昵称，全局唯一",
+                    "type": "string"
                 }
             }
         },
@@ -1229,7 +1255,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "182.92.152.108:8080",
+	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Lumino",

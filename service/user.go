@@ -23,11 +23,16 @@ func (s *UserService) Register(user *model.User) error {
 }
 
 // Modify -
-func (s *UserService) Modify(user *model.User) error {
-	return s.UserStore.Modify(user)
+func (s *UserService) Modify(modifyUserReq *model.ModifyUser) (user model.User, err error) {
+	return s.UserStore.Modify(modifyUserReq)
 }
 
 // Get -
-func (s *UserService) Get(user *model.User) (users []model.User, err error) {
-	return s.UserStore.Get(user)
+func (s *UserService) Get(userReq *model.GetUser) (user model.User, err error) {
+	return s.UserStore.Get(userReq)
+}
+
+// Delete -
+func (s *UserService) Delete(userReq *model.DeleteUser) error {
+	return s.UserStore.Delete(userReq)
 }

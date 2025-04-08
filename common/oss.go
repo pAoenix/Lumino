@@ -6,7 +6,9 @@ import (
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss/credentials"
 	"github.com/spf13/viper"
+	"log"
 	"mime/multipart"
+	"time"
 )
 
 // OssClient -
@@ -39,4 +41,20 @@ func (o *OssClient) UploadFile(name string, file multipart.File) error {
 		return err
 	}
 	return nil
+}
+
+// DownloadFile 下载oss文件
+func (o *OssClient) DownloadFile(name string) (string, error) {
+	// 生成GetObject的预签名URL
+	result, err := o.Client.Presign(context.TODO(), &oss.GetObjectRequest{
+		Bucket: oss.Ptr(viper.GetString("oss.bucket")), // 存储空间名称
+		Key:    oss.Ptr(name),                          // 对象名称
+	},
+		oss.PresignExpires(10*time.Minute),
+	)
+	if err != nil {
+		log.Fatalf("failed to get object presign %v", err)
+		return "", nil
+	}
+	return result.URL, err
 }

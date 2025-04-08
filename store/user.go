@@ -22,14 +22,17 @@ func (s *UserStore) Register(user *model.User) error {
 }
 
 // Modify -
-func (s *UserStore) Modify(user *model.User) error {
-	return s.db.Model(model.User{}).Where("id = ?", user.ID).Updates(user).Error
+func (s *UserStore) Modify(modifyUserReq *model.ModifyUser) (user model.User, err error) {
+	if err = s.db.Model(model.User{}).Where("id = ?", modifyUserReq.ID).Updates(modifyUserReq).Scan(&user).Error; err != nil {
+		return user, err
+	}
+	return
 }
 
 // Get -
-func (s *UserStore) Get(user *model.User) (users []model.User, err error) {
-	if err = s.db.Model(model.User{}).Where(user).Find(&users).Error; err != nil {
-		return nil, err
+func (s *UserStore) Get(userReq *model.GetUser) (user model.User, err error) {
+	if err = s.db.Model(model.User{}).Where("id = ?", userReq.ID).First(&user).Error; err != nil {
+		return user, err
 	}
 	return
 }
@@ -40,4 +43,9 @@ func (s *UserStore) BatchGetByIDs(userIDs []int) (users []model.User, err error)
 		return nil, err
 	}
 	return
+}
+
+// Delete -
+func (s *UserStore) Delete(userReq *model.DeleteUser) error {
+	return s.db.Model(model.User{}).Delete(&model.User{Model: model.Model{ID: userReq.ID}}).Error
 }

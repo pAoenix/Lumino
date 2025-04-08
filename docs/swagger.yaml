@@ -30,7 +30,7 @@ definitions:
       created_at:
         type: string
       creator_id:
-        description: 创建人,binding:"required"
+        description: 创建人
         type: integer
       deleted_at:
         example: "2025-03-26T00:00:00Z"
@@ -112,6 +112,38 @@ definitions:
         description: 被合并的账本id B -> A，B的记录全部合入到A
         type: integer
     type: object
+  model.ModifyUser:
+    properties:
+      balance:
+        description: 余额
+        type: number
+      balance_detail:
+        additionalProperties:
+          type: number
+        description: |-
+          BalanceDetail 余额详情
+          @swagger:type object
+          @additionalProperties type=number format=double
+          @example {"temperature":36.5,"humidity":0.42}
+        type: object
+      default_account_book_id:
+        description: 默认账本id
+        type: integer
+      friend:
+        description: 朋友列表
+        items:
+          type: integer
+        type: array
+      icon_url:
+        type: string
+      id:
+        type: integer
+      name:
+        description: 账号名称，昵称，全局唯一
+        type: string
+    required:
+    - id
+    type: object
   model.Transaction:
     properties:
       account_book_id:
@@ -188,7 +220,7 @@ definitions:
       updated_at:
         type: string
     type: object
-host: 182.92.152.108:8080
+host: localhost:8080
 info:
   contact: {}
   description: lumino 记账本服务
@@ -690,51 +722,37 @@ paths:
       tags:
       - 交易记录
   /api/v1/user:
-    get:
+    delete:
       parameters:
-      - description: 余额
-        in: query
-        name: balance
-        type: number
-      - in: query
-        name: created_at
-        type: string
-      - description: 默认账本id
-        in: query
-        name: default_account_book_id
-        type: integer
-      - example: "2025-03-26T00:00:00Z"
-        in: query
-        name: deleted_at
-        type: string
-      - collectionFormat: csv
-        description: 朋友列表
-        in: query
-        items:
-          type: integer
-        name: friend
-        type: array
-      - description: 用户头像的对象存储地址
-        in: query
-        name: icon_url
-        type: string
       - in: query
         name: id
+        required: true
         type: integer
-      - description: 账号名称，昵称，全局唯一
-        in: query
-        name: name
-        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            type: string
+        "500":
+          description: 服务端异常
+          schema:
+            type: string
+      summary: 删除用户信息
+      tags:
+      - 用户
+    get:
+      parameters:
       - in: query
-        name: updated_at
-        type: string
+        name: id
+        required: true
+        type: integer
       responses:
         "200":
           description: 用户结果
           schema:
-            items:
-              $ref: '#/definitions/model.User'
-            type: array
+            $ref: '#/definitions/model.User'
         "400":
           description: 请求体异常
           schema:
@@ -782,7 +800,12 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/model.User'
+          $ref: '#/definitions/model.ModifyUser'
+      - description: 用户头像
+        in: formData
+        name: icon_file
+        required: true
+        type: file
       responses:
         "200":
           description: 用户修改后结果
