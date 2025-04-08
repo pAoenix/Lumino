@@ -3,7 +3,6 @@ package store
 import (
 	"Lumino/model"
 	"errors"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -26,7 +25,6 @@ func (s *FriendStore) Invite(friend *model.Friend) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(user)
 	if user.ID != 0 {
 		return errors.New("你已存在该好友")
 	}
