@@ -79,7 +79,7 @@ func (s *UserServer) Register(c *gin.Context) {
 // @Summary	修改用户信息
 // @Tags 用户
 // @Param        user  body      model.ModifyUserReq  true  "用户信息"
-// @Param        icon_file formData file true "用户头像"
+// @Param        icon_file formData file false "用户头像"
 // @Success	200 {object}  model.User "用户修改后结果"
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"

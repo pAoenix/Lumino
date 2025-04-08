@@ -122,7 +122,7 @@ func (s *CategoryServer) Get(c *gin.Context) {
 // @Summary	修改图标
 // @Tags 图标
 // @Param        category  body      model.ModifyCategoryReq  true  "图标信息"
-// @Param        icon_file formData file true "分类图标文件"
+// @Param        icon_file formData file false "分类图标文件"
 // @Success	204
 // @Failure	400  {string}  string      "请求体异常"
 // @Failure	500  {string}  string      "服务端异常"
