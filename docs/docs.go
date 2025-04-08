@@ -435,9 +435,16 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "ID 图标id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "用户id",
                         "name": "user_id",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -476,8 +483,15 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Category"
+                            "$ref": "#/definitions/model.ModifyCategoryReq"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "分类图标文件",
+                        "name": "icon_file",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -510,7 +524,48 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Category"
+                            "$ref": "#/definitions/model.RegisterCategoryReq"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "分类图标文件",
+                        "name": "icon_file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "图标"
+                ],
+                "summary": "删除图标",
+                "parameters": [
+                    {
+                        "description": "图标信息",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DeleteCategoryReq"
                         }
                     }
                 ],
@@ -830,7 +885,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ModifyUser"
+                            "$ref": "#/definitions/model.ModifyUserReq"
                         }
                     },
                     {
@@ -874,7 +929,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.User"
+                            "$ref": "#/definitions/model.RegisterUserReq"
                         }
                     },
                     {
@@ -1051,12 +1106,8 @@ const docTemplate = `{
                     "type": "string",
                     "example": "2025-03-26T00:00:00Z"
                 },
-                "icon": {
+                "icon_url": {
                     "description": "类别图标的本地地址",
-                    "type": "string"
-                },
-                "icon_download_url": {
-                    "description": "类别图标的对象存储下载地址",
                     "type": "string"
                 },
                 "id": {
@@ -1071,6 +1122,18 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "用户id",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.DeleteCategoryReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "ID 图标id",
                     "type": "integer"
                 }
             }
@@ -1101,7 +1164,27 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ModifyUser": {
+        "model.ModifyCategoryReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "ID 图标id",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "分类名称的中文示意",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "用户id",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.ModifyUserReq": {
             "type": "object",
             "required": [
                 "id"
@@ -1129,12 +1212,59 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
-                "icon_url": {
-                    "description": "用户头像的对象存储地址",
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
+                },
+                "name": {
+                    "description": "账号名称，昵称，全局唯一",
+                    "type": "string"
+                }
+            }
+        },
+        "model.RegisterCategoryReq": {
+            "type": "object",
+            "required": [
+                "name",
+                "user_id"
+            ],
+            "properties": {
+                "name": {
+                    "description": "分类名称的中文示意",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "用户id",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.RegisterUserReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "balance": {
+                    "description": "余额",
+                    "type": "number"
+                },
+                "balance_detail": {
+                    "description": "BalanceDetail 余额详情\n@swagger:type object\n@additionalProperties type=number format=double\n@example {\"temperature\":36.5,\"humidity\":0.42}",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number"
+                    }
+                },
+                "default_account_book_id": {
+                    "description": "默认账本id",
+                    "type": "integer"
+                },
+                "friend": {
+                    "description": "朋友列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "name": {
                     "description": "账号名称，昵称，全局唯一",

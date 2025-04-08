@@ -18,16 +18,21 @@ func NewCategoryService(CategoryStore *store.CategoryStore) *CategoryService {
 }
 
 // Register -
-func (s *CategoryService) Register(Category *model.Category) error {
+func (s *CategoryService) Register(Category *model.RegisterCategoryReq) (resp model.Category, err error) {
 	return s.CategoryStore.Register(Category)
 }
 
 // Get -
-func (s *CategoryService) Get(categoryReq *model.CategoryReq) (resp []model.Category, err error) {
+func (s *CategoryService) Get(categoryReq *model.GetCategoryReq) (resp []model.Category, err error) {
 	return s.CategoryStore.Get(categoryReq)
 }
 
 // Modify -
-func (s *CategoryService) Modify(Category *model.Category) error {
+func (s *CategoryService) Modify(Category *model.ModifyCategoryReq) (resp model.Category, err error) {
 	return s.CategoryStore.Modify(Category)
+}
+
+// Delete -
+func (s *CategoryService) Delete(Category *model.DeleteCategoryReq) error {
+	return s.CategoryStore.Delete(Category)
 }

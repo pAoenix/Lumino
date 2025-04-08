@@ -27,14 +27,14 @@ func NewUserServer(userService *service.UserService, client *common.OssClient) *
 // Register -
 // @Summary	注册用户信息
 // @Tags 用户
-// @Param        user  body      model.User  true  "用户信息"
+// @Param        user  body      model.RegisterUserReq  true  "用户信息"
 // @Param        icon_file formData file true "用户头像"
 // @Success	200 {object}  model.User "注册结果"
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/user [post]
 func (s *UserServer) Register(c *gin.Context) {
-	req := model.User{}
+	req := model.RegisterUserReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -52,19 +52,20 @@ func (s *UserServer) Register(c *gin.Context) {
 		return
 	}
 	// 3. 注册入库
-	if err := s.UserService.Register(&req); err != nil {
+	resp, err := s.UserService.Register(&req)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 	// 4. 上传文件
 	defer file.Close()
-	req.IconUrl = viper.GetString("oss.profilePhotoDir") + strconv.Itoa(int(req.ID)) + ".jpg"
-	if err := s.OssClient.UploadFile(req.IconUrl, file); err != nil {
+	iconUrl := viper.GetString("oss.profilePhotoDir") + strconv.Itoa(int(resp.ID)) + ".jpg"
+	if err := s.OssClient.UploadFile(iconUrl, file); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 	// 5. 更新icon地址
-	modifyReq := model.ModifyUser{ID: req.ID, IconUrl: req.IconUrl}
+	modifyReq := model.ModifyUserReq{ID: resp.ID, IconUrl: iconUrl}
 	if resp, err := s.UserService.Modify(&modifyReq); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
@@ -77,14 +78,14 @@ func (s *UserServer) Register(c *gin.Context) {
 // Modify -
 // @Summary	修改用户信息
 // @Tags 用户
-// @Param        user  body      model.ModifyUser  true  "用户信息"
+// @Param        user  body      model.ModifyUserReq  true  "用户信息"
 // @Param        icon_file formData file true "用户头像"
 // @Success	200 {object}  model.User "用户修改后结果"
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/user [put]
 func (s *UserServer) Modify(c *gin.Context) {
-	req := model.ModifyUser{}
+	req := model.ModifyUserReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -119,13 +120,13 @@ func (s *UserServer) Modify(c *gin.Context) {
 // Get -
 // @Summary	获取用户信息
 // @Tags 用户
-// @Param        user  query      model.GetUser  true  "用户信息"
+// @Param        user  query      model.GetUserReq  true  "用户信息"
 // @Success	200 {object}  model.User "用户结果"
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/user [get]
 func (s *UserServer) Get(c *gin.Context) {
-	req := model.GetUser{}
+	req := model.GetUserReq{}
 	if err := c.ShouldBindQuery(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -148,13 +149,13 @@ func (s *UserServer) Get(c *gin.Context) {
 // Delete -
 // @Summary	删除用户信息
 // @Tags 用户
-// @Param        user  query      model.DeleteUser  true  "用户信息"
+// @Param        user  query      model.DeleteUserReq  true  "用户信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/user [delete]
 func (s *UserServer) Delete(c *gin.Context) {
-	req := model.DeleteUser{}
+	req := model.DeleteUserReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
