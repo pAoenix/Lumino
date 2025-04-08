@@ -31,6 +31,7 @@ type Router struct {
 func (r *Router) Handler() http.Handler {
 	gin.DisableConsoleColor()
 	e := gin.New()
+	e.MaxMultipartMemory = 8 << 20 // 8MB
 	e.Use(middleware.Cors())
 	e.Use(gin.Recovery())
 	e.Use(middleware.Log(logger.Logger))
@@ -51,6 +52,7 @@ func (r *Router) Handler() http.Handler {
 		user.POST("", r.UserServer.Register)
 		user.PUT("", r.UserServer.Modify)
 		user.GET("", r.UserServer.Get)
+		user.DELETE("", r.UserServer.Delete)
 	}
 
 	friend := e.Group("api/v1/friend")
@@ -64,6 +66,7 @@ func (r *Router) Handler() http.Handler {
 		category.POST("", r.CategoryServer.Register)
 		category.GET("", r.CategoryServer.Get)
 		category.PUT("", r.CategoryServer.Modify)
+		category.DELETE("", r.CategoryServer.Delete)
 	}
 
 	accountBook := e.Group("api/v1/account-book")

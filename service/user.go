@@ -18,16 +18,21 @@ func NewUserService(UserStore *store.UserStore) *UserService {
 }
 
 // Register -
-func (s *UserService) Register(User *model.User) error {
-	return s.UserStore.Register(User)
+func (s *UserService) Register(userReq *model.RegisterUserReq) (user model.User, err error) {
+	return s.UserStore.Register(userReq)
 }
 
 // Modify -
-func (s *UserService) Modify(User *model.User) error {
-	return s.UserStore.Modify(User)
+func (s *UserService) Modify(modifyUserReq *model.ModifyUserReq) (user model.User, err error) {
+	return s.UserStore.Modify(modifyUserReq)
 }
 
 // Get -
-func (s *UserService) Get(User *model.User) (users []model.User, err error) {
-	return s.UserStore.Get(User)
+func (s *UserService) Get(userReq *model.GetUserReq) (user model.User, err error) {
+	return s.UserStore.Get(userReq)
+}
+
+// Delete -
+func (s *UserService) Delete(userReq *model.DeleteUserReq) error {
+	return s.UserStore.Delete(userReq)
 }

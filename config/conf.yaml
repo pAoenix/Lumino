@@ -9,6 +9,12 @@ postgres:
   passwd: 6666
   maxOpenConns: 50
 
+oss:
+  bucket: lumino-dev
+  accessKey: LTAI5tFG9hdLbBgQdkqAzkYx
+  secretKey: 48IjsI6afJqmlUkbUtFPWPJ84IGqEA
+  region: cn-beijing
+  profilePhotoDir: icon/profile_photo/
 
 gracefulShutdown:
   timeoutSeconds: 30

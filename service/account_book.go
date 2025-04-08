@@ -4,7 +4,6 @@ import (
 	"Lumino/common"
 	"Lumino/model"
 	"Lumino/store"
-	"errors"
 )
 
 // AccountBookService -
@@ -41,15 +40,12 @@ func (s *AccountBookService) Get(accountBookReq *model.AccountBookReq) (resp mod
 	resp.AccountBooks = accountBookList
 
 	// 计算默认账本
-	user := &model.User{Model: model.Model{ID: accountBookReq.UserID}}
-	users, err := s.UserStore.Get(user)
+	userReq := &model.GetUserReq{ID: accountBookReq.UserID}
+	user, err := s.UserStore.Get(userReq)
 	if err != nil {
 		return
 	}
-	if len(users) != 1 {
-		return resp, errors.New("user-id is error")
-	}
-	resp.DefaultAccountBookID = users[0].DefaultAccountBookID
+	resp.DefaultAccountBookID = user.DefaultAccountBookID
 	// 计算涉及的用户信息
 	var userIDs []int
 	for _, abl := range accountBookList {
@@ -60,7 +56,7 @@ func (s *AccountBookService) Get(accountBookReq *model.AccountBookReq) (resp mod
 			}
 		}
 	}
-	users, err = s.UserStore.BatchGetByIDs(userIDs)
+	users, err := s.UserStore.BatchGetByIDs(userIDs)
 	if err != nil {
 		return
 	}

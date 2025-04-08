@@ -5,7 +5,7 @@ import "github.com/lib/pq"
 // AccountBook -
 type AccountBook struct {
 	Model
-	CreatorID int           `json:"creator_id" form:"creator_id"`                                               // 创建人,binding:"required"
+	CreatorID int           `json:"creator_id" form:"creator_id"`                                               // 创建人
 	UserIDs   pq.Int32Array `gorm:"type:integer[]" json:"user_ids" form:"user_ids" swaggertype:"array,integer"` // 账单用户列表
 	Name      string        `json:"name" form:"name"`                                                           // 账本名称
 	Spending  float64       `json:"spending" form:"spending"`                                                   // 账本花费
