@@ -1130,6 +1130,7 @@ const docTemplate = `{
                     }
                 },
                 "icon_url": {
+                    "description": "用户头像的对象存储地址",
                     "type": "string"
                 },
                 "id": {

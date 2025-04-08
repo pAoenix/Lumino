@@ -42,7 +42,7 @@ func (s *UserServer) Register(c *gin.Context) {
 	// 获取上传的文件
 	fileHeader, err := c.FormFile("icon_file")
 	if err != nil {
-		c.JSON(400, gin.H{"error": "file required"})
+		c.JSON(400, gin.H{"error": "需要注册头像"})
 		return
 	}
 	// 2. 打开文件
@@ -51,18 +51,26 @@ func (s *UserServer) Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "打开文件失败: " + err.Error()})
 		return
 	}
-	// 3. 上传文件
+	// 3. 注册入库
+	if err := s.UserService.Register(&req); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	// 4. 上传文件
 	defer file.Close()
 	req.IconUrl = viper.GetString("oss.profilePhotoDir") + strconv.Itoa(int(req.ID)) + ".jpg"
 	if err := s.OssClient.UploadFile(req.IconUrl, file); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
-	if err := s.UserService.Register(&req); err != nil {
+	// 5. 更新icon地址
+	modifyReq := model.ModifyUser{ID: req.ID, IconUrl: req.IconUrl}
+	if resp, err := s.UserService.Modify(&modifyReq); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
+	} else {
+		c.JSON(http.StatusOK, resp)
 	}
-	c.JSON(http.StatusOK, req)
 	return
 }
 
