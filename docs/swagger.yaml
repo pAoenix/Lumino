@@ -168,42 +168,6 @@ definitions:
     required:
     - id
     type: object
-  model.ModifyTransactionReq:
-    properties:
-      account_book_id:
-        description: 对应的账本id
-        type: integer
-      amount:
-        description: 交易数额
-        type: number
-      category_id:
-        description: 关联消费场景分类ID
-        type: integer
-      creator_id:
-        description: 记录账户id
-        type: integer
-      date:
-        description: 交易日期
-        type: string
-      description:
-        description: 注释
-        type: string
-      id:
-        type: integer
-      related_user_ids:
-        description: 涉及那些人
-        items:
-          type: integer
-        type: array
-      type:
-        description: 类型:收入/支出
-        type: integer
-    required:
-    - account_book_id
-    - amount
-    - id
-    - type
-    type: object
   model.ModifyUserReq:
     properties:
       balance:
@@ -262,40 +226,6 @@ definitions:
     required:
     - name
     - user_id
-    type: object
-  model.RegisterTransactionReq:
-    properties:
-      account_book_id:
-        description: 对应的账本id
-        type: integer
-      amount:
-        description: 交易数额
-        type: number
-      category_id:
-        description: 关联消费场景分类ID
-        type: integer
-      creator_id:
-        description: 记录账户id
-        type: integer
-      date:
-        description: 日期
-        type: string
-      description:
-        description: 注释
-        type: string
-      related_user_ids:
-        description: RelatedUserIDs 默认包含创建人
-        items:
-          type: integer
-        type: array
-      type:
-        description: 类型:收入/支出
-        type: integer
-    required:
-    - account_book_id
-    - amount
-    - category_id
-    - creator_id
     type: object
   model.RegisterUserReq:
     properties:
@@ -893,12 +823,49 @@ paths:
       - 交易记录
     post:
       parameters:
-      - description: 交易信息
-        in: body
-        name: transaction
+      - description: 对应的账本id
+        in: query
+        name: account_book_id
         required: true
-        schema:
-          $ref: '#/definitions/model.RegisterTransactionReq'
+        type: integer
+      - description: 交易数额
+        in: query
+        name: amount
+        required: true
+        type: number
+      - description: 关联消费场景分类ID
+        in: query
+        name: category_id
+        required: true
+        type: integer
+      - description: 记录账户id
+        in: query
+        name: creator_id
+        required: true
+        type: integer
+      - description: 日期
+        in: query
+        name: date
+        type: string
+      - description: 注释
+        in: query
+        name: description
+        type: string
+      - collectionFormat: csv
+        description: RelatedUserIDs 默认包含创建人
+        in: query
+        items:
+          type: integer
+        name: related_user_ids
+        type: array
+      - description: 类型:收入/支出
+        enum:
+        - 1
+        - 2
+        in: query
+        name: type
+        required: true
+        type: integer
       responses:
         "204":
           description: No Content
@@ -915,12 +882,45 @@ paths:
       - 交易记录
     put:
       parameters:
-      - description: 交易信息
-        in: body
-        name: transaction
+      - description: 对应的账本id
+        in: query
+        name: account_book_id
+        type: integer
+      - description: 交易数额
+        in: query
+        name: amount
+        type: number
+      - description: 关联消费场景分类ID
+        in: query
+        name: category_id
+        type: integer
+      - description: 记录账户id
+        in: query
+        name: creator_id
+        type: integer
+      - description: 交易日期
+        in: query
+        name: date
+        type: string
+      - description: 注释
+        in: query
+        name: description
+        type: string
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/model.ModifyTransactionReq'
+        type: integer
+      - collectionFormat: csv
+        description: 涉及那些人
+        in: query
+        items:
+          type: integer
+        name: related_user_ids
+        type: array
+      - description: 类型:收入/支出
+        in: query
+        name: type
+        type: integer
       responses:
         "204":
           description: No Content

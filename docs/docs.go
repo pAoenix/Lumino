@@ -736,13 +736,62 @@ const docTemplate = `{
                 "summary": "修改交易记录",
                 "parameters": [
                     {
-                        "description": "交易信息",
-                        "name": "transaction",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.ModifyTransactionReq"
-                        }
+                        "type": "integer",
+                        "description": "对应的账本id",
+                        "name": "account_book_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "交易数额",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "关联消费场景分类ID",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "记录账户id",
+                        "name": "creator_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "交易日期",
+                        "name": "date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "注释",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "涉及那些人",
+                        "name": "related_user_ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "类型:收入/支出",
+                        "name": "type",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -770,13 +819,65 @@ const docTemplate = `{
                 "summary": "注册交易记录",
                 "parameters": [
                     {
-                        "description": "交易信息",
-                        "name": "transaction",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.RegisterTransactionReq"
-                        }
+                        "type": "integer",
+                        "description": "对应的账本id",
+                        "name": "account_book_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "交易数额",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "关联消费场景分类ID",
+                        "name": "category_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "记录账户id",
+                        "name": "creator_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "日期",
+                        "name": "date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "注释",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "RelatedUserIDs 默认包含创建人",
+                        "name": "related_user_ids",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2
+                        ],
+                        "type": "integer",
+                        "description": "类型:收入/支出",
+                        "name": "type",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1231,55 +1332,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ModifyTransactionReq": {
-            "type": "object",
-            "required": [
-                "account_book_id",
-                "amount",
-                "id",
-                "type"
-            ],
-            "properties": {
-                "account_book_id": {
-                    "description": "对应的账本id",
-                    "type": "integer"
-                },
-                "amount": {
-                    "description": "交易数额",
-                    "type": "number"
-                },
-                "category_id": {
-                    "description": "关联消费场景分类ID",
-                    "type": "integer"
-                },
-                "creator_id": {
-                    "description": "记录账户id",
-                    "type": "integer"
-                },
-                "date": {
-                    "description": "交易日期",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "注释",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "related_user_ids": {
-                    "description": "涉及那些人",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "type": {
-                    "description": "类型:收入/支出",
-                    "type": "integer"
-                }
-            }
-        },
         "model.ModifyUserReq": {
             "type": "object",
             "required": [
@@ -1354,52 +1406,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "用户id",
-                    "type": "integer"
-                }
-            }
-        },
-        "model.RegisterTransactionReq": {
-            "type": "object",
-            "required": [
-                "account_book_id",
-                "amount",
-                "category_id",
-                "creator_id"
-            ],
-            "properties": {
-                "account_book_id": {
-                    "description": "对应的账本id",
-                    "type": "integer"
-                },
-                "amount": {
-                    "description": "交易数额",
-                    "type": "number"
-                },
-                "category_id": {
-                    "description": "关联消费场景分类ID",
-                    "type": "integer"
-                },
-                "creator_id": {
-                    "description": "记录账户id",
-                    "type": "integer"
-                },
-                "date": {
-                    "description": "日期",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "注释",
-                    "type": "string"
-                },
-                "related_user_ids": {
-                    "description": "RelatedUserIDs 默认包含创建人",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "type": {
-                    "description": "类型:收入/支出",
                     "type": "integer"
                 }
             }

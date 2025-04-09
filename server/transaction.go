@@ -22,7 +22,7 @@ func NewTransactionServer(transactionService *service.TransactionService) *Trans
 // Register -
 // @Summary	注册交易记录
 // @Tags 交易记录
-// @Param        transaction  body      model.RegisterTransactionReq  true  "交易信息"
+// @Param        transaction  query      model.RegisterTransactionReq  true  "交易信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
@@ -66,7 +66,7 @@ func (s *TransactionServer) Get(c *gin.Context) {
 // Modify -
 // @Summary	修改交易记录
 // @Tags 交易记录
-// @Param        transaction  body      model.ModifyTransactionReq  true  "交易信息"
+// @Param        transaction  query      model.ModifyTransactionReq  true  "交易信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
