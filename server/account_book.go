@@ -23,13 +23,13 @@ func NewAccountBookServer(accountBookService *service.AccountBookService) *Accou
 // Register -
 // @Summary	注册账本
 // @Tags 账本
-// @Param        account_book  body      model.AccountBook  true  "账本信息"
+// @Param        account_book  body      model.RegisterAccountBookReq  true  "账本信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/account-book [post]
 func (s *AccountBookServer) Register(c *gin.Context) {
-	req := model.AccountBook{}
+	req := model.RegisterAccountBookReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -67,13 +67,13 @@ func (s *AccountBookServer) Merge(c *gin.Context) {
 // Get -
 // @Summary	获取账本
 // @Tags 账本
-// @Param        account_book  query      model.AccountBookReq  true  "账本id信息"
+// @Param        account_book  query      model.GetAccountBookReq  true  "账本id信息"
 // @Success	200 {object}  model.AccountBookResp "账本结果"
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/account-book [get]
 func (s *AccountBookServer) Get(c *gin.Context) {
-	req := model.AccountBookReq{}
+	req := model.GetAccountBookReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -97,7 +97,7 @@ func (s *AccountBookServer) Get(c *gin.Context) {
 func (s *AccountBookServer) GetByID(c *gin.Context) {
 	accountBookID := c.Param("id")
 	abID, _ := common.String2Uint(accountBookID)
-	req := model.AccountBookReq{ID: abID}
+	req := model.GetAccountBookReq{ID: abID}
 	if resp, err := s.AccountBookService.Get(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 	} else {
@@ -109,13 +109,13 @@ func (s *AccountBookServer) GetByID(c *gin.Context) {
 // Modify -
 // @Summary	修改账本
 // @Tags 账本
-// @Param        account_book  body      model.AccountBook  true  "账本信息"
+// @Param        account_book  body      model.ModifyAccountBookReq  true  "账本信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/account-book [put]
 func (s *AccountBookServer) Modify(c *gin.Context) {
-	req := model.AccountBook{}
+	req := model.ModifyAccountBookReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -131,13 +131,13 @@ func (s *AccountBookServer) Modify(c *gin.Context) {
 // Delete -
 // @Summary	删除账本
 // @Tags 账本
-// @Param        account_book  body      model.AccountBook  true  "账本信息"
+// @Param        account_book  body      model.DeleteAccountBookReq  true  "账本信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/account-book [delete]
 func (s *AccountBookServer) Delete(c *gin.Context) {
-	req := model.AccountBook{}
+	req := model.DeleteAccountBookReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return

@@ -49,7 +49,7 @@ definitions:
       updated_at:
         type: string
       user_ids:
-        description: 账单用户列表
+        description: 账本用户列表
         items:
           type: integer
         type: array
@@ -91,12 +91,30 @@ definitions:
         description: 用户id
         type: integer
     type: object
+  model.DeleteAccountBookReq:
+    properties:
+      id:
+        description: 账本id
+        type: integer
+    required:
+    - id
+    type: object
   model.DeleteCategoryReq:
     properties:
       id:
         description: ID 图标id
         type: integer
     required:
+    - id
+    type: object
+  model.DeleteTransactionReq:
+    properties:
+      account_book_id:
+        type: integer
+      id:
+        type: integer
+    required:
+    - account_book_id
     - id
     type: object
   model.Friend:
@@ -116,6 +134,25 @@ definitions:
       merged_account_book_id:
         description: 被合并的账本id B -> A，B的记录全部合入到A
         type: integer
+    required:
+    - merge_account_book_id
+    - merged_account_book_id
+    type: object
+  model.ModifyAccountBookReq:
+    properties:
+      id:
+        description: 账本id
+        type: integer
+      name:
+        description: 账本名称
+        type: string
+      user_ids:
+        description: 账本用户列表
+        items:
+          type: integer
+        type: array
+    required:
+    - id
     type: object
   model.ModifyCategoryReq:
     properties:
@@ -160,6 +197,23 @@ definitions:
         type: string
     required:
     - id
+    type: object
+  model.RegisterAccountBookReq:
+    properties:
+      creator_id:
+        description: 创建人
+        type: integer
+      name:
+        description: 账本名称
+        type: string
+      user_ids:
+        description: 账本用户列表
+        items:
+          type: integer
+        type: array
+    required:
+    - creator_id
+    - name
     type: object
   model.RegisterCategoryReq:
     properties:
@@ -411,7 +465,7 @@ paths:
         name: account_book
         required: true
         schema:
-          $ref: '#/definitions/model.AccountBook'
+          $ref: '#/definitions/model.DeleteAccountBookReq'
       responses:
         "204":
           description: No Content
@@ -428,10 +482,6 @@ paths:
       - 账本
     get:
       parameters:
-      - description: 账本id
-        in: query
-        name: id
-        type: integer
       - description: '排序模式  0: 创建时间升序，1:创建时间降序'
         in: query
         name: sort_type
@@ -439,6 +489,7 @@ paths:
       - description: 用户
         in: query
         name: user_id
+        required: true
         type: integer
       responses:
         "200":
@@ -463,7 +514,7 @@ paths:
         name: account_book
         required: true
         schema:
-          $ref: '#/definitions/model.AccountBook'
+          $ref: '#/definitions/model.RegisterAccountBookReq'
       responses:
         "204":
           description: No Content
@@ -485,7 +536,7 @@ paths:
         name: account_book
         required: true
         schema:
-          $ref: '#/definitions/model.AccountBook'
+          $ref: '#/definitions/model.ModifyAccountBookReq'
       responses:
         "204":
           description: No Content
@@ -719,7 +770,7 @@ paths:
         name: transaction
         required: true
         schema:
-          $ref: '#/definitions/model.Transaction'
+          $ref: '#/definitions/model.DeleteTransactionReq'
       responses:
         "204":
           description: No Content
@@ -772,12 +823,49 @@ paths:
       - 交易记录
     post:
       parameters:
-      - description: 交易信息
-        in: body
-        name: transaction
+      - description: 对应的账本id
+        in: query
+        name: account_book_id
         required: true
-        schema:
-          $ref: '#/definitions/model.Transaction'
+        type: integer
+      - description: 交易数额
+        in: query
+        name: amount
+        required: true
+        type: number
+      - description: 关联消费场景分类ID
+        in: query
+        name: category_id
+        required: true
+        type: integer
+      - description: 记录账户id
+        in: query
+        name: creator_id
+        required: true
+        type: integer
+      - description: 日期
+        in: query
+        name: date
+        type: string
+      - description: 注释
+        in: query
+        name: description
+        type: string
+      - collectionFormat: csv
+        description: RelatedUserIDs 默认包含创建人
+        in: query
+        items:
+          type: integer
+        name: related_user_ids
+        type: array
+      - description: 类型:收入/支出
+        enum:
+        - 1
+        - 2
+        in: query
+        name: type
+        required: true
+        type: integer
       responses:
         "204":
           description: No Content
@@ -794,12 +882,45 @@ paths:
       - 交易记录
     put:
       parameters:
-      - description: 交易信息
-        in: body
-        name: transaction
+      - description: 对应的账本id
+        in: query
+        name: account_book_id
+        type: integer
+      - description: 交易数额
+        in: query
+        name: amount
+        type: number
+      - description: 关联消费场景分类ID
+        in: query
+        name: category_id
+        type: integer
+      - description: 记录账户id
+        in: query
+        name: creator_id
+        type: integer
+      - description: 交易日期
+        in: query
+        name: date
+        type: string
+      - description: 注释
+        in: query
+        name: description
+        type: string
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/model.Transaction'
+        type: integer
+      - collectionFormat: csv
+        description: 涉及那些人
+        in: query
+        items:
+          type: integer
+        name: related_user_ids
+        type: array
+      - description: 类型:收入/支出
+        in: query
+        name: type
+        type: integer
       responses:
         "204":
           description: No Content
