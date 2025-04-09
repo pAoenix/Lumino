@@ -6,7 +6,6 @@ import (
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss/credentials"
 	"github.com/spf13/viper"
-	"log"
 	"mime/multipart"
 	"time"
 )
@@ -53,8 +52,7 @@ func (o *OssClient) DownloadFile(name string) (string, error) {
 		oss.PresignExpires(10*time.Minute),
 	)
 	if err != nil {
-		log.Fatalf("failed to get object presign %v", err)
-		return "", nil
+		return "", err
 	}
 	return result.URL, err
 }

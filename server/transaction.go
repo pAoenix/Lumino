@@ -22,13 +22,13 @@ func NewTransactionServer(transactionService *service.TransactionService) *Trans
 // Register -
 // @Summary	注册交易记录
 // @Tags 交易记录
-// @Param        transaction  body      model.Transaction  true  "交易信息"
+// @Param        transaction  body      model.RegisterTransactionReq  true  "交易信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/transaction [post]
 func (s *TransactionServer) Register(c *gin.Context) {
-	req := model.Transaction{}
+	req := model.RegisterTransactionReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -44,13 +44,13 @@ func (s *TransactionServer) Register(c *gin.Context) {
 // Get -
 // @Summary	获取交易记录
 // @Tags 交易记录
-// @Param        transaction  query      model.TransactionReq  true  "交易信息"
+// @Param        transaction  query      model.GetTransactionReq  true  "交易信息"
 // @Success	200 {object}  []model.Transaction "交易记录"
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/transaction [get]
 func (s *TransactionServer) Get(c *gin.Context) {
-	req := model.TransactionReq{}
+	req := model.GetTransactionReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -66,13 +66,13 @@ func (s *TransactionServer) Get(c *gin.Context) {
 // Modify -
 // @Summary	修改交易记录
 // @Tags 交易记录
-// @Param        transaction  body      model.Transaction  true  "交易信息"
+// @Param        transaction  body      model.ModifyTransactionReq  true  "交易信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/transaction [put]
 func (s *TransactionServer) Modify(c *gin.Context) {
-	req := model.Transaction{}
+	req := model.ModifyTransactionReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -88,13 +88,13 @@ func (s *TransactionServer) Modify(c *gin.Context) {
 // Delete -
 // @Summary	删除交易记录
 // @Tags 交易记录
-// @Param        transaction  body      model.Transaction  true  "交易信息"
+// @Param        transaction  body      model.DeleteTransactionReq  true  "交易信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
 // @Router		/api/v1/transaction [delete]
 func (s *TransactionServer) Delete(c *gin.Context) {
-	req := model.Transaction{}
+	req := model.DeleteTransactionReq{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return

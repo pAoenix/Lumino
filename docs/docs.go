@@ -211,12 +211,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "账本id",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "description": "排序模式  0: 创建时间升序，1:创建时间降序",
                         "name": "sort_type",
                         "in": "query"
@@ -225,7 +219,8 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "用户",
                         "name": "user_id",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -261,7 +256,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AccountBook"
+                            "$ref": "#/definitions/model.ModifyAccountBookReq"
                         }
                     }
                 ],
@@ -295,7 +290,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AccountBook"
+                            "$ref": "#/definitions/model.RegisterAccountBookReq"
                         }
                     }
                 ],
@@ -329,7 +324,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AccountBook"
+                            "$ref": "#/definitions/model.DeleteAccountBookReq"
                         }
                     }
                 ],
@@ -746,7 +741,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/model.ModifyTransactionReq"
                         }
                     }
                 ],
@@ -780,7 +775,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/model.RegisterTransactionReq"
                         }
                     }
                 ],
@@ -814,7 +809,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/model.DeleteTransactionReq"
                         }
                     }
                 ],
@@ -1063,7 +1058,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_ids": {
-                    "description": "账单用户列表",
+                    "description": "账本用户列表",
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -1124,6 +1119,18 @@ const docTemplate = `{
                 }
             }
         },
+        "model.DeleteAccountBookReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "账本id",
+                    "type": "integer"
+                }
+            }
+        },
         "model.DeleteCategoryReq": {
             "type": "object",
             "required": [
@@ -1132,6 +1139,21 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "description": "ID 图标id",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.DeleteTransactionReq": {
+            "type": "object",
+            "required": [
+                "account_book_id",
+                "id"
+            ],
+            "properties": {
+                "account_book_id": {
+                    "type": "integer"
+                },
+                "id": {
                     "type": "integer"
                 }
             }
@@ -1151,6 +1173,10 @@ const docTemplate = `{
         },
         "model.MergeAccountBookReq": {
             "type": "object",
+            "required": [
+                "merge_account_book_id",
+                "merged_account_book_id"
+            ],
             "properties": {
                 "merge_account_book_id": {
                     "description": "合并的账本id  A",
@@ -1159,6 +1185,29 @@ const docTemplate = `{
                 "merged_account_book_id": {
                     "description": "被合并的账本id B -\u003e A，B的记录全部合入到A",
                     "type": "integer"
+                }
+            }
+        },
+        "model.ModifyAccountBookReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "账本id",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "账本名称",
+                    "type": "string"
+                },
+                "user_ids": {
+                    "description": "账本用户列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -1178,6 +1227,55 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "用户id",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.ModifyTransactionReq": {
+            "type": "object",
+            "required": [
+                "account_book_id",
+                "amount",
+                "id",
+                "type"
+            ],
+            "properties": {
+                "account_book_id": {
+                    "description": "对应的账本id",
+                    "type": "integer"
+                },
+                "amount": {
+                    "description": "交易数额",
+                    "type": "number"
+                },
+                "category_id": {
+                    "description": "关联消费场景分类ID",
+                    "type": "integer"
+                },
+                "creator_id": {
+                    "description": "记录账户id",
+                    "type": "integer"
+                },
+                "date": {
+                    "description": "交易日期",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "注释",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "related_user_ids": {
+                    "description": "涉及那些人",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "type": {
+                    "description": "类型:收入/支出",
                     "type": "integer"
                 }
             }
@@ -1219,6 +1317,30 @@ const docTemplate = `{
                 }
             }
         },
+        "model.RegisterAccountBookReq": {
+            "type": "object",
+            "required": [
+                "creator_id",
+                "name"
+            ],
+            "properties": {
+                "creator_id": {
+                    "description": "创建人",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "账本名称",
+                    "type": "string"
+                },
+                "user_ids": {
+                    "description": "账本用户列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "model.RegisterCategoryReq": {
             "type": "object",
             "required": [
@@ -1232,6 +1354,52 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "用户id",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.RegisterTransactionReq": {
+            "type": "object",
+            "required": [
+                "account_book_id",
+                "amount",
+                "category_id",
+                "creator_id"
+            ],
+            "properties": {
+                "account_book_id": {
+                    "description": "对应的账本id",
+                    "type": "integer"
+                },
+                "amount": {
+                    "description": "交易数额",
+                    "type": "number"
+                },
+                "category_id": {
+                    "description": "关联消费场景分类ID",
+                    "type": "integer"
+                },
+                "creator_id": {
+                    "description": "记录账户id",
+                    "type": "integer"
+                },
+                "date": {
+                    "description": "日期",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "注释",
+                    "type": "string"
+                },
+                "related_user_ids": {
+                    "description": "RelatedUserIDs 默认包含创建人",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "type": {
+                    "description": "类型:收入/支出",
                     "type": "integer"
                 }
             }

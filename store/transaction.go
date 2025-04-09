@@ -2,6 +2,7 @@ package store
 
 import (
 	"Lumino/model"
+	"errors"
 	"gorm.io/gorm/clause"
 )
 
@@ -18,15 +19,20 @@ func NewTransactionStore(db *DB) *TransactionStore {
 }
 
 // Register -
-func (s *TransactionStore) Register(transaction *model.Transaction) error {
+func (s *TransactionStore) Register(transaction *model.RegisterTransactionReq) error {
 	tx := s.db.Begin()
 	accountBook := model.AccountBook{}
+	// 判断用户是否存在
+	if err := tx.Model(&model.User{}).Where("id = ?", transaction.CreatorID).First(&model.User{}).Error; err != nil {
+		tx.Rollback() // 回滚事务
+		return errors.New("用户不存在" + err.Error())
+	}
 	// 加锁
 	if err := tx.Model(model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
 		Where("id = ?", transaction.AccountBookID).
 		First(&accountBook).Error; err != nil {
 		tx.Rollback() // 回滚事务
-		return err
+		return errors.New("账本不存在" + err.Error())
 	}
 	// 新建交易记录
 	if err := tx.Model(&model.Transaction{}).Create(transaction).Error; err != nil {
@@ -42,7 +48,9 @@ func (s *TransactionStore) Register(transaction *model.Transaction) error {
 			return err
 		}
 	} else {
-		if err := tx.Model(&model.AccountBook{}).Update("spending", accountBook.Spending+transaction.Amount).Error; err != nil {
+		if err := tx.Model(&model.AccountBook{}).
+			Where("id = ?", accountBook.ID).
+			Update("spending", accountBook.Spending+transaction.Amount).Error; err != nil {
 			tx.Rollback() // 回滚事务
 			return err
 		}
@@ -51,7 +59,7 @@ func (s *TransactionStore) Register(transaction *model.Transaction) error {
 }
 
 // Get -
-func (s *TransactionStore) Get(transactionReq *model.TransactionReq) (resp []model.Transaction, err error) {
+func (s *TransactionStore) Get(transactionReq *model.GetTransactionReq) (resp []model.Transaction, err error) {
 	sql := s.db.Model(&model.Transaction{})
 	if transactionReq.BeginTime != nil {
 		sql.Where("date >= ?", &transactionReq.BeginTime)
@@ -70,12 +78,12 @@ func (s *TransactionStore) Get(transactionReq *model.TransactionReq) (resp []mod
 }
 
 // Modify -
-func (s *TransactionStore) Modify(transaction *model.Transaction) error {
+func (s *TransactionStore) Modify(modifyTransaction *model.ModifyTransactionReq) error {
 	tx := s.db.Begin()
 	accountBook := model.AccountBook{}
 	// 加锁
 	if err := tx.Model(model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id = ?", transaction.AccountBookID).
+		Where("id = ?", modifyTransaction.AccountBookID).
 		First(&accountBook).Error; err != nil {
 		tx.Rollback() // 回滚事务
 		return err
@@ -83,17 +91,17 @@ func (s *TransactionStore) Modify(transaction *model.Transaction) error {
 	// 更新账本数值
 	tmpTransaction := model.Transaction{}
 	if err := tx.Model(&model.Transaction{}).
-		Select("*").Where("id = ?", transaction.ID).First(&tmpTransaction).Error; err != nil {
+		Select("*").Where("id = ?", modifyTransaction.ID).First(&tmpTransaction).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
 	// 更新后的交易信息入账
-	if transaction.Type == model.IncomeType {
+	if modifyTransaction.Type == model.IncomeType {
 		// 如果修改前后都是收入
 		if tmpTransaction.Type == model.IncomeType {
 			if err := tx.Model(&model.AccountBook{}).
 				Where("id = ?", accountBook.ID).
-				Update("income", accountBook.Income+transaction.Amount-tmpTransaction.Amount).Error; err != nil {
+				Update("income", accountBook.Income+modifyTransaction.Amount-tmpTransaction.Amount).Error; err != nil {
 				tx.Rollback() // 回滚事务
 				return err
 			}
@@ -101,7 +109,7 @@ func (s *TransactionStore) Modify(transaction *model.Transaction) error {
 			if err := tx.Model(&model.AccountBook{}).
 				Where("id = ?", accountBook.ID).
 				Update("spending", accountBook.Income-tmpTransaction.Amount).
-				Update("income", accountBook.Income+transaction.Amount).Error; err != nil {
+				Update("income", accountBook.Income+modifyTransaction.Amount).Error; err != nil {
 				tx.Rollback() // 回滚事务
 				return err
 			}
@@ -112,7 +120,7 @@ func (s *TransactionStore) Modify(transaction *model.Transaction) error {
 			if err := tx.Model(&model.AccountBook{}).
 				Where("id = ?", accountBook.ID).
 				Update("income", accountBook.Income-tmpTransaction.Amount).
-				Update("spending", accountBook.Spending+transaction.Amount).Error; err != nil {
+				Update("spending", accountBook.Spending+modifyTransaction.Amount).Error; err != nil {
 				tx.Rollback() // 回滚事务
 				return err
 			}
@@ -120,14 +128,14 @@ func (s *TransactionStore) Modify(transaction *model.Transaction) error {
 			// 一直是支出
 			if err := tx.Model(&model.AccountBook{}).
 				Where("id = ?", accountBook.ID).
-				Update("spending", accountBook.Spending+transaction.Amount-tmpTransaction.Amount).Error; err != nil {
+				Update("spending", accountBook.Spending+modifyTransaction.Amount-tmpTransaction.Amount).Error; err != nil {
 				tx.Rollback() // 回滚事务
 				return err
 			}
 		}
 	}
 	// 交易信息更新
-	if err := tx.Model(&model.Transaction{}).Where("id = ?", transaction.ID).Updates(transaction).Error; err != nil {
+	if err := tx.Model(&model.Transaction{}).Where("id = ?", modifyTransaction.ID).Updates(modifyTransaction).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -135,7 +143,7 @@ func (s *TransactionStore) Modify(transaction *model.Transaction) error {
 }
 
 // Delete -
-func (s *TransactionStore) Delete(transaction *model.Transaction) error {
+func (s *TransactionStore) Delete(transaction *model.DeleteTransactionReq) error {
 	tx := s.db.Begin()
 	accountBook := model.AccountBook{}
 	// 加锁
