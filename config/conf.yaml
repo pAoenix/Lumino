@@ -15,6 +15,7 @@ oss:
   secretKey: 48IjsI6afJqmlUkbUtFPWPJ84IGqEA
   region: cn-beijing
   profilePhotoDir: icon/profile_photo/
+  categoryDir: icon/category/
 
 gracefulShutdown:
   timeoutSeconds: 30
