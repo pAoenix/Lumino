@@ -77,6 +77,14 @@ func (s *TransactionServer) Modify(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
+	if req.Amount < 0.0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "金额需要>0"})
+		return
+	}
+	if req.Type != 0 && req.Type != model.IncomeType && req.Type != model.SpendingType {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "交易类型必须是0或者1"})
+		return
+	}
 	if err := s.TransactionService.Modify(&req); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return

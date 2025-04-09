@@ -6,7 +6,7 @@ import (
 )
 
 const IncomeType = 1
-const SpendingType = 0 // 默认是支出，int默认为0
+const SpendingType = 2 //
 
 // Transaction 交易记录
 type Transaction struct {
@@ -23,13 +23,13 @@ type Transaction struct {
 
 // RegisterTransactionReq -
 type RegisterTransactionReq struct {
-	Type          int        `json:"type" form:"type"`                                          // 类型:收入/支出
-	Amount        float64    `json:"amount" form:"amount" binding:"required,gt=0"`              // 交易数额
-	Date          *time.Time `json:"date" form:"date"`                                          // 日期
-	CreatorID     uint       `json:"creator_id" form:"creator_id" binding:"required"`           // 记录账户id
-	CategoryID    uint       `json:"category_id" form:"category_id" binding:"required"`         // 关联消费场景分类ID
-	Description   string     `json:"description" form:"description"`                            // 注释
-	AccountBookID uint       `json:"account_book_id" form:"account_book_id" binding:"required"` // 对应的账本id
+	Type          int       `json:"type" form:"type" binding:"required,oneof=1 2" `            // 类型:收入/支出
+	Amount        float64   `json:"amount" form:"amount" binding:"required,gt=0"`              // 交易数额
+	Date          time.Time `json:"date" form:"date"`                                          // 日期
+	CreatorID     uint      `json:"creator_id" form:"creator_id" binding:"required"`           // 记录账户id
+	CategoryID    uint      `json:"category_id" form:"category_id" binding:"required"`         // 关联消费场景分类ID
+	Description   string    `json:"description" form:"description"`                            // 注释
+	AccountBookID uint      `json:"account_book_id" form:"account_book_id" binding:"required"` // 对应的账本id
 	//  RelatedUserIDs 默认包含创建人
 	RelatedUserIDs pq.Int32Array `json:"related_user_ids" form:"related_user_ids" gorm:"type:integer[]" swaggertype:"array,integer"`
 }
@@ -51,9 +51,9 @@ type DeleteTransactionReq struct {
 // ModifyTransactionReq -
 type ModifyTransactionReq struct {
 	ID             uint          `json:"id" form:"id" binding:"required"`
-	AccountBookID  uint          `json:"account_book_id" form:"account_book_id" binding:"required"`                                  // 对应的账本id
-	Type           int           `json:"type" form:"type" binding:"required"`                                                        // 类型:收入/支出
-	Amount         float64       `json:"amount" form:"amount" binding:"required"`                                                    // 交易数额
+	AccountBookID  uint          `json:"account_book_id" form:"account_book_id"`                                                     // 对应的账本id
+	Type           int           `json:"type" form:"type" binding:"required_with=Amount"`                                            // 类型:收入/支出
+	Amount         float64       `json:"amount" form:"amount" binding:"required_with=Type"`                                          // 交易数额
 	Date           time.Time     `json:"date" form:"date"`                                                                           //交易日期
 	CreatorID      uint          `json:"creator_id" form:"creator_id"`                                                               // 记录账户id
 	CategoryID     uint          `json:"category_id" form:"category_id"`                                                             // 关联消费场景分类ID

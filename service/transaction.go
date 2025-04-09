@@ -1,7 +1,6 @@
 package service
 
 import (
-	"Lumino/common"
 	"Lumino/model"
 	"Lumino/store"
 	"time"
@@ -23,11 +22,8 @@ func NewTransactionService(transactionStore *store.TransactionStore, accountBook
 
 // Register -
 func (s *TransactionService) Register(transaction *model.RegisterTransactionReq) error {
-	if !common.ContainsInt(common.ConvertArrayToIntSlice(transaction.RelatedUserIDs), int(transaction.CreatorID)) {
-		transaction.RelatedUserIDs = append(transaction.RelatedUserIDs, int32(transaction.CreatorID))
-	}
-	if transaction.Date == nil {
-		*transaction.Date = time.Now()
+	if transaction.Date.IsZero() {
+		transaction.Date = time.Now()
 	}
 	return s.TransactionStore.Register(transaction)
 }
