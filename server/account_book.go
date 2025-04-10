@@ -23,7 +23,7 @@ func NewAccountBookServer(accountBookService *service.AccountBookService) *Accou
 // Register -
 // @Summary	注册账本
 // @Tags 账本
-// @Param        account_book  body      model.RegisterAccountBookReq  true  "账本信息"
+// @Param        account_book  query      model.RegisterAccountBookReq  true  "账本信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
@@ -45,7 +45,7 @@ func (s *AccountBookServer) Register(c *gin.Context) {
 // Merge -
 // @Summary	合并账本
 // @Tags 账本
-// @Param        account_book  body      model.MergeAccountBookReq  true  "账本id信息"
+// @Param        account_book  query      model.MergeAccountBookReq  true  "账本id信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
@@ -109,7 +109,7 @@ func (s *AccountBookServer) GetByID(c *gin.Context) {
 // Modify -
 // @Summary	修改账本
 // @Tags 账本
-// @Param        account_book  body      model.ModifyAccountBookReq  true  "账本信息"
+// @Param        account_book  query      model.ModifyAccountBookReq  true  "账本信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"
@@ -131,7 +131,7 @@ func (s *AccountBookServer) Modify(c *gin.Context) {
 // Delete -
 // @Summary	删除账本
 // @Tags 账本
-// @Param        account_book  body      model.DeleteAccountBookReq  true  "账本信息"
+// @Param        account_book  query      model.DeleteAccountBookReq  true  "账本信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"

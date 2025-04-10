@@ -27,7 +27,8 @@ func NewUserServer(userService *service.UserService, client *common.OssClient) *
 // Register -
 // @Summary	注册用户信息
 // @Tags 用户
-// @Param        user  body      model.RegisterUserReq  true  "用户信息"
+// @Param        user  query      model.RegisterUserReq  true  "用户信息"
+// @Param balance_detail query object false "余额详情" collectionFormat: multi
 // @Param        icon_file formData file true "用户头像"
 // @Success	200 {object}  model.User "注册结果"
 // @Failure	400 {string}  string      "请求体异常"
@@ -78,7 +79,8 @@ func (s *UserServer) Register(c *gin.Context) {
 // Modify -
 // @Summary	修改用户信息
 // @Tags 用户
-// @Param        user  body      model.ModifyUserReq  true  "用户信息"
+// @Param        user    query      model.ModifyUserReq  true  "用户信息"
+// @Param balance_detail query object false "余额详情" collectionFormat: multi
 // @Param        icon_file formData file false "用户头像"
 // @Success	200 {object}  model.User "用户修改后结果"
 // @Failure	400 {string}  string      "请求体异常"

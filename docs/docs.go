@@ -24,47 +24,56 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "number",
+                        "description": "账户余额",
                         "name": "balance",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "创建时间",
                         "name": "created_at",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "example": "2025-03-26T00:00:00Z",
+                        "description": "DeletedAt 删除时间",
                         "name": "deleted_at",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "账户描述",
                         "name": "description",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "账户图标",
                         "name": "icon",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "主键id",
                         "name": "id",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "账户名称",
                         "name": "name",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "账户类型",
                         "name": "type",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "更新时间",
                         "name": "updated_at",
                         "in": "query"
                     },
@@ -106,13 +115,65 @@ const docTemplate = `{
                 "summary": "修改账户",
                 "parameters": [
                     {
-                        "description": "账户信息",
-                        "name": "account",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Account"
-                        }
+                        "type": "number",
+                        "description": "账户余额",
+                        "name": "balance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "created_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2025-03-26T00:00:00Z",
+                        "description": "DeletedAt 删除时间",
+                        "name": "deleted_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账户描述",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账户图标",
+                        "name": "icon",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "主键id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账户名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "账户类型",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "updated_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建人",
+                        "name": "user_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -140,13 +201,65 @@ const docTemplate = `{
                 "summary": "注册账户",
                 "parameters": [
                     {
-                        "description": "账户信息",
-                        "name": "account",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Account"
-                        }
+                        "type": "number",
+                        "description": "账户余额",
+                        "name": "balance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "created_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2025-03-26T00:00:00Z",
+                        "description": "DeletedAt 删除时间",
+                        "name": "deleted_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账户描述",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账户图标",
+                        "name": "icon",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "主键id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账户名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "账户类型",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "updated_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建人",
+                        "name": "user_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -174,13 +287,65 @@ const docTemplate = `{
                 "summary": "删除账户",
                 "parameters": [
                     {
-                        "description": "账户信息",
-                        "name": "account",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Account"
-                        }
+                        "type": "number",
+                        "description": "账户余额",
+                        "name": "balance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "created_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "2025-03-26T00:00:00Z",
+                        "description": "DeletedAt 删除时间",
+                        "name": "deleted_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账户描述",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账户图标",
+                        "name": "icon",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "主键id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账户名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "账户类型",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "updated_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建人",
+                        "name": "user_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -251,13 +416,27 @@ const docTemplate = `{
                 "summary": "修改账本",
                 "parameters": [
                     {
-                        "description": "账本信息",
-                        "name": "account_book",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.ModifyAccountBookReq"
-                        }
+                        "type": "integer",
+                        "description": "账本id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "账本名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "账本用户列表",
+                        "name": "user_ids",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -285,13 +464,28 @@ const docTemplate = `{
                 "summary": "注册账本",
                 "parameters": [
                     {
-                        "description": "账本信息",
-                        "name": "account_book",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.RegisterAccountBookReq"
-                        }
+                        "type": "integer",
+                        "description": "创建人",
+                        "name": "creator_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "账本名称",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "账本用户列表",
+                        "name": "user_ids",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -319,13 +513,11 @@ const docTemplate = `{
                 "summary": "删除账本",
                 "parameters": [
                     {
-                        "description": "账本信息",
-                        "name": "account_book",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.DeleteAccountBookReq"
-                        }
+                        "type": "integer",
+                        "description": "账本id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -393,13 +585,18 @@ const docTemplate = `{
                 "summary": "合并账本",
                 "parameters": [
                     {
-                        "description": "账本id信息",
-                        "name": "account_book",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.MergeAccountBookReq"
-                        }
+                        "type": "integer",
+                        "description": "合并的账本id  A",
+                        "name": "merge_account_book_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "被合并的账本id B -\u003e A，B的记录全部合入到A",
+                        "name": "merged_account_book_id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -473,13 +670,23 @@ const docTemplate = `{
                 "summary": "修改图标",
                 "parameters": [
                     {
-                        "description": "图标信息",
-                        "name": "category",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.ModifyCategoryReq"
-                        }
+                        "type": "integer",
+                        "description": "ID 图标id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "分类名称的中文示意",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "user_id",
+                        "in": "query"
                     },
                     {
                         "type": "file",
@@ -513,13 +720,18 @@ const docTemplate = `{
                 "summary": "注册图标",
                 "parameters": [
                     {
-                        "description": "图标信息",
-                        "name": "category",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.RegisterCategoryReq"
-                        }
+                        "type": "string",
+                        "description": "分类名称的中文示意",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "file",
@@ -554,13 +766,11 @@ const docTemplate = `{
                 "summary": "删除图标",
                 "parameters": [
                     {
-                        "description": "图标信息",
-                        "name": "category",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.DeleteCategoryReq"
-                        }
+                        "type": "integer",
+                        "description": "ID 图标id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -590,13 +800,16 @@ const docTemplate = `{
                 "summary": "删除朋友",
                 "parameters": [
                     {
-                        "description": "删除信息",
-                        "name": "friend",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Friend"
-                        }
+                        "type": "integer",
+                        "description": "被邀请人",
+                        "name": "invitee",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "邀请人",
+                        "name": "inviter",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -626,13 +839,16 @@ const docTemplate = `{
                 "summary": "邀请朋友",
                 "parameters": [
                     {
-                        "description": "邀请信息",
-                        "name": "friend",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Friend"
-                        }
+                        "type": "integer",
+                        "description": "被邀请人",
+                        "name": "invitee",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "邀请人",
+                        "name": "inviter",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -700,7 +916,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "账户id",
+                        "description": "用户id",
                         "name": "user_id",
                         "in": "query"
                     }
@@ -743,7 +959,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "number",
-                        "description": "交易数额",
+                        "description": "交易数额,数值需要\u003e0",
                         "name": "amount",
                         "in": "query"
                     },
@@ -773,6 +989,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "description": "交易记录id",
                         "name": "id",
                         "in": "query",
                         "required": true
@@ -783,13 +1000,13 @@ const docTemplate = `{
                             "type": "integer"
                         },
                         "collectionFormat": "csv",
-                        "description": "涉及那些人",
+                        "description": "RelatedUserIDs 涉及那些人",
                         "name": "related_user_ids",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "类型:收入/支出",
+                        "description": "类型:收入/支出,交易类型必须是0或者1",
                         "name": "type",
                         "in": "query"
                     }
@@ -841,7 +1058,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "记录账户id",
+                        "description": "创建人id",
                         "name": "creator_id",
                         "in": "query",
                         "required": true
@@ -864,7 +1081,7 @@ const docTemplate = `{
                             "type": "integer"
                         },
                         "collectionFormat": "csv",
-                        "description": "RelatedUserIDs 默认包含创建人",
+                        "description": "RelatedUserIDs 涉及那些人",
                         "name": "related_user_ids",
                         "in": "query"
                     },
@@ -905,13 +1122,18 @@ const docTemplate = `{
                 "summary": "删除交易记录",
                 "parameters": [
                     {
-                        "description": "交易信息",
-                        "name": "transaction",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.DeleteTransactionReq"
-                        }
+                        "type": "integer",
+                        "description": "账本id",
+                        "name": "account_book_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "交易记录id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -942,6 +1164,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "用户id",
                         "name": "id",
                         "in": "query",
                         "required": true
@@ -975,13 +1198,44 @@ const docTemplate = `{
                 "summary": "修改用户信息",
                 "parameters": [
                     {
-                        "description": "用户信息",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.ModifyUserReq"
-                        }
+                        "type": "number",
+                        "description": "余额",
+                        "name": "balance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "默认账本id",
+                        "name": "default_account_book_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "朋友列表",
+                        "name": "friend",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "账号名称，昵称，全局唯一",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "object",
+                        "description": "余额详情",
+                        "name": "balance_detail",
+                        "in": "query"
                     },
                     {
                         "type": "file",
@@ -1018,13 +1272,39 @@ const docTemplate = `{
                 "summary": "注册用户信息",
                 "parameters": [
                     {
-                        "description": "用户信息",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.RegisterUserReq"
-                        }
+                        "type": "number",
+                        "description": "余额",
+                        "name": "balance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "默认账本id",
+                        "name": "default_account_book_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "朋友列表",
+                        "name": "friend",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账号名称，昵称，全局唯一",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "object",
+                        "description": "余额详情",
+                        "name": "balance_detail",
+                        "in": "query"
                     },
                     {
                         "type": "file",
@@ -1063,6 +1343,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "用户id",
                         "name": "id",
                         "in": "query",
                         "required": true
@@ -1093,31 +1374,40 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "balance": {
+                    "description": "账户余额",
                     "type": "number"
                 },
                 "created_at": {
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "deleted_at": {
+                    "description": "DeletedAt 删除时间",
                     "type": "string",
                     "example": "2025-03-26T00:00:00Z"
                 },
                 "description": {
+                    "description": "账户描述",
                     "type": "string"
                 },
                 "icon": {
+                    "description": "账户图标",
                     "type": "string"
                 },
                 "id": {
+                    "description": "主键id",
                     "type": "integer"
                 },
                 "name": {
+                    "description": "账户名称",
                     "type": "string"
                 },
                 "type": {
+                    "description": "账户类型",
                     "type": "integer"
                 },
                 "updated_at": {
+                    "description": "更新时间",
                     "type": "string"
                 },
                 "user_id": {
@@ -1130,6 +1420,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "created_at": {
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "creator_id": {
@@ -1137,10 +1428,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "deleted_at": {
+                    "description": "DeletedAt 删除时间",
                     "type": "string",
                     "example": "2025-03-26T00:00:00Z"
                 },
                 "id": {
+                    "description": "主键id",
                     "type": "integer"
                 },
                 "income": {
@@ -1156,6 +1449,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "updated_at": {
+                    "description": "更新时间",
                     "type": "string"
                 },
                 "user_ids": {
@@ -1194,9 +1488,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "created_at": {
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "deleted_at": {
+                    "description": "DeletedAt 删除时间",
                     "type": "string",
                     "example": "2025-03-26T00:00:00Z"
                 },
@@ -1205,6 +1501,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "description": "主键id",
                     "type": "integer"
                 },
                 "name": {
@@ -1212,235 +1509,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "description": "更新时间",
                     "type": "string"
                 },
                 "user_id": {
                     "description": "用户id",
                     "type": "integer"
-                }
-            }
-        },
-        "model.DeleteAccountBookReq": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "description": "账本id",
-                    "type": "integer"
-                }
-            }
-        },
-        "model.DeleteCategoryReq": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "description": "ID 图标id",
-                    "type": "integer"
-                }
-            }
-        },
-        "model.DeleteTransactionReq": {
-            "type": "object",
-            "required": [
-                "account_book_id",
-                "id"
-            ],
-            "properties": {
-                "account_book_id": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "model.Friend": {
-            "type": "object",
-            "properties": {
-                "invitee": {
-                    "description": "被邀请人",
-                    "type": "integer"
-                },
-                "inviter": {
-                    "description": "邀请人",
-                    "type": "integer"
-                }
-            }
-        },
-        "model.MergeAccountBookReq": {
-            "type": "object",
-            "required": [
-                "merge_account_book_id",
-                "merged_account_book_id"
-            ],
-            "properties": {
-                "merge_account_book_id": {
-                    "description": "合并的账本id  A",
-                    "type": "integer"
-                },
-                "merged_account_book_id": {
-                    "description": "被合并的账本id B -\u003e A，B的记录全部合入到A",
-                    "type": "integer"
-                }
-            }
-        },
-        "model.ModifyAccountBookReq": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "description": "账本id",
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "账本名称",
-                    "type": "string"
-                },
-                "user_ids": {
-                    "description": "账本用户列表",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "model.ModifyCategoryReq": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "description": "ID 图标id",
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "分类名称的中文示意",
-                    "type": "string"
-                },
-                "user_id": {
-                    "description": "用户id",
-                    "type": "integer"
-                }
-            }
-        },
-        "model.ModifyUserReq": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "balance": {
-                    "description": "余额",
-                    "type": "number"
-                },
-                "balance_detail": {
-                    "description": "BalanceDetail 余额详情\n@swagger:type object\n@additionalProperties type=number format=double\n@example {\"temperature\":36.5,\"humidity\":0.42}",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "number"
-                    }
-                },
-                "default_account_book_id": {
-                    "description": "默认账本id",
-                    "type": "integer"
-                },
-                "friend": {
-                    "description": "朋友列表",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "账号名称，昵称，全局唯一",
-                    "type": "string"
-                }
-            }
-        },
-        "model.RegisterAccountBookReq": {
-            "type": "object",
-            "required": [
-                "creator_id",
-                "name"
-            ],
-            "properties": {
-                "creator_id": {
-                    "description": "创建人",
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "账本名称",
-                    "type": "string"
-                },
-                "user_ids": {
-                    "description": "账本用户列表",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "model.RegisterCategoryReq": {
-            "type": "object",
-            "required": [
-                "name",
-                "user_id"
-            ],
-            "properties": {
-                "name": {
-                    "description": "分类名称的中文示意",
-                    "type": "string"
-                },
-                "user_id": {
-                    "description": "用户id",
-                    "type": "integer"
-                }
-            }
-        },
-        "model.RegisterUserReq": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "balance": {
-                    "description": "余额",
-                    "type": "number"
-                },
-                "balance_detail": {
-                    "description": "BalanceDetail 余额详情\n@swagger:type object\n@additionalProperties type=number format=double\n@example {\"temperature\":36.5,\"humidity\":0.42}",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "number"
-                    }
-                },
-                "default_account_book_id": {
-                    "description": "默认账本id",
-                    "type": "integer"
-                },
-                "friend": {
-                    "description": "朋友列表",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "name": {
-                    "description": "账号名称，昵称，全局唯一",
-                    "type": "string"
                 }
             }
         },
@@ -1460,10 +1534,11 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "created_at": {
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "creator_id": {
-                    "description": "记录账户id",
+                    "description": "创建人id",
                     "type": "integer"
                 },
                 "date": {
@@ -1471,6 +1546,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "deleted_at": {
+                    "description": "DeletedAt 删除时间",
                     "type": "string",
                     "example": "2025-03-26T00:00:00Z"
                 },
@@ -1479,10 +1555,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "description": "主键id",
                     "type": "integer"
                 },
                 "related_user_ids": {
-                    "description": "涉及那些人",
+                    "description": "RelatedUserIDs 涉及那些人",
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -1493,6 +1570,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updated_at": {
+                    "description": "更新时间",
                     "type": "string"
                 }
             }
@@ -1512,6 +1590,7 @@ const docTemplate = `{
                     }
                 },
                 "created_at": {
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "default_account_book_id": {
@@ -1519,6 +1598,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "deleted_at": {
+                    "description": "DeletedAt 删除时间",
                     "type": "string",
                     "example": "2025-03-26T00:00:00Z"
                 },
@@ -1534,6 +1614,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "description": "主键id",
                     "type": "integer"
                 },
                 "name": {
@@ -1541,6 +1622,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "description": "更新时间",
                     "type": "string"
                 }
             }

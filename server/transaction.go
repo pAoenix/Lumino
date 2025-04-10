@@ -77,7 +77,7 @@ func (s *TransactionServer) Modify(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	if req.Amount < 0.0 {
+	if req.Amount < 0.0 || req.Type != 0 && req.Amount <= 0.0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "金额需要>0"})
 		return
 	}
@@ -96,7 +96,7 @@ func (s *TransactionServer) Modify(c *gin.Context) {
 // Delete -
 // @Summary	删除交易记录
 // @Tags 交易记录
-// @Param        transaction  body      model.DeleteTransactionReq  true  "交易信息"
+// @Param        transaction  query      model.DeleteTransactionReq  true  "交易信息"
 // @Success	204
 // @Failure	400 {string}  string      "请求体异常"
 // @Failure	500 {string}  string      "服务端异常"

@@ -3,23 +3,32 @@ definitions:
   model.Account:
     properties:
       balance:
+        description: 账户余额
         type: number
       created_at:
+        description: 创建时间
         type: string
       deleted_at:
+        description: DeletedAt 删除时间
         example: "2025-03-26T00:00:00Z"
         type: string
       description:
+        description: 账户描述
         type: string
       icon:
+        description: 账户图标
         type: string
       id:
+        description: 主键id
         type: integer
       name:
+        description: 账户名称
         type: string
       type:
+        description: 账户类型
         type: integer
       updated_at:
+        description: 更新时间
         type: string
       user_id:
         description: 创建人
@@ -28,14 +37,17 @@ definitions:
   model.AccountBook:
     properties:
       created_at:
+        description: 创建时间
         type: string
       creator_id:
         description: 创建人
         type: integer
       deleted_at:
+        description: DeletedAt 删除时间
         example: "2025-03-26T00:00:00Z"
         type: string
       id:
+        description: 主键id
         type: integer
       income:
         description: 账本收入
@@ -47,6 +59,7 @@ definitions:
         description: 账本花费
         type: number
       updated_at:
+        description: 更新时间
         type: string
       user_ids:
         description: 账本用户列表
@@ -73,187 +86,27 @@ definitions:
   model.Category:
     properties:
       created_at:
+        description: 创建时间
         type: string
       deleted_at:
+        description: DeletedAt 删除时间
         example: "2025-03-26T00:00:00Z"
         type: string
       icon_url:
         description: 类别图标的本地地址
         type: string
       id:
+        description: 主键id
         type: integer
       name:
         description: 分类名称的中文示意
         type: string
       updated_at:
+        description: 更新时间
         type: string
       user_id:
         description: 用户id
         type: integer
-    type: object
-  model.DeleteAccountBookReq:
-    properties:
-      id:
-        description: 账本id
-        type: integer
-    required:
-    - id
-    type: object
-  model.DeleteCategoryReq:
-    properties:
-      id:
-        description: ID 图标id
-        type: integer
-    required:
-    - id
-    type: object
-  model.DeleteTransactionReq:
-    properties:
-      account_book_id:
-        type: integer
-      id:
-        type: integer
-    required:
-    - account_book_id
-    - id
-    type: object
-  model.Friend:
-    properties:
-      invitee:
-        description: 被邀请人
-        type: integer
-      inviter:
-        description: 邀请人
-        type: integer
-    type: object
-  model.MergeAccountBookReq:
-    properties:
-      merge_account_book_id:
-        description: 合并的账本id  A
-        type: integer
-      merged_account_book_id:
-        description: 被合并的账本id B -> A，B的记录全部合入到A
-        type: integer
-    required:
-    - merge_account_book_id
-    - merged_account_book_id
-    type: object
-  model.ModifyAccountBookReq:
-    properties:
-      id:
-        description: 账本id
-        type: integer
-      name:
-        description: 账本名称
-        type: string
-      user_ids:
-        description: 账本用户列表
-        items:
-          type: integer
-        type: array
-    required:
-    - id
-    type: object
-  model.ModifyCategoryReq:
-    properties:
-      id:
-        description: ID 图标id
-        type: integer
-      name:
-        description: 分类名称的中文示意
-        type: string
-      user_id:
-        description: 用户id
-        type: integer
-    required:
-    - id
-    type: object
-  model.ModifyUserReq:
-    properties:
-      balance:
-        description: 余额
-        type: number
-      balance_detail:
-        additionalProperties:
-          type: number
-        description: |-
-          BalanceDetail 余额详情
-          @swagger:type object
-          @additionalProperties type=number format=double
-          @example {"temperature":36.5,"humidity":0.42}
-        type: object
-      default_account_book_id:
-        description: 默认账本id
-        type: integer
-      friend:
-        description: 朋友列表
-        items:
-          type: integer
-        type: array
-      id:
-        type: integer
-      name:
-        description: 账号名称，昵称，全局唯一
-        type: string
-    required:
-    - id
-    type: object
-  model.RegisterAccountBookReq:
-    properties:
-      creator_id:
-        description: 创建人
-        type: integer
-      name:
-        description: 账本名称
-        type: string
-      user_ids:
-        description: 账本用户列表
-        items:
-          type: integer
-        type: array
-    required:
-    - creator_id
-    - name
-    type: object
-  model.RegisterCategoryReq:
-    properties:
-      name:
-        description: 分类名称的中文示意
-        type: string
-      user_id:
-        description: 用户id
-        type: integer
-    required:
-    - name
-    - user_id
-    type: object
-  model.RegisterUserReq:
-    properties:
-      balance:
-        description: 余额
-        type: number
-      balance_detail:
-        additionalProperties:
-          type: number
-        description: |-
-          BalanceDetail 余额详情
-          @swagger:type object
-          @additionalProperties type=number format=double
-          @example {"temperature":36.5,"humidity":0.42}
-        type: object
-      default_account_book_id:
-        description: 默认账本id
-        type: integer
-      friend:
-        description: 朋友列表
-        items:
-          type: integer
-        type: array
-      name:
-        description: 账号名称，昵称，全局唯一
-        type: string
-    required:
-    - name
     type: object
   model.Transaction:
     properties:
@@ -267,23 +120,26 @@ definitions:
         description: 关联消费场景分类ID
         type: integer
       created_at:
+        description: 创建时间
         type: string
       creator_id:
-        description: 记录账户id
+        description: 创建人id
         type: integer
       date:
         description: 日期
         type: string
       deleted_at:
+        description: DeletedAt 删除时间
         example: "2025-03-26T00:00:00Z"
         type: string
       description:
         description: 注释
         type: string
       id:
+        description: 主键id
         type: integer
       related_user_ids:
-        description: 涉及那些人
+        description: RelatedUserIDs 涉及那些人
         items:
           type: integer
         type: array
@@ -291,6 +147,7 @@ definitions:
         description: 类型:收入/支出
         type: integer
       updated_at:
+        description: 更新时间
         type: string
     type: object
   model.User:
@@ -308,11 +165,13 @@ definitions:
           @example {"temperature":36.5,"humidity":0.42}
         type: object
       created_at:
+        description: 创建时间
         type: string
       default_account_book_id:
         description: 默认账本id
         type: integer
       deleted_at:
+        description: DeletedAt 删除时间
         example: "2025-03-26T00:00:00Z"
         type: string
       friend:
@@ -324,11 +183,13 @@ definitions:
         description: 用户头像的对象存储地址
         type: string
       id:
+        description: 主键id
         type: integer
       name:
         description: 账号名称，昵称，全局唯一
         type: string
       updated_at:
+        description: 更新时间
         type: string
     type: object
 host: localhost:8080
@@ -341,12 +202,47 @@ paths:
   /api/v1/account:
     delete:
       parameters:
-      - description: 账户信息
-        in: body
-        name: account
-        required: true
-        schema:
-          $ref: '#/definitions/model.Account'
+      - description: 账户余额
+        in: query
+        name: balance
+        type: number
+      - description: 创建时间
+        in: query
+        name: created_at
+        type: string
+      - description: DeletedAt 删除时间
+        example: "2025-03-26T00:00:00Z"
+        in: query
+        name: deleted_at
+        type: string
+      - description: 账户描述
+        in: query
+        name: description
+        type: string
+      - description: 账户图标
+        in: query
+        name: icon
+        type: string
+      - description: 主键id
+        in: query
+        name: id
+        type: integer
+      - description: 账户名称
+        in: query
+        name: name
+        type: string
+      - description: 账户类型
+        in: query
+        name: type
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updated_at
+        type: string
+      - description: 创建人
+        in: query
+        name: user_id
+        type: integer
       responses:
         "204":
           description: No Content
@@ -363,32 +259,41 @@ paths:
       - 账户
     get:
       parameters:
-      - in: query
+      - description: 账户余额
+        in: query
         name: balance
         type: number
-      - in: query
+      - description: 创建时间
+        in: query
         name: created_at
         type: string
-      - example: "2025-03-26T00:00:00Z"
+      - description: DeletedAt 删除时间
+        example: "2025-03-26T00:00:00Z"
         in: query
         name: deleted_at
         type: string
-      - in: query
+      - description: 账户描述
+        in: query
         name: description
         type: string
-      - in: query
+      - description: 账户图标
+        in: query
         name: icon
         type: string
-      - in: query
+      - description: 主键id
+        in: query
         name: id
         type: integer
-      - in: query
+      - description: 账户名称
+        in: query
         name: name
         type: string
-      - in: query
+      - description: 账户类型
+        in: query
         name: type
         type: integer
-      - in: query
+      - description: 更新时间
+        in: query
         name: updated_at
         type: string
       - description: 创建人
@@ -415,12 +320,47 @@ paths:
       - 账户
     post:
       parameters:
-      - description: 账户信息
-        in: body
-        name: account
-        required: true
-        schema:
-          $ref: '#/definitions/model.Account'
+      - description: 账户余额
+        in: query
+        name: balance
+        type: number
+      - description: 创建时间
+        in: query
+        name: created_at
+        type: string
+      - description: DeletedAt 删除时间
+        example: "2025-03-26T00:00:00Z"
+        in: query
+        name: deleted_at
+        type: string
+      - description: 账户描述
+        in: query
+        name: description
+        type: string
+      - description: 账户图标
+        in: query
+        name: icon
+        type: string
+      - description: 主键id
+        in: query
+        name: id
+        type: integer
+      - description: 账户名称
+        in: query
+        name: name
+        type: string
+      - description: 账户类型
+        in: query
+        name: type
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updated_at
+        type: string
+      - description: 创建人
+        in: query
+        name: user_id
+        type: integer
       responses:
         "204":
           description: No Content
@@ -437,12 +377,47 @@ paths:
       - 账户
     put:
       parameters:
-      - description: 账户信息
-        in: body
-        name: account
-        required: true
-        schema:
-          $ref: '#/definitions/model.Account'
+      - description: 账户余额
+        in: query
+        name: balance
+        type: number
+      - description: 创建时间
+        in: query
+        name: created_at
+        type: string
+      - description: DeletedAt 删除时间
+        example: "2025-03-26T00:00:00Z"
+        in: query
+        name: deleted_at
+        type: string
+      - description: 账户描述
+        in: query
+        name: description
+        type: string
+      - description: 账户图标
+        in: query
+        name: icon
+        type: string
+      - description: 主键id
+        in: query
+        name: id
+        type: integer
+      - description: 账户名称
+        in: query
+        name: name
+        type: string
+      - description: 账户类型
+        in: query
+        name: type
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updated_at
+        type: string
+      - description: 创建人
+        in: query
+        name: user_id
+        type: integer
       responses:
         "204":
           description: No Content
@@ -460,12 +435,11 @@ paths:
   /api/v1/account-book:
     delete:
       parameters:
-      - description: 账本信息
-        in: body
-        name: account_book
+      - description: 账本id
+        in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/model.DeleteAccountBookReq'
+        type: integer
       responses:
         "204":
           description: No Content
@@ -509,12 +483,23 @@ paths:
       - 账本
     post:
       parameters:
-      - description: 账本信息
-        in: body
-        name: account_book
+      - description: 创建人
+        in: query
+        name: creator_id
         required: true
-        schema:
-          $ref: '#/definitions/model.RegisterAccountBookReq'
+        type: integer
+      - description: 账本名称
+        in: query
+        name: name
+        required: true
+        type: string
+      - collectionFormat: csv
+        description: 账本用户列表
+        in: query
+        items:
+          type: integer
+        name: user_ids
+        type: array
       responses:
         "204":
           description: No Content
@@ -531,12 +516,22 @@ paths:
       - 账本
     put:
       parameters:
-      - description: 账本信息
-        in: body
-        name: account_book
+      - description: 账本id
+        in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/model.ModifyAccountBookReq'
+        type: integer
+      - description: 账本名称
+        in: query
+        name: name
+        type: string
+      - collectionFormat: csv
+        description: 账本用户列表
+        in: query
+        items:
+          type: integer
+        name: user_ids
+        type: array
       responses:
         "204":
           description: No Content
@@ -579,12 +574,16 @@ paths:
   /api/v1/account-book/merge:
     post:
       parameters:
-      - description: 账本id信息
-        in: body
-        name: account_book
+      - description: 合并的账本id  A
+        in: query
+        name: merge_account_book_id
         required: true
-        schema:
-          $ref: '#/definitions/model.MergeAccountBookReq'
+        type: integer
+      - description: 被合并的账本id B -> A，B的记录全部合入到A
+        in: query
+        name: merged_account_book_id
+        required: true
+        type: integer
       responses:
         "204":
           description: No Content
@@ -602,12 +601,11 @@ paths:
   /api/v1/category:
     delete:
       parameters:
-      - description: 图标信息
-        in: body
-        name: category
+      - description: ID 图标id
+        in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/model.DeleteCategoryReq'
+        type: integer
       responses:
         "204":
           description: No Content
@@ -653,12 +651,16 @@ paths:
       - 图标
     post:
       parameters:
-      - description: 图标信息
-        in: body
-        name: category
+      - description: 分类名称的中文示意
+        in: query
+        name: name
         required: true
-        schema:
-          $ref: '#/definitions/model.RegisterCategoryReq'
+        type: string
+      - description: 用户id
+        in: query
+        name: user_id
+        required: true
+        type: integer
       - description: 分类图标文件
         in: formData
         name: icon_file
@@ -680,12 +682,19 @@ paths:
       - 图标
     put:
       parameters:
-      - description: 图标信息
-        in: body
-        name: category
+      - description: ID 图标id
+        in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/model.ModifyCategoryReq'
+        type: integer
+      - description: 分类名称的中文示意
+        in: query
+        name: name
+        type: string
+      - description: 用户id
+        in: query
+        name: user_id
+        type: integer
       - description: 分类图标文件
         in: formData
         name: icon_file
@@ -707,12 +716,14 @@ paths:
   /api/v1/friend:
     delete:
       parameters:
-      - description: 删除信息
-        in: body
-        name: friend
-        required: true
-        schema:
-          $ref: '#/definitions/model.Friend'
+      - description: 被邀请人
+        in: query
+        name: invitee
+        type: integer
+      - description: 邀请人
+        in: query
+        name: inviter
+        type: integer
       responses:
         "204":
           description: No Content
@@ -730,12 +741,14 @@ paths:
   /api/v1/friend/invite:
     post:
       parameters:
-      - description: 邀请信息
-        in: body
-        name: friend
-        required: true
-        schema:
-          $ref: '#/definitions/model.Friend'
+      - description: 被邀请人
+        in: query
+        name: invitee
+        type: integer
+      - description: 邀请人
+        in: query
+        name: inviter
+        type: integer
       responses:
         "204":
           description: No Content
@@ -765,12 +778,16 @@ paths:
   /api/v1/transaction:
     delete:
       parameters:
-      - description: 交易信息
-        in: body
-        name: transaction
+      - description: 账本id
+        in: query
+        name: account_book_id
         required: true
-        schema:
-          $ref: '#/definitions/model.DeleteTransactionReq'
+        type: integer
+      - description: 交易记录id
+        in: query
+        name: id
+        required: true
+        type: integer
       responses:
         "204":
           description: No Content
@@ -799,7 +816,7 @@ paths:
         in: query
         name: end_time
         type: string
-      - description: 账户id
+      - description: 用户id
         in: query
         name: user_id
         type: integer
@@ -838,7 +855,7 @@ paths:
         name: category_id
         required: true
         type: integer
-      - description: 记录账户id
+      - description: 创建人id
         in: query
         name: creator_id
         required: true
@@ -852,7 +869,7 @@ paths:
         name: description
         type: string
       - collectionFormat: csv
-        description: RelatedUserIDs 默认包含创建人
+        description: RelatedUserIDs 涉及那些人
         in: query
         items:
           type: integer
@@ -886,7 +903,7 @@ paths:
         in: query
         name: account_book_id
         type: integer
-      - description: 交易数额
+      - description: 交易数额,数值需要>0
         in: query
         name: amount
         type: number
@@ -906,18 +923,19 @@ paths:
         in: query
         name: description
         type: string
-      - in: query
+      - description: 交易记录id
+        in: query
         name: id
         required: true
         type: integer
       - collectionFormat: csv
-        description: 涉及那些人
+        description: RelatedUserIDs 涉及那些人
         in: query
         items:
           type: integer
         name: related_user_ids
         type: array
-      - description: 类型:收入/支出
+      - description: 类型:收入/支出,交易类型必须是0或者1
         in: query
         name: type
         type: integer
@@ -938,7 +956,8 @@ paths:
   /api/v1/user:
     delete:
       parameters:
-      - in: query
+      - description: 用户id
+        in: query
         name: id
         required: true
         type: integer
@@ -958,7 +977,8 @@ paths:
       - 用户
     get:
       parameters:
-      - in: query
+      - description: 用户id
+        in: query
         name: id
         required: true
         type: integer
@@ -980,12 +1000,30 @@ paths:
       - 用户
     post:
       parameters:
-      - description: 用户信息
-        in: body
-        name: user
+      - description: 余额
+        in: query
+        name: balance
+        type: number
+      - description: 默认账本id
+        in: query
+        name: default_account_book_id
+        type: integer
+      - collectionFormat: csv
+        description: 朋友列表
+        in: query
+        items:
+          type: integer
+        name: friend
+        type: array
+      - description: 账号名称，昵称，全局唯一
+        in: query
+        name: name
         required: true
-        schema:
-          $ref: '#/definitions/model.RegisterUserReq'
+        type: string
+      - description: 余额详情
+        in: query
+        name: balance_detail
+        type: object
       - description: 用户头像
         in: formData
         name: icon_file
@@ -1009,12 +1047,33 @@ paths:
       - 用户
     put:
       parameters:
-      - description: 用户信息
-        in: body
-        name: user
+      - description: 余额
+        in: query
+        name: balance
+        type: number
+      - description: 默认账本id
+        in: query
+        name: default_account_book_id
+        type: integer
+      - collectionFormat: csv
+        description: 朋友列表
+        in: query
+        items:
+          type: integer
+        name: friend
+        type: array
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/model.ModifyUserReq'
+        type: integer
+      - description: 账号名称，昵称，全局唯一
+        in: query
+        name: name
+        type: string
+      - description: 余额详情
+        in: query
+        name: balance_detail
+        type: object
       - description: 用户头像
         in: formData
         name: icon_file

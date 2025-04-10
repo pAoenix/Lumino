@@ -19,12 +19,12 @@ type User struct {
 
 // GetUserReq -
 type GetUserReq struct {
-	ID uint `json:"id" form:"id" binding:"required"`
+	ID uint `json:"id" form:"id" binding:"required"` // 用户id
 }
 
 // DeleteUserReq -
 type DeleteUserReq struct {
-	ID uint `json:"id" form:"id" binding:"required"`
+	ID uint `json:"id" form:"id" binding:"required"` // 用户id
 }
 
 // ModifyUserReq -
@@ -34,10 +34,7 @@ type ModifyUserReq struct {
 	DefaultAccountBookID uint    `json:"default_account_book_id" form:"default_account_book_id"` // 默认账本id
 	Balance              float64 `json:"balance" form:"balance"`                                 // 余额
 	// BalanceDetail 余额详情
-	// @swagger:type object
-	// @additionalProperties type=number format=double
-	// @example {"temperature":36.5,"humidity":0.42}
-	BalanceDetail map[string]float64 `json:"balance_detail" form:"balance_detail" gorm:"type:json"`
+	BalanceDetail map[string]float64 `json:"balance_detail" form:"balance_detail" gorm:"type:json" swaggerignore:"true"`
 	Friend        pq.Int32Array      `json:"friend" form:"friend" gorm:"type:integer[]" swaggertype:"array,integer"` // 朋友列表
 	IconUrl       string             `json:"icon_url" form:"icon_url" swaggerignore:"true"`                          // 用户头像的对象存储地址
 }
@@ -48,9 +45,6 @@ type RegisterUserReq struct {
 	DefaultAccountBookID uint    `json:"default_account_book_id" form:"default_account_book_id"`               // 默认账本id
 	Balance              float64 `json:"balance" form:"balance"`                                               // 余额
 	// BalanceDetail 余额详情
-	// @swagger:type object
-	// @additionalProperties type=number format=double
-	// @example {"temperature":36.5,"humidity":0.42}
-	BalanceDetail map[string]float64 `json:"balance_detail" form:"balance_detail" gorm:"type:json"`
+	BalanceDetail map[string]float64 `json:"balance_detail" form:"balance_detail" gorm:"type:json" swaggerignore:"true"`
 	Friend        pq.Int32Array      `json:"friend" form:"friend" gorm:"type:integer[]" swaggertype:"array,integer"` // 朋友列表
 }
