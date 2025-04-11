@@ -24,8 +24,8 @@ func NewTransactionServer(transactionService *service.TransactionService) *Trans
 // @Tags 交易记录
 // @Param        transaction  query      model.RegisterTransactionReq  true  "交易信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/transaction [post]
 func (s *TransactionServer) Register(c *gin.Context) {
 	req := model.RegisterTransactionReq{}
@@ -46,8 +46,8 @@ func (s *TransactionServer) Register(c *gin.Context) {
 // @Tags 交易记录
 // @Param        transaction  query      model.GetTransactionReq  true  "交易信息"
 // @Success	200 {object}  []model.Transaction "交易记录"
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/transaction [get]
 func (s *TransactionServer) Get(c *gin.Context) {
 	req := model.GetTransactionReq{}
@@ -68,8 +68,8 @@ func (s *TransactionServer) Get(c *gin.Context) {
 // @Tags 交易记录
 // @Param        transaction  query      model.ModifyTransactionReq  true  "交易信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/transaction [put]
 func (s *TransactionServer) Modify(c *gin.Context) {
 	req := model.ModifyTransactionReq{}
@@ -98,8 +98,8 @@ func (s *TransactionServer) Modify(c *gin.Context) {
 // @Tags 交易记录
 // @Param        transaction  query      model.DeleteTransactionReq  true  "交易信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/transaction [delete]
 func (s *TransactionServer) Delete(c *gin.Context) {
 	req := model.DeleteTransactionReq{}
