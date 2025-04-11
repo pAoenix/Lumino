@@ -5,6 +5,7 @@ import (
 	"Lumino/common/http_error_code"
 	"Lumino/model"
 	"errors"
+	"github.com/jinzhu/copier"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 	"mime/multipart"
@@ -68,7 +69,11 @@ func (s *UserStore) Modify(modifyUserReq *model.ModifyUserReq) (user model.User,
 	if err = ParamsJudge(s.db, modifyUserReq.DefaultAccountBookID, modifyUserReq.Friend, &modifyUserReq.ID); err != nil {
 		return user, err
 	}
-	if err = s.db.Model(&model.User{}).Where("id = ?", modifyUserReq.ID).Updates(modifyUserReq).First(&user).Error; err != nil {
+	if err = copier.Copy(&user, &modifyUserReq); err != nil {
+		return user, http_error_code.Internal("服务内异常",
+			http_error_code.WithInternal(err))
+	}
+	if err = s.db.Model(&model.User{}).Where("id = ?", modifyUserReq.ID).Updates(user).First(&user).Error; err != nil {
 		if IsDuplicateError(err) {
 			return user, http_error_code.Conflict("用户名已注册",
 				http_error_code.WithInternal(err))
