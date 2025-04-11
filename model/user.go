@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/lib/pq"
-	"gorm.io/gorm"
 )
 
 const UserTableName = "users"
@@ -14,7 +13,7 @@ type BalanceDetail map[string]float64
 
 // User 用户账户
 type User struct {
-	gorm.Model
+	Model
 	Name                 string  `json:"name" form:"name" gorm:"uniqueIndex:idx_user_name"`      //账号名称，昵称，全局唯一
 	DefaultAccountBookID uint    `json:"default_account_book_id" form:"default_account_book_id"` // 默认账本id
 	Balance              float64 `json:"balance" form:"balance"`                                 // 余额
