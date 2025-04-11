@@ -42,9 +42,5 @@ type ModifyUserReq struct {
 
 // RegisterUserReq -
 type RegisterUserReq struct {
-	Name                 string             `json:"name" form:"name" gorm:"uniqueIndex:idx_user_name" binding:"required"`       //账号名称，昵称，全局唯一
-	DefaultAccountBookID *uint              `json:"default_account_book_id" form:"default_account_book_id"`                     // 默认账本id
-	Balance              float64            `json:"balance" form:"balance"`                                                     // 余额
-	Friend               *pq.Int32Array     `json:"friend" form:"friend" gorm:"type:integer[]" swaggertype:"array,integer"`     // 朋友列表
-	BalanceDetail        map[string]float64 `json:"balance_detail" form:"balance_detail" gorm:"type:json" swaggerignore:"true"` // 余额详情
+	Name string `json:"name" form:"name" binding:"required"` //账号名称，昵称，全局唯一
 }

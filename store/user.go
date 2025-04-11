@@ -28,18 +28,6 @@ func NewUserStore(db *DB, ossClient *common.OssClient) *UserStore {
 // Register -
 func (s *UserStore) Register(userReq *model.RegisterUserReq, file multipart.File) (user model.User, err error) {
 	user.Name = userReq.Name
-	user.BalanceDetail = userReq.BalanceDetail
-	user.Balance = userReq.Balance
-	if userReq.Friend != nil {
-		user.Friend = *userReq.Friend
-	}
-	if userReq.DefaultAccountBookID != nil {
-		user.DefaultAccountBookID = *userReq.DefaultAccountBookID
-	}
-	// 判断输入数据是否都真实有效
-	if err = ParamsJudge(s.db, userReq.DefaultAccountBookID, userReq.Friend); err != nil {
-		return user, err
-	}
 	// 1.初步注册
 	tx := s.db.Begin()
 	if err = tx.Model(model.User{}).Create(&user).Error; err != nil {
@@ -55,8 +43,7 @@ func (s *UserStore) Register(userReq *model.RegisterUserReq, file multipart.File
 	iconUrl := viper.GetString("oss.profilePhotoDir") + strconv.Itoa(int(user.ID)) + ".jpg"
 	if err = s.OssClient.UploadFile(iconUrl, file); err != nil {
 		tx.Rollback()
-		return user, http_error_code.Internal("头像上传云端失败",
-			http_error_code.WithInternal(err))
+		return user, err
 	}
 	// 3.更新文件地址
 	modifyReq := model.ModifyUserReq{ID: user.ID, IconUrl: iconUrl}

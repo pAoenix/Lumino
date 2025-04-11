@@ -38,7 +38,8 @@ func (o *OssClient) UploadFile(name string, file multipart.File) error {
 	result, err := o.Client.PutObject(context.TODO(), putRequest)
 	logger.Info(result)
 	if err != nil {
-		return err
+		return http_error_code.Internal("oss上传异常",
+			http_error_code.WithInternal(err))
 	}
 	return nil
 }
