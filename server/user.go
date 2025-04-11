@@ -2,6 +2,7 @@ package server
 
 import (
 	"Lumino/common"
+	"Lumino/common/http_error_code"
 	"Lumino/model"
 	"Lumino/service"
 	"github.com/gin-gonic/gin"
@@ -134,7 +135,7 @@ func (s *UserServer) Get(c *gin.Context) {
 		return
 	}
 	if user, err := s.UserService.Get(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		_ = c.Error(http_error_code.FromDB(err))
 		return
 	} else {
 		if ossUrl, err := s.OssClient.DownloadFile(user.IconUrl); err != nil {
