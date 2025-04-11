@@ -3,9 +3,11 @@ package middleware
 import (
 	"context"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"log/slog"
 	"os"
 	"runtime/debug"
+	"strings"
 	"time"
 
 	httperrors "Lumino/common/http_error_code"
@@ -66,6 +68,9 @@ func toAppError(err error) *httperrors.AppError {
 	switch e := err.(type) {
 	case *httperrors.AppError:
 		return e
+	case validator.ValidationErrors:
+		// 处理验证错误
+		return formatValidationError(e)
 	default:
 		// 可以添加更多特定错误的转换逻辑
 		return httperrors.Internal("服务器内部错误",
@@ -133,4 +138,84 @@ func respondError(c *gin.Context, err *httperrors.AppError) {
 	}
 
 	c.JSON(err.Code, response)
+}
+
+// RegisterCustomValidators 注册自定义验证器
+func RegisterCustomValidators(v *validator.Validate) {
+	// 示例：注册自定义验证器
+	v.RegisterValidation("strong_password", func(fl validator.FieldLevel) bool {
+		return len(fl.Field().String()) >= 8
+	})
+}
+
+// formatValidationError 格式化验证错误
+func formatValidationError(err validator.ValidationErrors) *httperrors.AppError {
+	var details []string
+	for _, e := range err {
+		details = append(details, fmt.Sprintf(
+			"字段 %s 验证失败 (%s)",
+			e.Field(),
+			e.Tag(),
+		))
+	}
+	return httperrors.BindingFailed("请求数据验证失败",
+		httperrors.WithInternal(err),
+		httperrors.WithDetail(strings.Join(details, "; ")),
+	)
+}
+
+// BindJSON 然后在BindJSON等函数中使用：
+func BindJSON(c *gin.Context, obj any) error {
+	if err := c.ShouldBindJSON(obj); err != nil {
+		if verr, ok := err.(validator.ValidationErrors); ok {
+			return formatValidationError(verr)
+		}
+		return httperrors.BindingFailed("无效的请求数据",
+			httperrors.WithInternal(err),
+			httperrors.WithDetail("json_binding_error"),
+		)
+	}
+	return nil
+}
+
+// Bind 封装了ShouldBind并返回自定义错误
+func Bind(c *gin.Context, obj any) error {
+	if err := c.ShouldBind(obj); err != nil {
+		if verr, ok := err.(validator.ValidationErrors); ok {
+			return formatValidationError(verr)
+		}
+		return httperrors.BindingFailed("无效的参数数据",
+			httperrors.WithInternal(err),
+			httperrors.WithDetail("json_binding_error"),
+		)
+	}
+	return nil
+}
+
+// BindQuery 封装了ShouldBindQuery
+func BindQuery(c *gin.Context, obj any) error {
+	if err := c.ShouldBindQuery(obj); err != nil {
+		if verr, ok := err.(validator.ValidationErrors); ok {
+			return formatValidationError(verr)
+		}
+		return httperrors.BindingFailed("无效的查询数据",
+			httperrors.WithInternal(err),
+			httperrors.WithDetail("json_binding_error"),
+		)
+	}
+	return nil
+}
+
+// BindURI 封装了ShouldBindUri
+func BindURI(c *gin.Context, obj any) error {
+	if err := c.ShouldBindUri(obj); err != nil {
+		if verr, ok := err.(validator.ValidationErrors); ok {
+			return formatValidationError(verr)
+		}
+		return httperrors.BindingFailed("无效的URI数据",
+			httperrors.WithInternal(err),
+			httperrors.WithDetail("json_binding_error"),
+		)
+	}
+	return nil
 }

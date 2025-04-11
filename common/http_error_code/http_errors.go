@@ -20,6 +20,8 @@ const (
 	ErrorTypeInternal       ErrorType = "internal"        // 500
 	ErrorTypeNotImplemented ErrorType = "not_implemented" // 501
 	ErrorTypeUnavailable    ErrorType = "unavailable"     // 503
+	// ErrorTypeBindingFailed should-bind重写
+	ErrorTypeBindingFailed ErrorType = "binding_failed" // 400
 )
 
 // AppError 增强版应用错误结构体
@@ -101,7 +103,7 @@ type ErrorOption func(*AppError)
 // WithDetail -
 func WithDetail(detail string) ErrorOption {
 	return func(e *AppError) {
-		e.Detail = detail + "请求参数具体参考swagger文档"
+		e.Detail = detail
 	}
 }
 
@@ -164,6 +166,11 @@ func NotImplemented(msg string, opts ...ErrorOption) *AppError {
 // Unavailable -
 func Unavailable(msg string, opts ...ErrorOption) *AppError {
 	return New(ErrorTypeUnavailable, msg, opts...)
+}
+
+// BindingFailed 新增绑定错误构造器
+func BindingFailed(msg string, opts ...ErrorOption) *AppError {
+	return New(ErrorTypeBindingFailed, msg, opts...)
 }
 
 // typeToCode 错误类型到HTTP状态码
