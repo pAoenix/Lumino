@@ -194,6 +194,8 @@ func typeToCode(typ ErrorType) int {
 		return http.StatusNotImplemented
 	case ErrorTypeUnavailable:
 		return http.StatusServiceUnavailable
+	case ErrorTypeBindingFailed:
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}
