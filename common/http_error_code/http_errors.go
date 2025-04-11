@@ -1,40 +1,52 @@
 package http_error_code
 
 import (
-	"errors"
 	"fmt"
-	"gorm.io/gorm"
 	"net/http"
+	"runtime"
+	"strings"
 )
 
 // ErrorType 定义错误分类
 type ErrorType string
 
 const (
-	ErrorTypeInvalidInput ErrorType = "invalid_input" // 400
-	ErrorTypeUnauthorized ErrorType = "unauthorized"  // 401
-	ErrorTypeForbidden    ErrorType = "forbidden"     // 403
-	ErrorTypeNotFound     ErrorType = "not_found"     // 404
-	ErrorTypeConflict     ErrorType = "conflict"      // 409
-	ErrorTypeInternal     ErrorType = "internal"      // 500
-	ErrorTypeUnavailable  ErrorType = "unavailable"   // 503
+	ErrorTypeInvalidInput   ErrorType = "invalid_input"   // 400
+	ErrorTypeUnauthorized   ErrorType = "unauthorized"    // 401
+	ErrorTypeForbidden      ErrorType = "forbidden"       // 403
+	ErrorTypeNotFound       ErrorType = "not_found"       // 404
+	ErrorTypeConflict       ErrorType = "conflict"        // 409
+	ErrorTypeRateLimited    ErrorType = "rate_limited"    // 429
+	ErrorTypeInternal       ErrorType = "internal"        // 500
+	ErrorTypeNotImplemented ErrorType = "not_implemented" // 501
+	ErrorTypeUnavailable    ErrorType = "unavailable"     // 503
 )
 
-// AppError 应用错误结构体
+// AppError 增强版应用错误结构体
 type AppError struct {
-	Type     ErrorType `json:"type"`             // 错误类型
-	Code     int       `json:"code"`             // HTTP状态码
-	Message  string    `json:"message"`          // 用户友好消息
-	Detail   string    `json:"detail,omitempty"` // 调试细节
-	Internal error     `json:"-"`                // 内部错误(不暴露给客户端)
+	Type        ErrorType `json:"type"`              // 错误类型
+	Code        int       `json:"code"`              // HTTP状态码
+	Message     string    `json:"message"`           // 用户友好消息
+	Detail      string    `json:"detail,omitempty"`  // 调试细节
+	Internal    error     `json:"-"`                 // 内部错误(不暴露)
+	StackTrace  []string  `json:"-"`                 // 调用堆栈(仅开发环境)
+	ServiceName string    `json:"service,omitempty"` // 服务名称
 }
 
 // Error 实现error接口
 func (e *AppError) Error() string {
-	if e.Internal != nil {
-		return fmt.Sprintf("%s: %v", e.Message, e.Internal)
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("[%s] %s", e.Type, e.Message))
+
+	if e.Detail != "" {
+		sb.WriteString(fmt.Sprintf(" (detail: %s)", e.Detail))
 	}
-	return e.Message
+
+	if e.Internal != nil {
+		sb.WriteString(fmt.Sprintf(": %v", e.Internal))
+	}
+
+	return sb.String()
 }
 
 // Unwrap 支持errors.Unwrap
@@ -42,52 +54,116 @@ func (e *AppError) Unwrap() error {
 	return e.Internal
 }
 
+// WithStack 添加调用堆栈
+func (e *AppError) WithStack() *AppError {
+	if e.StackTrace == nil {
+		pc := make([]uintptr, 10)
+		n := runtime.Callers(2, pc)
+		if n > 0 {
+			frames := runtime.CallersFrames(pc[:n])
+			e.StackTrace = make([]string, 0, n)
+			for {
+				frame, more := frames.Next()
+				e.StackTrace = append(e.StackTrace, fmt.Sprintf("%s:%d %s", frame.File, frame.Line, frame.Function))
+				if !more {
+					break
+				}
+			}
+		}
+	}
+	return e
+}
+
+// WithService 标记服务名称
+func (e *AppError) WithService(name string) *AppError {
+	e.ServiceName = name
+	return e
+}
+
 // New 创建新错误
-func New(typ ErrorType, msg string, detail string, err error) *AppError {
-	code := typeToCode(typ)
-	return &AppError{
-		Type:     typ,
-		Code:     code,
-		Message:  msg,
-		Detail:   detail,
-		Internal: err,
+func New(typ ErrorType, msg string, opts ...ErrorOption) *AppError {
+	err := &AppError{
+		Type:    typ,
+		Code:    typeToCode(typ),
+		Message: msg,
+	}
+
+	for _, opt := range opts {
+		opt(err)
+	}
+
+	return err
+}
+
+// ErrorOption 错误配置选项
+type ErrorOption func(*AppError)
+
+// WithDetail -
+func WithDetail(detail string) ErrorOption {
+	return func(e *AppError) {
+		e.Detail = detail + "请求参数具体参考swagger文档"
+	}
+}
+
+// WithInternal -
+func WithInternal(err error) ErrorOption {
+	return func(e *AppError) {
+		e.Internal = err
+	}
+}
+
+// WithStack -
+func WithStack() ErrorOption {
+	return func(e *AppError) {
+		e.WithStack()
 	}
 }
 
 // 预定义错误构造器
 
 // BadRequest -
-func BadRequest(msg, detail string, err error) *AppError {
-	return New(ErrorTypeInvalidInput, msg, detail, err)
+func BadRequest(msg string, opts ...ErrorOption) *AppError {
+	return New(ErrorTypeInvalidInput, msg, opts...)
 }
 
 // Unauthorized -
-func Unauthorized(msg, detail string, err error) *AppError {
-	return New(ErrorTypeUnauthorized, msg, detail, err)
+func Unauthorized(msg string, opts ...ErrorOption) *AppError {
+	return New(ErrorTypeUnauthorized, msg, opts...)
+}
+
+// Forbidden -
+func Forbidden(msg string, opts ...ErrorOption) *AppError {
+	return New(ErrorTypeForbidden, msg, opts...)
 }
 
 // NotFound -
-func NotFound(msg, detail string, err error) *AppError {
-	return New(ErrorTypeNotFound, msg, detail, err)
+func NotFound(msg string, opts ...ErrorOption) *AppError {
+	return New(ErrorTypeNotFound, msg, opts...)
 }
 
-// InternalServer -
-func InternalServer(msg, detail string, err error) *AppError {
-	return New(ErrorTypeInternal, msg, detail, err)
+// Conflict -
+func Conflict(msg string, opts ...ErrorOption) *AppError {
+	return New(ErrorTypeConflict, msg, opts...)
 }
 
-// FromDB 从GORM错误转换
-func FromDB(err error) *AppError {
-	switch {
-	case errors.Is(err, gorm.ErrRecordNotFound):
-		return BadRequest("请求内容不存在", "", err)
-	case errors.Is(err, gorm.ErrDuplicatedKey):
-		return New(ErrorTypeConflict, "数据冲突", "", err)
-	case errors.Is(err, gorm.ErrInvalidTransaction):
-		return InternalServer("数据库事务错误", "", err)
-	default:
-		return InternalServer("数据库操作失败", "", err)
-	}
+// RateLimited -
+func RateLimited(msg string, opts ...ErrorOption) *AppError {
+	return New(ErrorTypeRateLimited, msg, opts...)
+}
+
+// Internal -
+func Internal(msg string, opts ...ErrorOption) *AppError {
+	return New(ErrorTypeInternal, msg, opts...)
+}
+
+// NotImplemented -
+func NotImplemented(msg string, opts ...ErrorOption) *AppError {
+	return New(ErrorTypeNotImplemented, msg, opts...)
+}
+
+// Unavailable -
+func Unavailable(msg string, opts ...ErrorOption) *AppError {
+	return New(ErrorTypeUnavailable, msg, opts...)
 }
 
 // typeToCode 错误类型到HTTP状态码
@@ -103,8 +179,12 @@ func typeToCode(typ ErrorType) int {
 		return http.StatusNotFound
 	case ErrorTypeConflict:
 		return http.StatusConflict
+	case ErrorTypeRateLimited:
+		return http.StatusTooManyRequests
 	case ErrorTypeInternal:
 		return http.StatusInternalServerError
+	case ErrorTypeNotImplemented:
+		return http.StatusNotImplemented
 	case ErrorTypeUnavailable:
 		return http.StatusServiceUnavailable
 	default:
