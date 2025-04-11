@@ -141,12 +141,12 @@ func (s *UserServer) Get(c *gin.Context) {
 // @Router		/api/v1/user [delete]
 func (s *UserServer) Delete(c *gin.Context) {
 	req := model.DeleteUserReq{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
 	if err := s.UserService.Delete(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.Error(err)
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)

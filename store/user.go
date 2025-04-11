@@ -92,5 +92,8 @@ func (s *UserStore) BatchGetByIDs(userIDs []int) (users []model.User, err error)
 
 // Delete -
 func (s *UserStore) Delete(userReq *model.DeleteUserReq) error {
+	if err := ParamsJudge(s.db, nil, nil, &userReq.ID); err != nil {
+		return err
+	}
 	return s.db.Model(model.User{}).Delete(&model.User{Model: model.Model{ID: userReq.ID}}).Error
 }
