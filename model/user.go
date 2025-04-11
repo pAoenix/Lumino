@@ -1,12 +1,20 @@
 package model
 
-import "github.com/lib/pq"
+import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
+	"github.com/lib/pq"
+	"gorm.io/gorm"
+)
 
 const UserTableName = "users"
 
+type BalanceDetail map[string]float64
+
 // User 用户账户
 type User struct {
-	Model
+	gorm.Model
 	Name                 string  `json:"name" form:"name" gorm:"uniqueIndex:idx_user_name"`      //账号名称，昵称，全局唯一
 	DefaultAccountBookID uint    `json:"default_account_book_id" form:"default_account_book_id"` // 默认账本id
 	Balance              float64 `json:"balance" form:"balance"`                                 // 余额
@@ -14,9 +22,9 @@ type User struct {
 	// @swagger:type object
 	// @additionalProperties type=number format=double
 	// @example {"temperature":36.5,"humidity":0.42}
-	BalanceDetail map[string]float64 `json:"balance_detail" form:"balance_detail" gorm:"type:json"`
-	Friend        pq.Int32Array      `json:"friend" form:"friend" gorm:"type:integer[]" swaggertype:"array,integer"` // 朋友列表
-	IconUrl       string             `json:"icon_url" form:"icon_url"`                                               // 用户头像的对象存储地址
+	BalanceDetail BalanceDetail `json:"balance_detail" form:"balance_detail" gorm:"type:json"`
+	Friend        pq.Int32Array `json:"friend" form:"friend" gorm:"type:integer[]" swaggertype:"array,integer"` // 朋友列表
+	IconUrl       string        `json:"icon_url" form:"icon_url"`                                               // 用户头像的对象存储地址
 }
 
 // GetUserReq -
@@ -33,14 +41,42 @@ type DeleteUserReq struct {
 type ModifyUserReq struct {
 	ID                   uint               `json:"id" form:"id" binding:"required"`
 	Name                 string             `json:"name" form:"name" gorm:"uniqueIndex:idx_user_name"`                          //账号名称，昵称，全局唯一
-	DefaultAccountBookID uint               `json:"default_account_book_id" form:"default_account_book_id"`                     // 默认账本id
+	DefaultAccountBookID *uint              `json:"default_account_book_id" form:"default_account_book_id"`                     // 默认账本id
 	Balance              float64            `json:"balance" form:"balance"`                                                     // 余额
-	Friend               pq.Int32Array      `json:"friend" form:"friend" gorm:"type:integer[]" swaggertype:"array,integer"`     // 朋友列表
+	Friend               *pq.Int32Array     `json:"friend" form:"friend" gorm:"type:integer[]" swaggertype:"array,integer"`     // 朋友列表
 	IconUrl              string             `json:"icon_url" form:"icon_url" swaggerignore:"true"`                              // 用户头像的对象存储地址
 	BalanceDetail        map[string]float64 `json:"balance_detail" form:"balance_detail" gorm:"type:json" swaggerignore:"true"` // 余额详情
+}
+
+// ModifyProfilePhotoReq -
+type ModifyProfilePhotoReq struct {
+	ID uint `json:"id" form:"id" binding:"required"`
 }
 
 // RegisterUserReq -
 type RegisterUserReq struct {
 	Name string `json:"name" form:"name" binding:"required"` //账号名称，昵称，全局唯一
+}
+
+// Scan - 重写，支持map类型pg
+func (bm *BalanceDetail) Scan(value interface{}) error {
+	if value == nil {
+		*bm = nil
+		return nil
+	}
+
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New("invalid balance detail data")
+	}
+
+	return json.Unmarshal(bytes, bm)
+}
+
+// Value - 重写，支持map类型pg
+func (bm BalanceDetail) Value() (driver.Value, error) {
+	if bm == nil {
+		return nil, nil
+	}
+	return json.Marshal(bm)
 }

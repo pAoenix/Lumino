@@ -86,7 +86,7 @@ func (s *AccountBookStore) Merge(mergeAccountBookReq *model.MergeAccountBookReq)
 	tx := s.db.Begin()
 	// 账本加锁
 	accountBook := model.AccountBook{}
-	if err := tx.Model(model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
+	if err := tx.Model(&model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
 		Where("id = ?", mergeAccountBookReq.MergeAccountBookID).
 		First(&accountBook).Error; err != nil {
 		tx.Rollback() // 回滚事务
@@ -137,7 +137,7 @@ func (s *AccountBookStore) Merge(mergeAccountBookReq *model.MergeAccountBookReq)
 		return err
 	}
 	// 删除账本
-	if err := tx.Model(model.AccountBook{}).
+	if err := tx.Model(&model.AccountBook{}).
 		Delete(&model.AccountBook{Model: model.Model{ID: mergeAccountBookReq.MergedAccountBookID}}).
 		Error; err != nil {
 		tx.Rollback()

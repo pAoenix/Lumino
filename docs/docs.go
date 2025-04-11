@@ -1236,12 +1236,6 @@ const docTemplate = `{
                         "description": "余额详情",
                         "name": "balance_detail",
                         "in": "query"
-                    },
-                    {
-                        "type": "file",
-                        "description": "用户头像",
-                        "name": "icon_file",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1272,39 +1266,11 @@ const docTemplate = `{
                 "summary": "注册用户信息",
                 "parameters": [
                     {
-                        "type": "number",
-                        "description": "余额",
-                        "name": "balance",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "默认账本id",
-                        "name": "default_account_book_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        },
-                        "collectionFormat": "csv",
-                        "description": "朋友列表",
-                        "name": "friend",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "description": "账号名称，昵称，全局唯一",
                         "name": "name",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "object",
-                        "description": "余额详情",
-                        "name": "balance_detail",
-                        "in": "query"
                     },
                     {
                         "type": "file",
@@ -1347,6 +1313,45 @@ const docTemplate = `{
                         "name": "id",
                         "in": "query",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "$ref": "#/definitions/http_error_code.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "$ref": "#/definitions/http_error_code.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/profile-photo": {
+            "put": {
+                "tags": [
+                    "用户"
+                ],
+                "summary": "修改用户头像",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "用户头像",
+                        "name": "icon_file",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1509,6 +1514,12 @@ const docTemplate = `{
                 }
             }
         },
+        "model.BalanceDetail": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "number"
+            }
+        },
         "model.Category": {
             "type": "object",
             "properties": {
@@ -1609,10 +1620,11 @@ const docTemplate = `{
                 },
                 "balance_detail": {
                     "description": "BalanceDetail 余额详情\n@swagger:type object\n@additionalProperties type=number format=double\n@example {\"temperature\":36.5,\"humidity\":0.42}",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "number"
-                    }
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.BalanceDetail"
+                        }
+                    ]
                 },
                 "created_at": {
                     "description": "创建时间",

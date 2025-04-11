@@ -32,6 +32,19 @@ func (s *UserService) Register(userReq *model.RegisterUserReq, fileHeader *multi
 	return s.UserStore.Register(userReq, file)
 }
 
+// ModifyProfilePhoto -
+func (s *UserService) ModifyProfilePhoto(userReq *model.ModifyProfilePhotoReq, fileHeader *multipart.FileHeader) error {
+	// 1. 打开文件
+	file, err := fileHeader.Open()
+	if err != nil {
+		return http_error_code.Internal("打开文件失败",
+			http_error_code.WithInternal(err))
+	}
+	defer file.Close()
+	// 2. 注册用户
+	return s.UserStore.ModifyProfilePhoto(userReq, file)
+}
+
 // Modify -
 func (s *UserService) Modify(modifyUserReq *model.ModifyUserReq) (user model.User, err error) {
 	return s.UserStore.Modify(modifyUserReq)

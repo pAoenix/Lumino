@@ -12,7 +12,7 @@ import (
 func ParamsJudge(db *DB, AccountBookID *uint, userIDs *pq.Int32Array, userID *uint) error {
 	if AccountBookID != nil {
 		accountBook := model.AccountBook{}
-		if err := db.Model(model.AccountBook{}).Where("id = ?", *AccountBookID).First(&accountBook).Error; err != nil {
+		if err := db.Model(&model.AccountBook{}).Where("id = ?", *AccountBookID).First(&accountBook).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return http_error_code.BadRequest("账本不存在")
 			}
@@ -32,7 +32,7 @@ func ParamsJudge(db *DB, AccountBookID *uint, userIDs *pq.Int32Array, userID *ui
 	}
 	if userID != nil {
 		user := model.User{}
-		if err := db.Model(model.User{}).Where("id = ?", *userID).First(&user).Error; err != nil {
+		if err := db.Model(&model.User{}).Where("id = ?", *userID).First(&user).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return http_error_code.BadRequest("用户不存在")
 			}

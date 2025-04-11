@@ -101,6 +101,10 @@ definitions:
           $ref: '#/definitions/model.User'
         type: array
     type: object
+  model.BalanceDetail:
+    additionalProperties:
+      type: number
+    type: object
   model.Category:
     properties:
       created_at:
@@ -174,14 +178,13 @@ definitions:
         description: 余额
         type: number
       balance_detail:
-        additionalProperties:
-          type: number
+        allOf:
+        - $ref: '#/definitions/model.BalanceDetail'
         description: |-
           BalanceDetail 余额详情
           @swagger:type object
           @additionalProperties type=number format=double
           @example {"temperature":36.5,"humidity":0.42}
-        type: object
       created_at:
         description: 创建时间
         type: string
@@ -1018,30 +1021,11 @@ paths:
       - 用户
     post:
       parameters:
-      - description: 余额
-        in: query
-        name: balance
-        type: number
-      - description: 默认账本id
-        in: query
-        name: default_account_book_id
-        type: integer
-      - collectionFormat: csv
-        description: 朋友列表
-        in: query
-        items:
-          type: integer
-        name: friend
-        type: array
       - description: 账号名称，昵称，全局唯一
         in: query
         name: name
         required: true
         type: string
-      - description: 余额详情
-        in: query
-        name: balance_detail
-        type: object
       - description: 用户头像
         in: formData
         name: icon_file
@@ -1092,10 +1076,6 @@ paths:
         in: query
         name: balance_detail
         type: object
-      - description: 用户头像
-        in: formData
-        name: icon_file
-        type: file
       responses:
         "200":
           description: 用户修改后结果
@@ -1110,6 +1090,31 @@ paths:
           schema:
             $ref: '#/definitions/http_error_code.AppError'
       summary: 修改用户信息
+      tags:
+      - 用户
+  /api/v1/user/profile-photo:
+    put:
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: integer
+      - description: 用户头像
+        in: formData
+        name: icon_file
+        type: file
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 请求体异常
+          schema:
+            $ref: '#/definitions/http_error_code.AppError'
+        "500":
+          description: 服务端异常
+          schema:
+            $ref: '#/definitions/http_error_code.AppError'
+      summary: 修改用户头像
       tags:
       - 用户
 securityDefinitions:

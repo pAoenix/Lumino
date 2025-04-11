@@ -52,6 +52,7 @@ func (r *Router) Handler() http.Handler {
 	{
 		user.POST("", r.UserServer.Register)
 		user.PUT("", r.UserServer.Modify)
+		user.PUT("profile-photo", r.UserServer.ModifyProfilePhoto)
 		user.GET("", r.UserServer.Get)
 		user.DELETE("", r.UserServer.Delete)
 	}
