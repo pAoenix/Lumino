@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+const TransactionTableName = "transactions"
 const IncomeType = 1
 const SpendingType = 2 //
 

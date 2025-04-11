@@ -140,6 +140,7 @@ func (s *AccountBookStore) Merge(mergeAccountBookReq *model.MergeAccountBookReq)
 	if err := tx.Model(model.AccountBook{}).
 		Delete(&model.AccountBook{Model: model.Model{ID: mergeAccountBookReq.MergedAccountBookID}}).
 		Error; err != nil {
+		tx.Rollback()
 		return err
 	}
 	return tx.Commit().Error

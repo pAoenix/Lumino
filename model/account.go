@@ -1,5 +1,7 @@
 package model
 
+const AccountTableName = "accounts"
+
 // Account 账户，类似支付宝，银行卡
 type Account struct {
 	Model

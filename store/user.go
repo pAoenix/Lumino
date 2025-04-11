@@ -1,32 +1,72 @@
 package store
 
 import (
+	"Lumino/common"
 	"Lumino/common/http_error_code"
 	"Lumino/model"
 	"errors"
+	"github.com/spf13/viper"
 	"gorm.io/gorm"
+	"mime/multipart"
+	"strconv"
 )
 
 // UserStore -
 type UserStore struct {
-	db *DB
+	db        *DB
+	OssClient *common.OssClient
 }
 
 // NewUserStore -
-func NewUserStore(db *DB) *UserStore {
+func NewUserStore(db *DB, ossClient *common.OssClient) *UserStore {
 	return &UserStore{
-		db: db,
+		db:        db,
+		OssClient: ossClient,
 	}
 }
 
 // Register -
-func (s *UserStore) Register(userReq *model.RegisterUserReq) (user model.User, err error) {
+func (s *UserStore) Register(userReq *model.RegisterUserReq, file multipart.File) (user model.User, err error) {
 	user.Name = userReq.Name
 	user.BalanceDetail = userReq.BalanceDetail
 	user.Balance = userReq.Balance
-	user.Friend = userReq.Friend
-	user.DefaultAccountBookID = userReq.DefaultAccountBookID
-	err = s.db.Model(model.User{}).Create(&user).Error
+	//user.Friend = *userReq.Friend
+	//user.DefaultAccountBookID = *userReq.DefaultAccountBookID
+	if err = ParamsJudge(s.db, userReq.DefaultAccountBookID, userReq.Friend); err != nil {
+		return user, err
+	}
+	// 1.初步注册
+	tx := s.db.Begin()
+	if err = tx.Model(model.User{}).Create(&user).Error; err != nil {
+		tx.Rollback()
+		if IsDuplicateError(err) {
+			return user, http_error_code.Conflict("用户名已注册",
+				http_error_code.WithInternal(err))
+		}
+		return user, http_error_code.Internal("注册用户失败",
+			http_error_code.WithInternal(err))
+	}
+	// 2.数据上传
+	iconUrl := viper.GetString("oss.profilePhotoDir") + strconv.Itoa(int(user.ID)) + ".jpg"
+	if err = s.OssClient.UploadFile(iconUrl, file); err != nil {
+		tx.Rollback()
+		return user, http_error_code.Internal("头像上传云端失败",
+			http_error_code.WithInternal(err))
+	}
+	// 3.更新文件地址
+	modifyReq := model.ModifyUserReq{ID: user.ID, IconUrl: iconUrl}
+	user.IconUrl = iconUrl
+	if err = tx.Model(model.User{}).Where("id = ?", user.ID).Updates(&modifyReq).Error; err != nil {
+		tx.Rollback()
+		return user, http_error_code.Internal("注册用户失败",
+			http_error_code.WithInternal(err))
+	}
+	// 4. 提交事务
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return user, http_error_code.Internal("注册用户失败",
+			http_error_code.WithInternal(err))
+	}
 	return
 }
 

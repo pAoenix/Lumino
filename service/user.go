@@ -1,8 +1,10 @@
 package service
 
 import (
+	"Lumino/common/http_error_code"
 	"Lumino/model"
 	"Lumino/store"
+	"mime/multipart"
 )
 
 // UserService -
@@ -18,8 +20,16 @@ func NewUserService(UserStore *store.UserStore) *UserService {
 }
 
 // Register -
-func (s *UserService) Register(userReq *model.RegisterUserReq) (user model.User, err error) {
-	return s.UserStore.Register(userReq)
+func (s *UserService) Register(userReq *model.RegisterUserReq, fileHeader *multipart.FileHeader) (user model.User, err error) {
+	// 1. 打开文件
+	file, err := fileHeader.Open()
+	if err != nil {
+		return user, http_error_code.Internal("打开文件失败",
+			http_error_code.WithInternal(err))
+	}
+	defer file.Close()
+	// 注册用户
+	return s.UserStore.Register(userReq, file)
 }
 
 // Modify -

@@ -4,11 +4,14 @@ import (
 	"Lumino/common"
 	"Lumino/common/logger"
 	"Lumino/model"
+	"errors"
 	"fmt"
+	"github.com/lib/pq"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	pgLogger "gorm.io/gorm/logger"
+	"strings"
 	"time"
 )
 
@@ -65,4 +68,29 @@ func newDB(driver, connectStr string, logLevel pgLogger.LogLevel) *DB {
 		dirver: driver,
 		config: connectStr,
 	}
+}
+
+// IsDuplicateError 唯一索引判断
+func IsDuplicateError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	// 检查GORM v2的通用错误
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		return true
+	}
+
+	// 检查PostgreSQL错误
+	var pqErr *pq.Error
+	if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		return true
+	}
+
+	// 检查MySQL/SQLite等错误特征
+	errStr := strings.ToLower(err.Error())
+	return strings.Contains(errStr, "duplicate entry") ||
+		strings.Contains(errStr, "unique constraint") ||
+		strings.Contains(errStr, "duplicate key value") ||
+		strings.Contains(errStr, "violates unique constraint")
 }

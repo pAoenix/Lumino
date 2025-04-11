@@ -32,11 +32,11 @@ func (r *Router) Handler() http.Handler {
 	gin.DisableConsoleColor()
 	e := gin.New()
 	e.MaxMultipartMemory = 8 << 20 // 8MB
-	e.Use(gin.Recovery())
 	e.Use(middleware.DB(r.DB))
 	e.Use(middleware.Cors())
 	e.Use(middleware.Log(logger.Logger))
 	e.Use(middleware.ErrorHandler())
+	e.Use(gin.Recovery())
 	e.GET("api/v1/health", r.HealthServer.Health)
 	docs.SwaggerInfo.BasePath = ""
 	e.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

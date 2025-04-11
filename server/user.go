@@ -2,6 +2,7 @@ package server
 
 import (
 	"Lumino/common"
+	"Lumino/common/http_error_code"
 	"Lumino/model"
 	"Lumino/router/middleware"
 	"Lumino/service"
@@ -37,43 +38,24 @@ func NewUserServer(userService *service.UserService, client *common.OssClient) *
 // @Router		/api/v1/user [post]
 func (s *UserServer) Register(c *gin.Context) {
 	req := model.RegisterUserReq{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
 	// 获取上传的文件
 	fileHeader, err := c.FormFile("icon_file")
 	if err != nil {
-		c.JSON(400, gin.H{"error": "需要注册头像"})
+		c.Error(http_error_code.BadRequest("需要注册头像",
+			http_error_code.WithInternal(err)))
 		return
 	}
-	// 2. 打开文件
-	file, err := fileHeader.Open()
+	// 注册入库
+	resp, err := s.UserService.Register(&req, fileHeader)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "打开文件失败: " + err.Error()})
+		c.Error(err) // 交给中间件处理
 		return
 	}
-	// 3. 注册入库
-	resp, err := s.UserService.Register(&req)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	}
-	// 4. 上传文件
-	defer file.Close()
-	iconUrl := viper.GetString("oss.profilePhotoDir") + strconv.Itoa(int(resp.ID)) + ".jpg"
-	if err := s.OssClient.UploadFile(iconUrl, file); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	}
-	// 5. 更新icon地址
-	modifyReq := model.ModifyUserReq{ID: resp.ID, IconUrl: iconUrl}
-	if resp, err := s.UserService.Modify(&modifyReq); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	} else {
-		c.JSON(http.StatusOK, resp)
-	}
+	c.JSON(http.StatusOK, resp)
 	return
 }
 

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-playground/validator/v10"
+	"github.com/spf13/viper"
 	"log/slog"
-	"os"
 	"runtime/debug"
 	"strings"
 	"time"
@@ -123,7 +123,7 @@ func errorLevel(code int) slog.Level {
 // respondError 响应错误给客户端
 func respondError(c *gin.Context, err *httperrors.AppError) {
 	// 在生产环境隐藏内部细节
-	isProduction := os.Getenv("ENV") == "production"
+	isProduction := viper.GetString("env") == "production"
 
 	response := gin.H{
 		"type":    err.Type,
