@@ -652,13 +652,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -702,13 +702,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -780,13 +780,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }

@@ -630,11 +630,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 删除图标
       tags:
       - 图标
@@ -659,11 +659,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 获取图标
       tags:
       - 图标
@@ -723,11 +723,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 修改图标
       tags:
       - 图标
