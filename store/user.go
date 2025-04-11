@@ -30,8 +30,13 @@ func (s *UserStore) Register(userReq *model.RegisterUserReq, file multipart.File
 	user.Name = userReq.Name
 	user.BalanceDetail = userReq.BalanceDetail
 	user.Balance = userReq.Balance
-	//user.Friend = *userReq.Friend
-	//user.DefaultAccountBookID = *userReq.DefaultAccountBookID
+	if userReq.Friend != nil {
+		user.Friend = *userReq.Friend
+	}
+	if userReq.DefaultAccountBookID != nil {
+		user.DefaultAccountBookID = *userReq.DefaultAccountBookID
+	}
+	// 判断输入数据是否都真实有效
 	if err = ParamsJudge(s.db, userReq.DefaultAccountBookID, userReq.Friend); err != nil {
 		return user, err
 	}
