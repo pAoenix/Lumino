@@ -1,7 +1,10 @@
 package store
 
 import (
+	"Lumino/common/http_error_code"
 	"Lumino/model"
+	"errors"
+	"gorm.io/gorm"
 )
 
 // UserStore -
@@ -38,7 +41,11 @@ func (s *UserStore) Modify(modifyUserReq *model.ModifyUserReq) (user model.User,
 // Get -
 func (s *UserStore) Get(userReq *model.GetUserReq) (user model.User, err error) {
 	if err = s.db.Model(model.User{}).Where("id = ?", userReq.ID).First(&user).Error; err != nil {
-		return user, err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return user, http_error_code.BadRequest("用户ID不存在")
+		}
+		return user, http_error_code.Internal("服务内部错误",
+			http_error_code.WithInternal(err))
 	}
 	return
 }

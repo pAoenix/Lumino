@@ -2,8 +2,8 @@ package server
 
 import (
 	"Lumino/common"
-	"Lumino/common/http_error_code"
 	"Lumino/model"
+	"Lumino/router/middleware"
 	"Lumino/service"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -32,8 +32,8 @@ func NewUserServer(userService *service.UserService, client *common.OssClient) *
 // @Param balance_detail query object false "余额详情" collectionFormat: multi
 // @Param        icon_file formData file true "用户头像"
 // @Success	200 {object}  model.User "注册结果"
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/user [post]
 func (s *UserServer) Register(c *gin.Context) {
 	req := model.RegisterUserReq{}
@@ -84,8 +84,8 @@ func (s *UserServer) Register(c *gin.Context) {
 // @Param balance_detail query object false "余额详情" collectionFormat: multi
 // @Param        icon_file formData file false "用户头像"
 // @Success	200 {object}  model.User "用户修改后结果"
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/user [put]
 func (s *UserServer) Modify(c *gin.Context) {
 	req := model.ModifyUserReq{}
@@ -125,21 +125,21 @@ func (s *UserServer) Modify(c *gin.Context) {
 // @Tags 用户
 // @Param        user  query      model.GetUserReq  true  "用户信息"
 // @Success	200 {object}  model.User "用户结果"
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/user [get]
 func (s *UserServer) Get(c *gin.Context) {
 	req := model.GetUserReq{}
-	if err := c.ShouldBindQuery(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.BindQuery(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
 	if user, err := s.UserService.Get(&req); err != nil {
-		_ = c.Error(http_error_code.FromDB(err))
+		c.Error(err) // 交给中间件处理
 		return
 	} else {
 		if ossUrl, err := s.OssClient.DownloadFile(user.IconUrl); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+			c.Error(err) // 交给中间件处理
 			return
 		} else {
 			user.IconUrl = ossUrl
@@ -154,8 +154,8 @@ func (s *UserServer) Get(c *gin.Context) {
 // @Tags 用户
 // @Param        user  query      model.DeleteUserReq  true  "用户信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/user [delete]
 func (s *UserServer) Delete(c *gin.Context) {
 	req := model.DeleteUserReq{}

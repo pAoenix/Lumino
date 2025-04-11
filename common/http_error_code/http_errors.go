@@ -26,13 +26,13 @@ const (
 
 // AppError 增强版应用错误结构体
 type AppError struct {
-	Type        ErrorType `json:"type"`              // 错误类型
-	Code        int       `json:"code"`              // HTTP状态码
-	Message     string    `json:"message"`           // 用户友好消息
-	Detail      string    `json:"detail,omitempty"`  // 调试细节
-	Internal    error     `json:"-"`                 // 内部错误(不暴露)
-	StackTrace  []string  `json:"-"`                 // 调用堆栈(仅开发环境)
-	ServiceName string    `json:"service,omitempty"` // 服务名称
+	Type        ErrorType `json:"type" swaggertype:"string"` // 错误类型
+	Code        int       `json:"code"`                      // HTTP状态码
+	Message     string    `json:"message"`                   // 用户友好消息
+	Detail      string    `json:"detail,omitempty"`          // 调试细节
+	Internal    error     `json:"-"`                         // 内部错误(不暴露)
+	StackTrace  []string  `json:"-"`                         // 调用堆栈(仅开发环境)
+	ServiceName string    `json:"service,omitempty"`         // 服务名称
 }
 
 // Error 实现error接口

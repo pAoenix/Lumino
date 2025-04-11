@@ -20,7 +20,7 @@ func NewHealthServer() *HealthServer {
 // @Summary	健康检查
 // @Tags 健康检查
 // @Success	200
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/health [get]
 func (s *HealthServer) Health(c *gin.Context) {
 	hostname, _ := os.Hostname()

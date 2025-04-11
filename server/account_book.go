@@ -25,8 +25,8 @@ func NewAccountBookServer(accountBookService *service.AccountBookService) *Accou
 // @Tags 账本
 // @Param        account_book  query      model.RegisterAccountBookReq  true  "账本信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account-book [post]
 func (s *AccountBookServer) Register(c *gin.Context) {
 	req := model.RegisterAccountBookReq{}
@@ -47,8 +47,8 @@ func (s *AccountBookServer) Register(c *gin.Context) {
 // @Tags 账本
 // @Param        account_book  query      model.MergeAccountBookReq  true  "账本id信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account-book/merge [post]
 func (s *AccountBookServer) Merge(c *gin.Context) {
 	req := model.MergeAccountBookReq{}
@@ -69,8 +69,8 @@ func (s *AccountBookServer) Merge(c *gin.Context) {
 // @Tags 账本
 // @Param        account_book  query      model.GetAccountBookReq  true  "账本id信息"
 // @Success	200 {object}  model.AccountBookResp "账本结果"
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account-book [get]
 func (s *AccountBookServer) Get(c *gin.Context) {
 	req := model.GetAccountBookReq{}
@@ -91,8 +91,8 @@ func (s *AccountBookServer) Get(c *gin.Context) {
 // @Tags 账本
 // @Param        id  path      int  true  "账本id" format(uint)
 // @Success	200 {object}  model.AccountBookResp "账本结果"
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account-book/:id [get]
 func (s *AccountBookServer) GetByID(c *gin.Context) {
 	accountBookID := c.Param("id")
@@ -111,8 +111,8 @@ func (s *AccountBookServer) GetByID(c *gin.Context) {
 // @Tags 账本
 // @Param        account_book  query      model.ModifyAccountBookReq  true  "账本信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account-book [put]
 func (s *AccountBookServer) Modify(c *gin.Context) {
 	req := model.ModifyAccountBookReq{}
@@ -133,8 +133,8 @@ func (s *AccountBookServer) Modify(c *gin.Context) {
 // @Tags 账本
 // @Param        account_book  query      model.DeleteAccountBookReq  true  "账本信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account-book [delete]
 func (s *AccountBookServer) Delete(c *gin.Context) {
 	req := model.DeleteAccountBookReq{}

@@ -24,8 +24,8 @@ func NewAccountServer(AccountService *service.AccountService) *AccountServer {
 // @Tags 账户
 // @Param        account  query      model.Account  true  "账户信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account [post]
 func (s *AccountServer) Register(c *gin.Context) {
 	req := model.Account{}
@@ -46,8 +46,8 @@ func (s *AccountServer) Register(c *gin.Context) {
 // @Tags 账户
 // @Param        account  query      model.Account  true  "账户信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account [put]
 func (s *AccountServer) Modify(c *gin.Context) {
 	req := model.Account{}
@@ -68,8 +68,8 @@ func (s *AccountServer) Modify(c *gin.Context) {
 // @Tags 账户
 // @Param        account  query      model.Account  true  "账户信息"
 // @Success	200 {object}  []model.Account "账户结果"
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account [get]
 func (s *AccountServer) Get(c *gin.Context) {
 	req := model.Account{}
@@ -91,8 +91,8 @@ func (s *AccountServer) Get(c *gin.Context) {
 // @Tags 账户
 // @Param        account  query      model.Account  true  "账户信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account [delete]
 func (s *AccountServer) Delete(c *gin.Context) {
 	req := model.Account{}

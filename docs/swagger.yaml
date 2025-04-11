@@ -1,5 +1,23 @@
 basePath: /api/v1
 definitions:
+  http_error_code.AppError:
+    properties:
+      code:
+        description: HTTP状态码
+        type: integer
+      detail:
+        description: 调试细节
+        type: string
+      message:
+        description: 用户友好消息
+        type: string
+      service:
+        description: 服务名称
+        type: string
+      type:
+        description: 错误类型
+        type: string
+    type: object
   model.Account:
     properties:
       balance:
@@ -249,11 +267,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 删除账户
       tags:
       - 账户
@@ -310,11 +328,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 获取账户
       tags:
       - 账户
@@ -367,11 +385,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 注册账户
       tags:
       - 账户
@@ -424,11 +442,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 修改账户
       tags:
       - 账户
@@ -446,11 +464,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 删除账本
       tags:
       - 账本
@@ -473,11 +491,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 获取账本
       tags:
       - 账本
@@ -506,11 +524,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 注册账本
       tags:
       - 账本
@@ -538,11 +556,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 修改账本
       tags:
       - 账本
@@ -563,11 +581,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 获取账本
       tags:
       - 账本
@@ -590,11 +608,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 合并账本
       tags:
       - 账本
@@ -672,11 +690,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 注册图标
       tags:
       - 图标
@@ -730,11 +748,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 删除朋友
       tags:
       - 朋友
@@ -755,11 +773,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 邀请朋友
       tags:
       - 朋友
@@ -771,7 +789,7 @@ paths:
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 健康检查
       tags:
       - 健康检查
@@ -794,11 +812,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 删除交易记录
       tags:
       - 交易记录
@@ -830,11 +848,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 获取交易记录
       tags:
       - 交易记录
@@ -889,11 +907,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 注册交易记录
       tags:
       - 交易记录
@@ -945,11 +963,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 修改交易记录
       tags:
       - 交易记录
@@ -967,11 +985,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 删除用户信息
       tags:
       - 用户
@@ -990,11 +1008,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 获取用户信息
       tags:
       - 用户
@@ -1037,11 +1055,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 注册用户信息
       tags:
       - 用户
@@ -1086,11 +1104,11 @@ paths:
         "400":
           description: 请求体异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
         "500":
           description: 服务端异常
           schema:
-            type: string
+            $ref: '#/definitions/http_error_code.AppError'
       summary: 修改用户信息
       tags:
       - 用户

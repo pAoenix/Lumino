@@ -97,13 +97,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -183,13 +183,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -269,13 +269,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -355,13 +355,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -398,13 +398,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -446,13 +446,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -495,13 +495,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -527,13 +527,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -565,13 +565,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -606,13 +606,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -748,13 +748,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -819,13 +819,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -858,13 +858,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -883,7 +883,7 @@ const docTemplate = `{
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -934,13 +934,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -1018,13 +1018,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -1104,13 +1104,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -1143,13 +1143,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -1180,13 +1180,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -1254,13 +1254,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -1324,13 +1324,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -1356,13 +1356,13 @@ const docTemplate = `{
                     "400": {
                         "description": "请求体异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     },
                     "500": {
                         "description": "服务端异常",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http_error_code.AppError"
                         }
                     }
                 }
@@ -1370,6 +1370,31 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "http_error_code.AppError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "HTTP状态码",
+                    "type": "integer"
+                },
+                "detail": {
+                    "description": "调试细节",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "用户友好消息",
+                    "type": "string"
+                },
+                "service": {
+                    "description": "服务名称",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "错误类型",
+                    "type": "string"
+                }
+            }
+        },
         "model.Account": {
             "type": "object",
             "properties": {
