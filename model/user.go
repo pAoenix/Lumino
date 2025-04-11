@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/lib/pq"
+	"time"
 )
 
 const UserTableName = "users"
@@ -39,6 +40,7 @@ type DeleteUserReq struct {
 // ModifyUserReq -
 type ModifyUserReq struct {
 	ID                   uint               `json:"id" form:"id" binding:"required"`
+	UpdatedAt            time.Time          `json:"updated_at" form:"updated_at" swaggerignore:"true"`                          // 更新时间，主要是触发自动的更新时间:输入无效，会被强制更新成now()
 	Name                 string             `json:"name" form:"name" gorm:"uniqueIndex:idx_user_name"`                          //账号名称，昵称，全局唯一
 	DefaultAccountBookID *uint              `json:"default_account_book_id" form:"default_account_book_id"`                     // 默认账本id
 	Balance              float64            `json:"balance" form:"balance"`                                                     // 余额
