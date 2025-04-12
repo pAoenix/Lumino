@@ -170,20 +170,6 @@ func formatValidationError(err validator.ValidationErrors) *httperrors.AppError 
 	)
 }
 
-// BindJSON 然后在BindJSON等函数中使用：
-func BindJSON(c *gin.Context, obj any) error {
-	if err := c.ShouldBindJSON(obj); err != nil {
-		if verr, ok := err.(validator.ValidationErrors); ok {
-			return formatValidationError(verr)
-		}
-		return httperrors.BindingFailed("无效的请求数据",
-			httperrors.WithInternal(err),
-			httperrors.WithDetail("json_binding_error"),
-		)
-	}
-	return nil
-}
-
 // Bind 封装了ShouldBind并返回自定义错误
 func Bind(c *gin.Context, obj any) error {
 	if err := c.ShouldBind(obj); err != nil {
@@ -198,30 +184,17 @@ func Bind(c *gin.Context, obj any) error {
 	return nil
 }
 
+// BindJSON 然后在BindJSON等函数中使用：
+func BindJSON(c *gin.Context, obj any) error {
+	return Bind(c, obj)
+}
+
 // BindQuery 封装了ShouldBindQuery
 func BindQuery(c *gin.Context, obj any) error {
-	if err := c.ShouldBindQuery(obj); err != nil {
-		if verr, ok := err.(validator.ValidationErrors); ok {
-			return formatValidationError(verr)
-		}
-		return httperrors.BindingFailed("无效的查询数据",
-			httperrors.WithInternal(err),
-			httperrors.WithDetail("json_binding_error"),
-		)
-	}
-	return nil
+	return Bind(c, obj)
 }
 
 // BindURI 封装了ShouldBindUri
 func BindURI(c *gin.Context, obj any) error {
-	if err := c.ShouldBindUri(obj); err != nil {
-		if verr, ok := err.(validator.ValidationErrors); ok {
-			return formatValidationError(verr)
-		}
-		return httperrors.BindingFailed("无效的URI数据",
-			httperrors.WithInternal(err),
-			httperrors.WithDetail("json_binding_error"),
-		)
-	}
-	return nil
+	return Bind(c, obj)
 }
