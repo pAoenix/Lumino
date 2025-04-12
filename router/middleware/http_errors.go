@@ -128,7 +128,7 @@ func respondError(c *gin.Context, err *httperrors.AppError) {
 	isProduction := viper.GetString("env") == "production"
 
 	// 如果是中间件的拦截，特殊处理一些部分
-	if strings.Contains(err.Internal.Error(), LargeBody) {
+	if err.Internal != nil && strings.Contains(err.Internal.Error(), LargeBody) {
 		err.Message = err.Message + LargeBody
 	}
 
@@ -164,7 +164,7 @@ func formatValidationError(err validator.ValidationErrors) *httperrors.AppError 
 			e.Tag(),
 		))
 	}
-	return httperrors.BindingFailed("请求数据验证失败",
+	return httperrors.BindingFailed("请求数据验证失败: "+strings.Join(details, "; "),
 		httperrors.WithInternal(err),
 		httperrors.WithDetail(strings.Join(details, "; ")),
 	)
