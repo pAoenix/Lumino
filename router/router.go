@@ -72,6 +72,7 @@ func (r *Router) Handler() http.Handler {
 		category.POST("", r.CategoryServer.Register)
 		category.GET("", r.CategoryServer.Get)
 		category.PUT("", r.CategoryServer.Modify)
+		category.PUT("/icon-image", r.CategoryServer.ModifyIconImage)
 		category.DELETE("", r.CategoryServer.Delete)
 	}
 

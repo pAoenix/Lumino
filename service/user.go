@@ -1,6 +1,7 @@
 package service
 
 import (
+	"Lumino/common"
 	"Lumino/common/http_error_code"
 	"Lumino/model"
 	"Lumino/store"
@@ -10,12 +11,14 @@ import (
 // UserService -
 type UserService struct {
 	UserStore *store.UserStore
+	ossClient *common.OssClient
 }
 
 // NewUserService -
-func NewUserService(UserStore *store.UserStore) *UserService {
+func NewUserService(UserStore *store.UserStore, ossClient *common.OssClient) *UserService {
 	return &UserService{
 		UserStore: UserStore,
+		ossClient: ossClient,
 	}
 }
 
@@ -41,7 +44,7 @@ func (s *UserService) ModifyProfilePhoto(userReq *model.ModifyProfilePhotoReq, f
 			http_error_code.WithInternal(err))
 	}
 	defer file.Close()
-	// 2. 注册用户
+	// 2. 修改图标
 	return s.UserStore.ModifyProfilePhoto(userReq, file)
 }
 
@@ -52,7 +55,15 @@ func (s *UserService) Modify(modifyUserReq *model.ModifyUserReq) (user model.Use
 
 // Get -
 func (s *UserService) Get(userReq *model.GetUserReq) (user model.User, err error) {
-	return s.UserStore.Get(userReq)
+	if user, err = s.UserStore.Get(userReq); err != nil {
+		return
+	}
+	if ossUrl, err := s.ossClient.DownloadFile(user.IconUrl); err != nil {
+		return user, err
+	} else {
+		user.IconUrl = ossUrl
+	}
+	return
 }
 
 // Delete -

@@ -14,7 +14,7 @@ import (
 type AccountBookService struct {
 	AccountBookStore *store.AccountBookStore
 	UserStore        *store.UserStore
-	OssClient        *common.OssClient
+	ossClient        *common.OssClient
 }
 
 // NewAccountBookService -
@@ -22,7 +22,7 @@ func NewAccountBookService(accountBookStore *store.AccountBookStore, userStore *
 	return &AccountBookService{
 		AccountBookStore: accountBookStore,
 		UserStore:        userStore,
-		OssClient:        ossClient,
+		ossClient:        ossClient,
 	}
 }
 
@@ -81,7 +81,7 @@ func (s *AccountBookService) Get(accountBookReq *model.GetAccountBookReq) (resp 
 				<-sem // 释放信号量
 				wg.Done()
 			}()
-			if ossUrl, err := s.OssClient.DownloadFile(users[i].IconUrl); err != nil {
+			if ossUrl, err := s.ossClient.DownloadFile(users[i].IconUrl); err != nil {
 				errCh <- fmt.Errorf("处理 %d 失败: %v", i, err)
 			} else {
 				users[i].IconUrl = ossUrl
