@@ -743,6 +743,7 @@ paths:
       - description: 分类图标文件
         in: formData
         name: icon_file
+        required: true
         type: file
       responses:
         "204":
@@ -1130,6 +1131,7 @@ paths:
       - description: 用户头像
         in: formData
         name: icon_file
+        required: true
         type: file
       responses:
         "204":

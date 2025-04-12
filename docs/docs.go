@@ -807,7 +807,8 @@ const docTemplate = `{
                         "type": "file",
                         "description": "分类图标文件",
                         "name": "icon_file",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1392,7 +1393,8 @@ const docTemplate = `{
                         "type": "file",
                         "description": "用户头像",
                         "name": "icon_file",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {

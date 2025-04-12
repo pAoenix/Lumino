@@ -116,7 +116,7 @@ func (s *CategoryServer) Modify(c *gin.Context) {
 // @Summary	修改图标文件
 // @Tags 图标
 // @Param        category  query      model.ModifyCategoryIconReq  true  "图标信息"
-// @Param        icon_file formData file false "分类图标文件"
+// @Param        icon_file formData file true "分类图标文件"
 // @Success	204
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"

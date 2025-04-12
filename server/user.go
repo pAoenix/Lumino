@@ -95,7 +95,7 @@ func (s *UserServer) Modify(c *gin.Context) {
 // @Summary	修改用户头像
 // @Tags 用户
 // @Param        user    query      model.ModifyProfilePhotoReq  true  "用户信息"
-// @Param        icon_file formData file false "用户头像"
+// @Param        icon_file formData file true "用户头像"
 // @Success	204
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
