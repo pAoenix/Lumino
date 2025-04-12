@@ -133,10 +133,10 @@ func respondError(c *gin.Context, err *httperrors.AppError) {
 	// 在生产环境隐藏内部细节
 	isProduction := viper.GetString("env") == "production"
 
-	// 如果是中间件的拦截，特殊处理一些部分
-	if err.Internal != nil && strings.Contains(err.Internal.Error(), LargeBody) {
-		err.Message = err.Message + LargeBody
-	}
+	// 如果是中间件的拦截，特殊处理一些部分放到message（TODO:detail和message怎么权衡？）
+	//if err.Internal != nil && strings.Contains(err.Internal.Error(), LargeBody) {
+	//	err.Message = err.Message + LargeBody
+	//}
 
 	response := gin.H{
 		"type":    err.Type,
@@ -317,7 +317,7 @@ func formatValidationError(err validator.ValidationErrors) *httperrors.AppError 
 			e.Tag(),
 		))
 	}
-	return httperrors.BindingFailed("请求数据验证失败: "+strings.Join(details, "; "),
+	return httperrors.BindingFailed("请求数据验证失败",
 		httperrors.WithInternal(err),
 		httperrors.WithDetail(strings.Join(details, "; ")),
 	)
