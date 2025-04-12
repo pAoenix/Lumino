@@ -13,14 +13,12 @@ import (
 // UserServer -
 type UserServer struct {
 	UserService *service.UserService
-	OssClient   *common.OssClient
 }
 
 // NewUserServer -
 func NewUserServer(userService *service.UserService, client *common.OssClient) *UserServer {
 	return &UserServer{
 		UserService: userService,
-		OssClient:   client,
 	}
 }
 
@@ -155,12 +153,6 @@ func (s *UserServer) Get(c *gin.Context) {
 		c.Error(err) // 交给中间件处理
 		return
 	} else {
-		if ossUrl, err := s.OssClient.DownloadFile(user.IconUrl); err != nil {
-			c.Error(err) // 交给中间件处理
-			return
-		} else {
-			user.IconUrl = ossUrl
-		}
 		c.JSON(http.StatusOK, user)
 	}
 	return

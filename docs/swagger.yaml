@@ -716,6 +716,30 @@ paths:
         in: query
         name: user_id
         type: integer
+      responses:
+        "200":
+          description: 图标结果
+          schema:
+            $ref: '#/definitions/model.Category'
+        "400":
+          description: 请求体异常
+          schema:
+            $ref: '#/definitions/http_error_code.AppError'
+        "500":
+          description: 服务端异常
+          schema:
+            $ref: '#/definitions/http_error_code.AppError'
+      summary: 修改图标信息
+      tags:
+      - 图标
+  /api/v1/category/icon-image:
+    put:
+      parameters:
+      - description: ID 图标id
+        in: query
+        name: id
+        required: true
+        type: integer
       - description: 分类图标文件
         in: formData
         name: icon_file
@@ -731,7 +755,7 @@ paths:
           description: 服务端异常
           schema:
             $ref: '#/definitions/http_error_code.AppError'
-      summary: 修改图标
+      summary: 修改图标文件
       tags:
       - 图标
   /api/v1/friend:

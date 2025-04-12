@@ -667,7 +667,7 @@ const docTemplate = `{
                 "tags": [
                     "图标"
                 ],
-                "summary": "修改图标",
+                "summary": "修改图标信息",
                 "parameters": [
                     {
                         "type": "integer",
@@ -687,17 +687,14 @@ const docTemplate = `{
                         "description": "用户id",
                         "name": "user_id",
                         "in": "query"
-                    },
-                    {
-                        "type": "file",
-                        "description": "分类图标文件",
-                        "name": "icon_file",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "图标结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.Category"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -771,6 +768,46 @@ const docTemplate = `{
                         "name": "id",
                         "in": "query",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "$ref": "#/definitions/http_error_code.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "$ref": "#/definitions/http_error_code.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/category/icon-image": {
+            "put": {
+                "tags": [
+                    "图标"
+                ],
+                "summary": "修改图标文件",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID 图标id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "分类图标文件",
+                        "name": "icon_file",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
