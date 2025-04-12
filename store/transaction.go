@@ -33,7 +33,7 @@ func (s *TransactionStore) Register(transactionSeq *model.RegisterTransactionReq
 		return errors.New("图标不存在" + err.Error())
 	}
 	// 加锁
-	if err := tx.Model(model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
+	if err := tx.Model(&model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
 		Where("id = ?", transactionSeq.AccountBookID).
 		First(&accountBook).Error; err != nil {
 		tx.Rollback() // 回滚事务
@@ -111,13 +111,13 @@ func (s *TransactionStore) Modify(modifyTransaction *model.ModifyTransactionReq)
 		}
 	}
 	// 交易记录查询
-	if err := tx.Model(model.Transaction{}).Where("id = ?", modifyTransaction.ID).
+	if err := tx.Model(&model.Transaction{}).Where("id = ?", modifyTransaction.ID).
 		First(&transaction).Error; err != nil {
 		tx.Rollback()
 		return errors.New("交易记录不存在" + err.Error())
 	}
 	// 账本加锁
-	if err := tx.Model(model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
+	if err := tx.Model(&model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
 		Where("id = ?", transaction.AccountBookID).
 		First(&accountBook).Error; err != nil {
 		tx.Rollback() // 回滚事务
@@ -126,7 +126,7 @@ func (s *TransactionStore) Modify(modifyTransaction *model.ModifyTransactionReq)
 	// TODO 用户判断
 	if modifyTransaction.Amount > 0 {
 		// 重新查询，避免脏读
-		if err := tx.Model(model.Transaction{}).Where("id = ?", modifyTransaction.ID).
+		if err := tx.Model(&model.Transaction{}).Where("id = ?", modifyTransaction.ID).
 			First(&transaction).Error; err != nil {
 			tx.Rollback()
 			return errors.New("交易记录不存在" + err.Error())
@@ -184,7 +184,7 @@ func (s *TransactionStore) Delete(transaction *model.DeleteTransactionReq) error
 	tx := s.db.Begin()
 	accountBook := model.AccountBook{}
 	// 加锁
-	if err := tx.Model(model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
+	if err := tx.Model(&model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
 		Where("id = ?", transaction.AccountBookID).
 		First(&accountBook).Error; err != nil {
 		tx.Rollback() // 回滚事务

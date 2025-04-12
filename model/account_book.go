@@ -2,6 +2,8 @@ package model
 
 import "github.com/lib/pq"
 
+const AccountBookTableName = "account_books"
+
 // AccountBook -
 type AccountBook struct {
 	Model

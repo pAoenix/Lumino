@@ -7,11 +7,14 @@ import (
 	"Lumino/server"
 	"Lumino/store"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 	"net/http"
+	"strings"
 )
 
 // Router -
@@ -29,13 +32,15 @@ type Router struct {
 
 // Handler -
 func (r *Router) Handler() http.Handler {
+	setupValidator()
 	gin.DisableConsoleColor()
 	e := gin.New()
-	e.MaxMultipartMemory = 8 << 20 // 8MB
-	e.Use(middleware.Cors())
-	e.Use(gin.Recovery())
-	e.Use(middleware.Log(logger.Logger))
+	e.Use(middleware.SizeLimitMiddleware())
 	e.Use(middleware.DB(r.DB))
+	e.Use(middleware.Cors())
+	e.Use(middleware.Log(logger.Logger))
+	e.Use(middleware.ErrorHandler())
+	e.Use(gin.Recovery())
 	e.GET("api/v1/health", r.HealthServer.Health)
 	docs.SwaggerInfo.BasePath = ""
 	e.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -51,6 +56,7 @@ func (r *Router) Handler() http.Handler {
 	{
 		user.POST("", r.UserServer.Register)
 		user.PUT("", r.UserServer.Modify)
+		user.PUT("profile-photo", r.UserServer.ModifyProfilePhoto)
 		user.GET("", r.UserServer.Get)
 		user.DELETE("", r.UserServer.Delete)
 	}
@@ -94,5 +100,15 @@ func NewHttpServer(router Router) *http.Server {
 	return &http.Server{
 		Addr:    ":" + viper.GetString("port"),
 		Handler: router.Handler(),
+	}
+}
+
+func setupValidator() {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		// 注册 notblank 验证规则
+		_ = v.RegisterValidation("notblank", func(fl validator.FieldLevel) bool {
+			value := fl.Field().String()
+			return len(strings.TrimSpace(value)) > 0
+		})
 	}
 }

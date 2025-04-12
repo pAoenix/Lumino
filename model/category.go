@@ -1,5 +1,7 @@
 package model
 
+const CategoryTableName = "categories"
+
 // Category 记账类别
 type Category struct {
 	Model

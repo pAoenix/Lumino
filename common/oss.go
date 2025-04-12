@@ -1,6 +1,7 @@
 package common
 
 import (
+	"Lumino/common/http_error_code"
 	"Lumino/common/logger"
 	"context"
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
@@ -37,7 +38,8 @@ func (o *OssClient) UploadFile(name string, file multipart.File) error {
 	result, err := o.Client.PutObject(context.TODO(), putRequest)
 	logger.Info(result)
 	if err != nil {
-		return err
+		return http_error_code.Internal("oss上传异常",
+			http_error_code.WithInternal(err))
 	}
 	return nil
 }
@@ -52,7 +54,8 @@ func (o *OssClient) DownloadFile(name string) (string, error) {
 		oss.PresignExpires(10*time.Minute),
 	)
 	if err != nil {
-		return "", err
+		return "", http_error_code.Internal("oss下载异常",
+			http_error_code.WithInternal(err))
 	}
 	return result.URL, err
 }

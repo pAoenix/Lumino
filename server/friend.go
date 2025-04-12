@@ -2,6 +2,7 @@ package server
 
 import (
 	"Lumino/model"
+	"Lumino/router/middleware"
 	"Lumino/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -22,23 +23,19 @@ func NewFriendServer(friendService *service.FriendService) *FriendServer {
 // Invite -
 // @Summary	邀请朋友
 // @Tags 朋友
-// @Param        friend  body      model.Friend  true  "邀请信息"
+// @Param        friend  query      model.Friend  true  "邀请信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/friend/invite [post]
 func (s *FriendServer) Invite(c *gin.Context) {
 	req := model.Friend{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
 	if err := s.FriendService.Invite(&req); err != nil {
-		if err.Error() == "你已存在该好友" {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-			return
-		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.Error(err)
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)
@@ -48,19 +45,19 @@ func (s *FriendServer) Invite(c *gin.Context) {
 // Delete -
 // @Summary	删除朋友
 // @Tags 朋友
-// @Param        friend  body      model.Friend  true  "删除信息"
+// @Param        friend  query      model.Friend  true  "删除信息"
 // @Success	204
-// @Failure	400 {string}  string      "请求体异常"
-// @Failure	500 {string}  string      "服务端异常"
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/friend [delete]
 func (s *FriendServer) Delete(c *gin.Context) {
 	req := model.Friend{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
 	if err := s.FriendService.Delete(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.Error(err)
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)
