@@ -14,6 +14,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const LargeBody = "http: request body too large"
+
 // ErrorHandler 通用错误处理中间件
 func ErrorHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -125,6 +127,11 @@ func respondError(c *gin.Context, err *httperrors.AppError) {
 	// 在生产环境隐藏内部细节
 	isProduction := viper.GetString("env") == "production"
 
+	// 如果是中间件的拦截，特殊处理一些部分
+	if strings.Contains(err.Internal.Error(), LargeBody) {
+		err.Message = err.Message + LargeBody
+	}
+
 	response := gin.H{
 		"type":    err.Type,
 		"message": err.Message,
@@ -136,7 +143,6 @@ func respondError(c *gin.Context, err *httperrors.AppError) {
 			response["detail"] = err.Detail
 		}
 	}
-
 	c.JSON(err.Code, response)
 }
 

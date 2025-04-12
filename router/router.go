@@ -31,7 +31,7 @@ type Router struct {
 func (r *Router) Handler() http.Handler {
 	gin.DisableConsoleColor()
 	e := gin.New()
-	e.MaxMultipartMemory = 8 << 20 // 8MB
+	e.Use(middleware.SizeLimitMiddleware(8 << 20)) // 8MB
 	e.Use(middleware.DB(r.DB))
 	e.Use(middleware.Cors())
 	e.Use(middleware.Log(logger.Logger))

@@ -39,10 +39,23 @@ func (s *UserServer) Register(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	// 获取上传的文件
+	// 1. 获取上传的文件
 	fileHeader, err := c.FormFile("icon_file")
 	if err != nil {
 		c.Error(http_error_code.BadRequest("需要注册头像",
+			http_error_code.WithInternal(err)))
+		return
+	}
+
+	// 2. 验证图片类型
+	ok, _, err := common.IsValidImage(fileHeader)
+	if err != nil {
+		c.Error(http_error_code.Internal("文件检查失败",
+			http_error_code.WithInternal(err)))
+		return
+	}
+	if !ok {
+		c.Error(http_error_code.BadRequest("仅支持JPEG/PNG/GIF/BMP/WEBP图片",
 			http_error_code.WithInternal(err)))
 		return
 	}
