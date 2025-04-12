@@ -7,11 +7,14 @@ import (
 	"Lumino/server"
 	"Lumino/store"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 	"net/http"
+	"strings"
 )
 
 // Router -
@@ -29,6 +32,7 @@ type Router struct {
 
 // Handler -
 func (r *Router) Handler() http.Handler {
+	setupValidator()
 	gin.DisableConsoleColor()
 	e := gin.New()
 	e.Use(middleware.SizeLimitMiddleware(1 << 20)) // 1MB
@@ -96,5 +100,15 @@ func NewHttpServer(router Router) *http.Server {
 	return &http.Server{
 		Addr:    ":" + viper.GetString("port"),
 		Handler: router.Handler(),
+	}
+}
+
+func setupValidator() {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		// 注册 notblank 验证规则
+		_ = v.RegisterValidation("notblank", func(fl validator.FieldLevel) bool {
+			value := fl.Field().String()
+			return len(strings.TrimSpace(value)) > 0
+		})
 	}
 }
