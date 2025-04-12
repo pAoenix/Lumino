@@ -133,17 +133,17 @@ func respondError(c *gin.Context, err *httperrors.AppError) {
 	// 在生产环境隐藏内部细节
 	isProduction := viper.GetString("env") == "production"
 
-	// 如果是中间件的拦截，特殊处理一些部分放到message（TODO:detail和message怎么权衡？）
-	//if err.Internal != nil && strings.Contains(err.Internal.Error(), LargeBody) {
-	//	err.Message = err.Message + LargeBody
-	//}
+	// 如果是中间件的拦截，特殊处理一些部分放到message
+	if strings.Contains(err.Detail, LargeBody) {
+		err.Detail = err.Detail + fmt.Sprintf("请求体大小超过限制 (%dM)", int(viper.GetInt64("bodySizeLimit")/1e6))
+	}
 
 	response := gin.H{
 		"type":    err.Type,
 		"message": err.Message,
 	}
 
-	// 非生产环境返回更多调试信息
+	// 非生产环境返回更多调试信息（TODO:detail和message怎么权衡？）
 	if !isProduction {
 		if err.Detail != "" {
 			response["detail"] = err.Detail

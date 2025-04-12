@@ -1,5 +1,6 @@
 env: dev
 port: 8080
+bodySizeLimit: 1000000 # 1M
 
 postgres:
   dbname: lumino_dev

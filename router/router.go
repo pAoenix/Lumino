@@ -35,7 +35,7 @@ func (r *Router) Handler() http.Handler {
 	setupValidator()
 	gin.DisableConsoleColor()
 	e := gin.New()
-	e.Use(middleware.SizeLimitMiddleware(1 << 20)) // 1MB
+	e.Use(middleware.SizeLimitMiddleware())
 	e.Use(middleware.DB(r.DB))
 	e.Use(middleware.Cors())
 	e.Use(middleware.Log(logger.Logger))
