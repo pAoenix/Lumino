@@ -740,10 +740,12 @@ paths:
       - description: 被邀请人
         in: query
         name: invitee
+        required: true
         type: integer
       - description: 邀请人
         in: query
         name: inviter
+        required: true
         type: integer
       responses:
         "204":
@@ -765,10 +767,12 @@ paths:
       - description: 被邀请人
         in: query
         name: invitee
+        required: true
         type: integer
       - description: 邀请人
         in: query
         name: inviter
+        required: true
         type: integer
       responses:
         "204":

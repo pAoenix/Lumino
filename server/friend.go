@@ -2,6 +2,7 @@ package server
 
 import (
 	"Lumino/model"
+	"Lumino/router/middleware"
 	"Lumino/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -29,16 +30,12 @@ func NewFriendServer(friendService *service.FriendService) *FriendServer {
 // @Router		/api/v1/friend/invite [post]
 func (s *FriendServer) Invite(c *gin.Context) {
 	req := model.Friend{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
 	if err := s.FriendService.Invite(&req); err != nil {
-		if err.Error() == "你已存在该好友" {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-			return
-		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.Error(err)
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)
@@ -55,12 +52,12 @@ func (s *FriendServer) Invite(c *gin.Context) {
 // @Router		/api/v1/friend [delete]
 func (s *FriendServer) Delete(c *gin.Context) {
 	req := model.Friend{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
 	if err := s.FriendService.Delete(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.Error(err)
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)

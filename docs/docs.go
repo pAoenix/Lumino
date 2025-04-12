@@ -803,13 +803,15 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "被邀请人",
                         "name": "invitee",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "integer",
                         "description": "邀请人",
                         "name": "inviter",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -842,13 +844,15 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "被邀请人",
                         "name": "invitee",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "integer",
                         "description": "邀请人",
                         "name": "inviter",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
