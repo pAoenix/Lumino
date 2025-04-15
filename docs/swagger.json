@@ -1223,10 +1223,21 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "用户id",
+                        "description": "用户id(id,昵称，手机号至少一个)",
                         "name": "id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账号名称，昵称，全局唯一",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "phone_number",
+                        "in": "query"
                     }
                 ],
                 "responses": {

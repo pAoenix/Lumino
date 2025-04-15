@@ -28,13 +28,16 @@ func NewUserStore(db *DB, ossClient *common.OssClient) *UserStore {
 
 // Register -
 func (s *UserStore) Register(userReq *model.RegisterUserReq, file multipart.File) (user model.User, err error) {
-	user.Name = userReq.Name
+	if err = copier.Copy(&user, &userReq); err != nil {
+		return user, http_error_code.Internal("服务内异常",
+			http_error_code.WithInternal(err))
+	}
 	// 1.初步注册
 	tx := s.db.Begin()
 	if err = tx.Model(&model.User{}).Create(&user).Error; err != nil {
 		tx.Rollback()
 		if IsDuplicateError(err) {
-			return user, http_error_code.Conflict("用户名已注册",
+			return user, http_error_code.Conflict("用户名已注册或手机号已注册",
 				http_error_code.WithInternal(err))
 		}
 		return user, http_error_code.Internal("注册用户失败",
@@ -96,9 +99,9 @@ func (s *UserStore) ModifyProfilePhoto(modifyUserReq *model.ModifyProfilePhotoRe
 
 // Get -
 func (s *UserStore) Get(userReq *model.GetUserReq) (user model.User, err error) {
-	if err = s.db.Model(&model.User{}).Where("id = ?", userReq.ID).First(&user).Error; err != nil {
+	if err = s.db.Model(&model.User{}).Where(userReq).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return user, http_error_code.BadRequest("用户ID不存在")
+			return user, http_error_code.BadRequest("用户不存在")
 		}
 		return user, http_error_code.Internal("服务内部错误",
 			http_error_code.WithInternal(err))

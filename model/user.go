@@ -29,7 +29,10 @@ type User struct {
 
 // GetUserReq -
 type GetUserReq struct {
-	ID uint `json:"id" form:"id" binding:"required"` // 用户id
+	ID                *uint  `json:"id" form:"id"`                                               // 用户id(id,昵称，手机号至少一个)
+	Name              string `json:"name" form:"name" binding:"omitempty,notblank"`              // 账号名称，昵称，全局唯一
+	PhoneNumber       string `json:"phone_number" form:"phone_number" binding:"omitempty,phone"` // 手机号
+	NeedLeastOneParam string `json:"-" form:"-" binding:"require_at_least_one=ID Name PhoneNumber" swaggerignore:"true"`
 }
 
 // DeleteUserReq -

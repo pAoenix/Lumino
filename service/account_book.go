@@ -49,7 +49,7 @@ func (s *AccountBookService) Get(accountBookReq *model.GetAccountBookReq) (resp 
 	resp.AccountBooks = accountBookList
 
 	// 计算默认账本
-	userReq := &model.GetUserReq{ID: accountBookReq.CreatorID}
+	userReq := &model.GetUserReq{ID: &accountBookReq.CreatorID}
 	user, err := s.UserStore.Get(userReq)
 	if err != nil {
 		return
