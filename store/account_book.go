@@ -2,8 +2,9 @@ package store
 
 import (
 	"Lumino/common"
+	"Lumino/common/http_error_code"
 	"Lumino/model"
-	"errors"
+	"github.com/jinzhu/copier"
 	"gorm.io/gorm/clause"
 )
 
@@ -20,24 +21,19 @@ func NewAccountBookStore(db *DB) *AccountBookStore {
 }
 
 // Register -
-func (s *AccountBookStore) Register(accountBook *model.RegisterAccountBookReq) error {
-	// 判断用户是否存在
-	if err := s.db.Model(&model.User{}).Where("id = ?", accountBook.CreatorID).First(&model.User{}).Error; err != nil {
-		return errors.New("用户不存在" + err.Error())
+func (s *AccountBookStore) Register(accountBookReq *model.RegisterAccountBookReq) (accountBook model.AccountBook, err error) {
+	if err = ParamsJudge(s.db, nil, &accountBookReq.UserIDs, &accountBookReq.CreatorID, nil); err != nil {
+		return
 	}
-	var count int64
-	if err := s.db.Model(&model.User{}).Where("id IN ?", []int32(accountBook.UserIDs)).Count(&count).Error; err != nil {
-		return err
+	if err = copier.Copy(&accountBook, &accountBookReq); err != nil {
+		return accountBook, http_error_code.Internal("服务内异常",
+			http_error_code.WithInternal(err))
 	}
-	if count != int64(len(accountBook.UserIDs)) {
-		return errors.New("请确保所有用户均存在")
+	if err = s.db.Model(&model.AccountBook{}).Create(&accountBook).Error; err != nil {
+		return model.AccountBook{}, http_error_code.Internal("服务内异常",
+			http_error_code.WithInternal(err))
 	}
-	newAB := model.AccountBook{
-		Name:      accountBook.Name,
-		CreatorID: accountBook.CreatorID,
-		UserIDs:   accountBook.UserIDs,
-	}
-	return s.db.Model(&model.AccountBook{}).Create(&newAB).Error
+	return
 }
 
 // Get -
@@ -46,6 +42,10 @@ func (s *AccountBookStore) Get(accountBookReq *model.GetAccountBookReq) (resp []
 	if accountBookReq.SortType == 0 {
 		sort = "id"
 	}
+	if err = ParamsJudge(s.db, &accountBookReq.ID, nil, &accountBookReq.UserID, nil); err != nil {
+		return
+	}
+
 	if s.db.Model(&model.AccountBook{}).Order(sort).Where("? = any(user_ids)", accountBookReq.UserID).Find(&resp).Error != nil {
 		return nil, err
 	} else {
@@ -54,26 +54,28 @@ func (s *AccountBookStore) Get(accountBookReq *model.GetAccountBookReq) (resp []
 }
 
 // Modify -
-func (s *AccountBookStore) Modify(accountBookReq *model.ModifyAccountBookReq) error {
-	// 判断用户是否存在
+func (s *AccountBookStore) Modify(accountBookReq *model.ModifyAccountBookReq) (accountBook model.AccountBook, err error) {
+	if err = ParamsJudge(s.db, &accountBookReq.ID, accountBookReq.UserIDs, nil, nil); err != nil {
+		return
+	}
 	if accountBookReq.UserIDs != nil {
-		var count int64
-		if err := s.db.Model(&model.User{}).Where("id IN ?", []int32(*accountBookReq.UserIDs)).Count(&count).Error; err != nil {
-			return err
-		}
-		if count != int64(len(*accountBookReq.UserIDs)) {
-			return errors.New("请确保所有用户均存在")
-		}
 		// 需要保证创建人在用户里
-		accountBook := model.AccountBook{}
-		if err := s.db.Model(&model.AccountBook{}).Where("id = ?", accountBookReq.ID).First(&accountBook).Error; err != nil {
-			return err
+		accountBookTmp := model.AccountBook{}
+		if err = s.db.Model(&model.AccountBook{}).Where("id = ?", accountBookReq.ID).First(&accountBookTmp).Error; err != nil {
+			return
 		}
-		if !common.ContainsInt(common.ConvertArrayToIntSlice(*accountBookReq.UserIDs), int(accountBook.CreatorID)) {
-			*accountBookReq.UserIDs = append(*accountBookReq.UserIDs, int32(accountBook.CreatorID))
+		if !common.ContainsInt(common.ConvertArrayToIntSlice(*accountBookReq.UserIDs), int(accountBookTmp.CreatorID)) {
+			*accountBookReq.UserIDs = append(*accountBookReq.UserIDs, int32(accountBookTmp.CreatorID))
 		}
 	}
-	return s.db.Model(&model.AccountBook{}).Where("id = ?", accountBookReq.ID).Updates(&accountBookReq).Error
+	if err = copier.Copy(&accountBook, &accountBookReq); err != nil {
+		return accountBook, http_error_code.Internal("服务内异常",
+			http_error_code.WithInternal(err))
+	}
+	if err = s.db.Model(&model.AccountBook{}).Where("id = ?", accountBookReq.ID).Updates(&accountBook).Find(&accountBook).Error; err != nil {
+		return
+	}
+	return
 }
 
 // Delete -
@@ -87,26 +89,29 @@ func (s *AccountBookStore) Merge(mergeAccountBookReq *model.MergeAccountBookReq)
 	// 账本加锁
 	accountBook := model.AccountBook{}
 	if err := tx.Model(&model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id = ?", mergeAccountBookReq.MergeAccountBookID).
+		Where("id = ? and creator_id = ?", mergeAccountBookReq.MergeAccountBookID, mergeAccountBookReq.CreatorID).
 		First(&accountBook).Error; err != nil {
 		tx.Rollback() // 回滚事务
-		return errors.New("合并账本不存在" + err.Error())
+		return http_error_code.BadRequest("合并账本不存在本人名下",
+			http_error_code.WithInternal(err))
+	}
+	// 获取被合并的账本的用户，需要对用户合并
+	mergedAccountBook := model.AccountBook{}
+	if err := tx.Model(&model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ? and creator_id = ?", mergeAccountBookReq.MergedAccountBookID, mergeAccountBookReq.CreatorID).
+		First(&mergedAccountBook).Error; err != nil {
+		tx.Rollback() // 回滚事务
+		return http_error_code.BadRequest("被合并账本不存在本人名下",
+			http_error_code.WithInternal(err))
 	}
 	// 更新账本数值
 	var transactions []model.Transaction
-	if err := tx.Model(&model.Transaction{}).Select("*").Where("account_book_id = ?", mergeAccountBookReq.MergedAccountBookID).Find(&transactions).Error; err != nil {
+	if err := tx.Model(&model.Transaction{}).Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("account_book_id = ?", mergeAccountBookReq.MergedAccountBookID).Find(&transactions).Error; err != nil {
 		tx.Rollback() // 回滚事务
 		return err
 	}
-	// 获取被合并的账本的用户，需要对用户合并
-	mergedAB := model.AccountBook{}
-	if err := tx.Model(&model.AccountBook{}).
-		Where("id = ?", mergeAccountBookReq.MergedAccountBookID).
-		First(&mergedAB).Error; err != nil {
-		tx.Rollback() // 回滚事务
-		return errors.New("被合并账本不存在" + err.Error())
-	}
-	for _, userID := range mergedAB.UserIDs {
+	for _, userID := range mergedAccountBook.UserIDs {
 		if !common.ContainsInt(common.ConvertArrayToIntSlice(accountBook.UserIDs), int(userID)) {
 			accountBook.UserIDs = append(accountBook.UserIDs, userID)
 		}

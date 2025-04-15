@@ -24,7 +24,7 @@ type DeleteCategoryReq struct {
 // ModifyCategoryReq -
 type ModifyCategoryReq struct {
 	ID      uint   `json:"id" form:"id" binding:"required"`               // ID 图标id
-	Name    string `json:"name" form:"name"`                              //分类名称的中文示意
+	Name    string `json:"name" form:"name" binding:"omitempty,notblank"` //分类名称的中文示意
 	UserID  *uint  `json:"user_id" form:"user_id"`                        // 用户id
 	IconUrl string `json:"icon_url" form:"icon_url" swaggerignore:"true"` // 类别图标的本地地址
 }
@@ -36,6 +36,6 @@ type ModifyCategoryIconReq struct {
 
 // RegisterCategoryReq -
 type RegisterCategoryReq struct {
-	Name   string `json:"name" form:"name" binding:"required"`       //分类名称的中文示意
-	UserID uint   `json:"user_id" form:"user_id" binding:"required"` // 用户id
+	Name   string `json:"name" form:"name" binding:"required,notblank"` //分类名称的中文示意
+	UserID uint   `json:"user_id" form:"user_id" binding:"required"`    // 用户id
 }

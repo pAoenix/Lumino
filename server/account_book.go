@@ -1,8 +1,9 @@
 package server
 
 import (
-	"Lumino/common"
+	"Lumino/common/http_error_code"
 	"Lumino/model"
+	"Lumino/router/middleware"
 	"Lumino/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -24,21 +25,22 @@ func NewAccountBookServer(accountBookService *service.AccountBookService) *Accou
 // @Summary	注册账本
 // @Tags 账本
 // @Param        account_book  query      model.RegisterAccountBookReq  true  "账本信息"
-// @Success	204
+// @Success	200 {object}  model.AccountBook             "注册结果"
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account-book [post]
 func (s *AccountBookServer) Register(c *gin.Context) {
 	req := model.RegisterAccountBookReq{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
-	if err := s.AccountBookService.Register(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	if resp, err := s.AccountBookService.Register(&req); err != nil {
+		c.Error(err)
 		return
+	} else {
+		c.JSON(http.StatusOK, resp)
 	}
-	c.JSON(http.StatusNoContent, nil)
 	return
 }
 
@@ -46,21 +48,25 @@ func (s *AccountBookServer) Register(c *gin.Context) {
 // @Summary	合并账本
 // @Tags 账本
 // @Param        account_book  query      model.MergeAccountBookReq  true  "账本id信息"
-// @Success	204
+// @Success	200 {object}  model.AccountBookResp "账本结果"
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account-book/merge [post]
 func (s *AccountBookServer) Merge(c *gin.Context) {
 	req := model.MergeAccountBookReq{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
-	if err := s.AccountBookService.Merge(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	if req.MergedAccountBookID == req.MergeAccountBookID {
+		c.Error(http_error_code.BadRequest("合并账本不能相同"))
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	if resp, err := s.AccountBookService.Merge(&req); err != nil {
+		c.Error(err)
+	} else {
+		c.JSON(http.StatusOK, resp)
+	}
 	return
 }
 
@@ -74,12 +80,12 @@ func (s *AccountBookServer) Merge(c *gin.Context) {
 // @Router		/api/v1/account-book [get]
 func (s *AccountBookServer) Get(c *gin.Context) {
 	req := model.GetAccountBookReq{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
 	if resp, err := s.AccountBookService.Get(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.Error(err)
 	} else {
 		c.JSON(http.StatusOK, resp)
 	}
@@ -95,11 +101,13 @@ func (s *AccountBookServer) Get(c *gin.Context) {
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account-book/:id [get]
 func (s *AccountBookServer) GetByID(c *gin.Context) {
-	accountBookID := c.Param("id")
-	abID, _ := common.String2Uint(accountBookID)
-	req := model.GetAccountBookReq{ID: abID}
+	req := model.GetAccountBookReq{}
+	if err := middleware.BindURI(c, &req); err != nil {
+		c.Error(err)
+		return
+	}
 	if resp, err := s.AccountBookService.Get(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.Error(err)
 	} else {
 		c.JSON(http.StatusOK, resp)
 	}
@@ -116,15 +124,16 @@ func (s *AccountBookServer) GetByID(c *gin.Context) {
 // @Router		/api/v1/account-book [put]
 func (s *AccountBookServer) Modify(c *gin.Context) {
 	req := model.ModifyAccountBookReq{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
-	if err := s.AccountBookService.Modify(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	if resp, err := s.AccountBookService.Modify(&req); err != nil {
+		c.Error(err)
 		return
+	} else {
+		c.JSON(http.StatusOK, resp)
 	}
-	c.JSON(http.StatusNoContent, nil)
 	return
 }
 
@@ -138,12 +147,12 @@ func (s *AccountBookServer) Modify(c *gin.Context) {
 // @Router		/api/v1/account-book [delete]
 func (s *AccountBookServer) Delete(c *gin.Context) {
 	req := model.DeleteAccountBookReq{}
-	if err := c.ShouldBind(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
 		return
 	}
 	if err := s.AccountBookService.Delete(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.Error(err)
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)

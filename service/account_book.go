@@ -2,10 +2,10 @@ package service
 
 import (
 	"Lumino/common"
+	"Lumino/common/http_error_code"
 	"Lumino/common/logger"
 	"Lumino/model"
 	"Lumino/store"
-	"errors"
 	"fmt"
 	"sync"
 )
@@ -27,16 +27,16 @@ func NewAccountBookService(accountBookStore *store.AccountBookStore, userStore *
 }
 
 // Register -
-func (s *AccountBookService) Register(accountBook *model.RegisterAccountBookReq) error {
-	if !common.ContainsInt(common.ConvertArrayToIntSlice(accountBook.UserIDs), int(accountBook.CreatorID)) {
-		accountBook.UserIDs = append(accountBook.UserIDs, int32(accountBook.CreatorID))
+func (s *AccountBookService) Register(accountBookreq *model.RegisterAccountBookReq) (accountBook model.AccountBook, err error) {
+	if !common.ContainsInt(common.ConvertArrayToIntSlice(accountBookreq.UserIDs), int(accountBookreq.CreatorID)) {
+		accountBookreq.UserIDs = append(accountBookreq.UserIDs, int32(accountBookreq.CreatorID))
 	}
-	return s.AccountBookStore.Register(accountBook)
+	return s.AccountBookStore.Register(accountBookreq)
 }
 
 // Modify -
-func (s *AccountBookService) Modify(accountBook *model.ModifyAccountBookReq) error {
-	return s.AccountBookStore.Modify(accountBook)
+func (s *AccountBookService) Modify(accountBookReq *model.ModifyAccountBookReq) (accountBook model.AccountBook, err error) {
+	return s.AccountBookStore.Modify(accountBookReq)
 }
 
 // Get -
@@ -95,7 +95,7 @@ func (s *AccountBookService) Get(accountBookReq *model.GetAccountBookReq) (resp 
 		for len(errCh) > 0 {
 			logger.Error(<-errCh)
 		}
-		return resp, errors.New("下载用户头像失败")
+		return resp, http_error_code.Internal("下载用户头像失败")
 	}
 	resp.Users = users
 	return
@@ -107,6 +107,11 @@ func (s *AccountBookService) Delete(accountBook *model.DeleteAccountBookReq) err
 }
 
 // Merge -
-func (s *AccountBookService) Merge(mergeAccountBookReq *model.MergeAccountBookReq) error {
-	return s.AccountBookStore.Merge(mergeAccountBookReq)
+func (s *AccountBookService) Merge(mergeAccountBookReq *model.MergeAccountBookReq) (resp model.AccountBookResp, err error) {
+	if err = s.AccountBookStore.Merge(mergeAccountBookReq); err != nil {
+		return resp, err
+	}
+	return s.Get(&model.GetAccountBookReq{
+		ID: mergeAccountBookReq.MergeAccountBookID,
+	})
 }
