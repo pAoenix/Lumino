@@ -22,7 +22,7 @@ func NewAccountBookStore(db *DB) *AccountBookStore {
 
 // Register -
 func (s *AccountBookStore) Register(accountBookReq *model.RegisterAccountBookReq) (accountBook model.AccountBook, err error) {
-	if err = ParamsJudge(s.db, nil, &accountBookReq.UserIDs, &accountBookReq.CreatorID, nil); err != nil {
+	if err = ParamsJudge(s.db, nil, &accountBookReq.UserIDs, &accountBookReq.CreatorID, nil, nil); err != nil {
 		return
 	}
 	if err = copier.Copy(&accountBook, &accountBookReq); err != nil {
@@ -42,11 +42,14 @@ func (s *AccountBookStore) Get(accountBookReq *model.GetAccountBookReq) (resp []
 	if accountBookReq.SortType == 0 {
 		sort = "id"
 	}
-	if err = ParamsJudge(s.db, &accountBookReq.ID, nil, &accountBookReq.UserID, nil); err != nil {
+	if err = ParamsJudge(s.db, accountBookReq.ID, nil, &accountBookReq.CreatorID, nil, nil); err != nil {
 		return
 	}
-
-	if s.db.Model(&model.AccountBook{}).Order(sort).Where("? = any(user_ids)", accountBookReq.UserID).Find(&resp).Error != nil {
+	sql := s.db.Model(&model.AccountBook{}).Order(sort).Where("? = any(user_ids)", accountBookReq.CreatorID)
+	if accountBookReq.ID != nil {
+		sql = sql.Where("id = ?", accountBookReq.ID)
+	}
+	if sql.Find(&resp).Error != nil {
 		return nil, err
 	} else {
 		return
@@ -55,7 +58,7 @@ func (s *AccountBookStore) Get(accountBookReq *model.GetAccountBookReq) (resp []
 
 // Modify -
 func (s *AccountBookStore) Modify(accountBookReq *model.ModifyAccountBookReq) (accountBook model.AccountBook, err error) {
-	if err = ParamsJudge(s.db, &accountBookReq.ID, accountBookReq.UserIDs, nil, nil); err != nil {
+	if err = ParamsJudge(s.db, &accountBookReq.ID, accountBookReq.UserIDs, nil, nil, nil); err != nil {
 		return
 	}
 	if accountBookReq.UserIDs != nil {
@@ -104,32 +107,14 @@ func (s *AccountBookStore) Merge(mergeAccountBookReq *model.MergeAccountBookReq)
 		return http_error_code.BadRequest("被合并账本不存在本人名下",
 			http_error_code.WithInternal(err))
 	}
-	// 更新账本数值
-	var transactions []model.Transaction
-	if err := tx.Model(&model.Transaction{}).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("account_book_id = ?", mergeAccountBookReq.MergedAccountBookID).Find(&transactions).Error; err != nil {
-		tx.Rollback() // 回滚事务
-		return err
-	}
 	for _, userID := range mergedAccountBook.UserIDs {
 		if !common.ContainsInt(common.ConvertArrayToIntSlice(accountBook.UserIDs), int(userID)) {
 			accountBook.UserIDs = append(accountBook.UserIDs, userID)
 		}
 	}
-	income := 0.
-	spending := 0.
-	for _, transaction := range transactions {
-		if transaction.Type == model.IncomeType {
-			income += transaction.Amount
-		} else {
-			spending += transaction.Amount
-		}
-	}
 	if err := tx.Model(&model.AccountBook{}).Where("id = ?", accountBook.ID).
 		Updates(model.AccountBook{
-			Spending: accountBook.Spending + spending,
-			Income:   accountBook.Income + income,
-			UserIDs:  accountBook.UserIDs,
+			UserIDs: accountBook.UserIDs,
 		}).Error; err != nil {
 		tx.Rollback() // 回滚事务
 		return err

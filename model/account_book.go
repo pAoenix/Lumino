@@ -7,7 +7,7 @@ const AccountBookTableName = "account_books"
 // AccountBook -
 type AccountBook struct {
 	Model
-	CreatorID uint          `json:"creator_id" form:"creator_id"`                                               // 创建人
+	CreatorID uint          `json:"creator_id" form:"creator_id"`                                               // 创建人,不允许修改
 	UserIDs   pq.Int32Array `gorm:"type:integer[]" json:"user_ids" form:"user_ids" swaggertype:"array,integer"` // 账本用户列表
 	Name      string        `json:"name" form:"name"`                                                           // 账本名称
 	Spending  float64       `json:"spending" form:"spending"`                                                   // 账本花费
@@ -23,9 +23,9 @@ type RegisterAccountBookReq struct {
 
 // GetAccountBookReq -
 type GetAccountBookReq struct {
-	UserID   uint `json:"user_id" form:"user_id" binding:"required"` // 用户
-	ID       uint `json:"id" form:"id" swaggerignore:"true"`         // 账本id
-	SortType int  `json:"sort_type" form:"sort_type"`                // 排序模式  0: 创建时间升序，1:创建时间降序
+	CreatorID uint  `json:"user_id" form:"user_id" binding:"required"` // 用户
+	ID        *uint `json:"id" form:"id" swaggerignore:"true"`         // 账本id
+	SortType  int   `json:"sort_type" form:"sort_type"`                // 排序模式  0: 创建时间升序，1:创建时间降序
 }
 
 // MergeAccountBookReq -

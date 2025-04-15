@@ -21,11 +21,11 @@ func NewTransactionService(transactionStore *store.TransactionStore, accountBook
 }
 
 // Register -
-func (s *TransactionService) Register(transaction *model.RegisterTransactionReq) error {
-	if transaction.Date.IsZero() {
-		transaction.Date = time.Now()
+func (s *TransactionService) Register(transactionReq *model.RegisterTransactionReq) (resp model.Transaction, err error) {
+	if transactionReq.Date.IsZero() {
+		transactionReq.Date = time.Now()
 	}
-	return s.TransactionStore.Register(transaction)
+	return s.TransactionStore.Register(transactionReq)
 }
 
 // Get -
@@ -34,11 +34,11 @@ func (s *TransactionService) Get(transactionReq *model.GetTransactionReq) (resp 
 }
 
 // Modify -
-func (s *TransactionService) Modify(transaction *model.ModifyTransactionReq) error {
-	return s.TransactionStore.Modify(transaction)
+func (s *TransactionService) Modify(transactionReq *model.ModifyTransactionReq) (transaction model.Transaction, err error) {
+	return s.TransactionStore.Modify(transactionReq)
 }
 
 // Delete -
-func (s *TransactionService) Delete(transaction *model.DeleteTransactionReq) error {
-	return s.TransactionStore.Delete(transaction)
+func (s *TransactionService) Delete(transactionReq *model.DeleteTransactionReq) error {
+	return s.TransactionStore.Delete(transactionReq)
 }

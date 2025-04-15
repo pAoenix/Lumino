@@ -66,7 +66,7 @@ func (s *UserStore) Register(userReq *model.RegisterUserReq, file multipart.File
 // Modify -
 func (s *UserStore) Modify(modifyUserReq *model.ModifyUserReq) (user model.User, err error) {
 	// 1.判断信息是否正常
-	if err = ParamsJudge(s.db, modifyUserReq.DefaultAccountBookID, modifyUserReq.Friend, &modifyUserReq.ID, nil); err != nil {
+	if err = ParamsJudge(s.db, modifyUserReq.DefaultAccountBookID, modifyUserReq.Friend, &modifyUserReq.ID, nil, nil); err != nil {
 		return user, err
 	}
 	if err = copier.Copy(&user, &modifyUserReq); err != nil {
@@ -86,7 +86,7 @@ func (s *UserStore) Modify(modifyUserReq *model.ModifyUserReq) (user model.User,
 // ModifyProfilePhoto -
 func (s *UserStore) ModifyProfilePhoto(modifyUserReq *model.ModifyProfilePhotoReq, file multipart.File) error {
 	// 1.判断用户是否存在
-	if err := ParamsJudge(s.db, nil, nil, &modifyUserReq.ID, nil); err != nil {
+	if err := ParamsJudge(s.db, nil, nil, &modifyUserReq.ID, nil, nil); err != nil {
 		return err
 	}
 	// 2.数据上传
@@ -116,7 +116,7 @@ func (s *UserStore) BatchGetByIDs(userIDs []int) (users []model.User, err error)
 
 // Delete -
 func (s *UserStore) Delete(userReq *model.DeleteUserReq) error {
-	if err := ParamsJudge(s.db, nil, nil, &userReq.ID, nil); err != nil {
+	if err := ParamsJudge(s.db, nil, nil, &userReq.ID, nil, nil); err != nil {
 		return err
 	}
 	return s.db.Model(&model.User{}).Delete(&model.User{Model: model.Model{ID: userReq.ID}}).Error

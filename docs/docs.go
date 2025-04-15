@@ -489,8 +489,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "注册结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBook"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -586,6 +589,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "创建人(只能合并自己创建的账本)",
+                        "name": "creator_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
                         "description": "合并的账本id  A",
                         "name": "merge_account_book_id",
                         "in": "query",
@@ -600,8 +610,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "账本结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBookResp"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -942,7 +955,8 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "对应的账本id",
                         "name": "account_book_id",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -958,8 +972,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "用户id",
-                        "name": "user_id",
+                        "description": "交易id",
+                        "name": "id",
                         "in": "query"
                     }
                 ],
@@ -1012,12 +1026,6 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "description": "记录账户id",
-                        "name": "creator_id",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "description": "交易日期",
                         "name": "date",
@@ -1037,6 +1045,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "description": "付款人id",
+                        "name": "pay_user_id",
+                        "in": "query"
+                    },
+                    {
                         "type": "array",
                         "items": {
                             "type": "integer"
@@ -1047,6 +1061,10 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "enum": [
+                            1,
+                            2
+                        ],
                         "type": "integer",
                         "description": "类型:收入/支出,交易类型必须是0或者1",
                         "name": "type",
@@ -1118,6 +1136,14 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "付款人id",
+                        "name": "pay_user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minItems": 1,
                         "type": "array",
                         "items": {
                             "type": "integer"
@@ -1125,7 +1151,8 @@ const docTemplate = `{
                         "collectionFormat": "csv",
                         "description": "RelatedUserIDs 涉及那些人",
                         "name": "related_user_ids",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "enum": [
@@ -1140,8 +1167,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "交易记录",
+                        "schema": {
+                            "$ref": "#/definitions/model.Transaction"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -1163,13 +1193,6 @@ const docTemplate = `{
                 ],
                 "summary": "删除交易记录",
                 "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "账本id",
-                        "name": "account_book_id",
-                        "in": "query",
-                        "required": true
-                    },
                     {
                         "type": "integer",
                         "description": "交易记录id",
@@ -1274,6 +1297,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "phone_number",
+                        "in": "query"
+                    },
+                    {
                         "type": "object",
                         "description": "余额详情",
                         "name": "balance_detail",
@@ -1311,6 +1340,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "账号名称，昵称，全局唯一",
                         "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "phone_number",
                         "in": "query",
                         "required": true
                     },
@@ -1497,7 +1533,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "creator_id": {
-                    "description": "创建人",
+                    "description": "创建人,不允许修改",
                     "type": "integer"
                 },
                 "deleted_at": {
@@ -1637,6 +1673,10 @@ const docTemplate = `{
                     "description": "主键id",
                     "type": "integer"
                 },
+                "pay_user_id": {
+                    "description": "付款人id",
+                    "type": "integer"
+                },
                 "related_user_ids": {
                     "description": "RelatedUserIDs 涉及那些人",
                     "type": "array",
@@ -1699,6 +1739,10 @@ const docTemplate = `{
                 },
                 "name": {
                     "description": "账号名称，昵称，全局唯一",
+                    "type": "string"
+                },
+                "phone_number": {
+                    "description": "手机号",
                     "type": "string"
                 },
                 "updated_at": {

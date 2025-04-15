@@ -58,7 +58,7 @@ definitions:
         description: 创建时间
         type: string
       creator_id:
-        description: 创建人
+        description: 创建人,不允许修改
         type: integer
       deleted_at:
         description: DeletedAt 删除时间
@@ -160,6 +160,9 @@ definitions:
       id:
         description: 主键id
         type: integer
+      pay_user_id:
+        description: 付款人id
+        type: integer
       related_user_ids:
         description: RelatedUserIDs 涉及那些人
         items:
@@ -208,6 +211,9 @@ definitions:
         type: integer
       name:
         description: 账号名称，昵称，全局唯一
+        type: string
+      phone_number:
+        description: 手机号
         type: string
       updated_at:
         description: 更新时间
@@ -522,8 +528,10 @@ paths:
         name: user_ids
         type: array
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: 注册结果
+          schema:
+            $ref: '#/definitions/model.AccountBook'
         "400":
           description: 请求体异常
           schema:
@@ -595,6 +603,11 @@ paths:
   /api/v1/account-book/merge:
     post:
       parameters:
+      - description: 创建人(只能合并自己创建的账本)
+        in: query
+        name: creator_id
+        required: true
+        type: integer
       - description: 合并的账本id  A
         in: query
         name: merge_account_book_id
@@ -606,8 +619,10 @@ paths:
         required: true
         type: integer
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: 账本结果
+          schema:
+            $ref: '#/definitions/model.AccountBookResp'
         "400":
           description: 请求体异常
           schema:
@@ -828,11 +843,6 @@ paths:
   /api/v1/transaction:
     delete:
       parameters:
-      - description: 账本id
-        in: query
-        name: account_book_id
-        required: true
-        type: integer
       - description: 交易记录id
         in: query
         name: id
@@ -857,6 +867,7 @@ paths:
       - description: 对应的账本id
         in: query
         name: account_book_id
+        required: true
         type: integer
       - description: 起始时间
         in: query
@@ -866,9 +877,9 @@ paths:
         in: query
         name: end_time
         type: string
-      - description: 用户id
+      - description: 交易id
         in: query
-        name: user_id
+        name: id
         type: integer
       responses:
         "200":
@@ -918,12 +929,19 @@ paths:
         in: query
         name: description
         type: string
+      - description: 付款人id
+        in: query
+        name: pay_user_id
+        required: true
+        type: integer
       - collectionFormat: csv
         description: RelatedUserIDs 涉及那些人
         in: query
         items:
           type: integer
+        minItems: 1
         name: related_user_ids
+        required: true
         type: array
       - description: 类型:收入/支出
         enum:
@@ -934,8 +952,10 @@ paths:
         required: true
         type: integer
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: 交易记录
+          schema:
+            $ref: '#/definitions/model.Transaction'
         "400":
           description: 请求体异常
           schema:
@@ -961,10 +981,6 @@ paths:
         in: query
         name: category_id
         type: integer
-      - description: 记录账户id
-        in: query
-        name: creator_id
-        type: integer
       - description: 交易日期
         in: query
         name: date
@@ -978,6 +994,10 @@ paths:
         name: id
         required: true
         type: integer
+      - description: 付款人id
+        in: query
+        name: pay_user_id
+        type: integer
       - collectionFormat: csv
         description: RelatedUserIDs 涉及那些人
         in: query
@@ -986,6 +1006,9 @@ paths:
         name: related_user_ids
         type: array
       - description: 类型:收入/支出,交易类型必须是0或者1
+        enum:
+        - 1
+        - 2
         in: query
         name: type
         type: integer
@@ -1055,6 +1078,11 @@ paths:
         name: name
         required: true
         type: string
+      - description: 手机号
+        in: query
+        name: phone_number
+        required: true
+        type: string
       - description: 用户头像
         in: formData
         name: icon_file
@@ -1100,6 +1128,10 @@ paths:
       - description: 账号名称，昵称，全局唯一
         in: query
         name: name
+        type: string
+      - description: 手机号
+        in: query
+        name: phone_number
         type: string
       - description: 余额详情
         in: query

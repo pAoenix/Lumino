@@ -12,8 +12,8 @@ type Category struct {
 
 // GetCategoryReq -
 type GetCategoryReq struct {
-	ID     uint `json:"id" form:"id"`                              // ID 图标id
-	UserID uint `json:"user_id" form:"user_id" binding:"required"` // 用户id
+	ID     *uint `json:"id" form:"id"`                              // ID 图标id
+	UserID *uint `json:"user_id" form:"user_id" binding:"required"` // 用户id
 }
 
 // DeleteCategoryReq -

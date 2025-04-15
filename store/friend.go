@@ -22,7 +22,7 @@ func NewFriendStore(db *DB) *FriendStore {
 
 // Invite -
 func (s *FriendStore) Invite(friend *model.Friend) error {
-	if err := ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil); err != nil {
+	if err := ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil, nil); err != nil {
 		return err
 	}
 	user := model.User{}
@@ -43,7 +43,7 @@ func (s *FriendStore) Invite(friend *model.Friend) error {
 
 // Delete -
 func (s *FriendStore) Delete(friend *model.Friend) error {
-	if err := ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil); err != nil {
+	if err := ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil, nil); err != nil {
 		return err
 	}
 	user := model.User{}

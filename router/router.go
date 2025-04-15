@@ -14,6 +14,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
@@ -110,6 +111,11 @@ func setupValidator() {
 		_ = v.RegisterValidation("notblank", func(fl validator.FieldLevel) bool {
 			value := fl.Field().String()
 			return len(strings.TrimSpace(value)) > 0
+		})
+		_ = v.RegisterValidation("phone", func(fl validator.FieldLevel) bool {
+			phone := fl.Field().String()
+			matched, _ := regexp.MatchString(`^1[3-9]\d{9}$`, phone)
+			return matched
 		})
 	}
 }

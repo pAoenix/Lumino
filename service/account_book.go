@@ -49,7 +49,7 @@ func (s *AccountBookService) Get(accountBookReq *model.GetAccountBookReq) (resp 
 	resp.AccountBooks = accountBookList
 
 	// 计算默认账本
-	userReq := &model.GetUserReq{ID: accountBookReq.UserID}
+	userReq := &model.GetUserReq{ID: accountBookReq.CreatorID}
 	user, err := s.UserStore.Get(userReq)
 	if err != nil {
 		return
@@ -112,6 +112,6 @@ func (s *AccountBookService) Merge(mergeAccountBookReq *model.MergeAccountBookRe
 		return resp, err
 	}
 	return s.Get(&model.GetAccountBookReq{
-		ID: mergeAccountBookReq.MergeAccountBookID,
+		ID: &mergeAccountBookReq.MergeAccountBookID,
 	})
 }
