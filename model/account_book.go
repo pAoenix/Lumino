@@ -45,7 +45,7 @@ type AccountBookResp struct {
 // ModifyAccountBookReq -
 type ModifyAccountBookReq struct {
 	ID      uint           `json:"id" form:"id" binding:"required"`                                            // 账本id
-	Name    *string        `json:"name" form:"name" binding:"omitempty,notblank"`                              // 账本名称
+	Name    string         `json:"name" form:"name" binding:"omitempty,notblank"`                              // 账本名称
 	UserIDs *pq.Int32Array `gorm:"type:integer[]" json:"user_ids" form:"user_ids" swaggertype:"array,integer"` // 账本用户列表
 }
 

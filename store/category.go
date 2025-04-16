@@ -77,7 +77,7 @@ func (s *CategoryStore) Get(categoryReq *model.GetCategoryReq) (resp []model.Cat
 
 // Modify -
 func (s *CategoryStore) Modify(categoryReq *model.ModifyCategoryReq) (resp model.Category, err error) {
-	if err = ParamsJudge(s.db, nil, nil, categoryReq.UserID, &categoryReq.ID, nil); err != nil {
+	if err = ParamsJudge(s.db, nil, nil, nil, &categoryReq.ID, nil); err != nil {
 		return resp, err
 	}
 	category := model.Category{}

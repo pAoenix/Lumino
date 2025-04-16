@@ -83,6 +83,9 @@ func (s *AccountBookStore) Modify(accountBookReq *model.ModifyAccountBookReq) (a
 
 // Delete -
 func (s *AccountBookStore) Delete(accountBookReq *model.DeleteAccountBookReq) error {
+	if err := ParamsJudge(s.db, &accountBookReq.ID, nil, nil, nil, nil); err != nil {
+		return err
+	}
 	return s.db.Model(&model.AccountBook{}).Delete(&model.AccountBook{Model: model.Model{ID: accountBookReq.ID}}).Error
 }
 
