@@ -343,5 +343,8 @@ func BindQuery(c *gin.Context, obj any) error {
 
 // BindURI 封装了ShouldBindUri
 func BindURI(c *gin.Context, obj any) error {
-	return Bind(c, obj)
+	if err := c.ShouldBindUri(obj); err != nil {
+		return handleBindError(err)
+	}
+	return nil
 }

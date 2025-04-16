@@ -18,11 +18,11 @@ func NewFriendService(FriendStore *store.FriendStore) *FriendService {
 }
 
 // Invite -
-func (s *FriendService) Invite(friend *model.Friend) error {
+func (s *FriendService) Invite(friend *model.Friend) (user model.User, err error) {
 	return s.FriendStore.Invite(friend)
 }
 
 // Delete -
-func (s *FriendService) Delete(friend *model.Friend) error {
+func (s *FriendService) Delete(friend *model.Friend) (user model.User, err error) {
 	return s.FriendStore.Delete(friend)
 }

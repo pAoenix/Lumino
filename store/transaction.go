@@ -1,9 +1,9 @@
 package store
 
 import (
+	"Lumino/common/http_error_code"
 	"Lumino/model"
-	"errors"
-	"gorm.io/gorm/clause"
+	"github.com/jinzhu/copier"
 )
 
 // TransactionStore -
@@ -19,62 +19,30 @@ func NewTransactionStore(db *DB) *TransactionStore {
 }
 
 // Register -
-func (s *TransactionStore) Register(transactionSeq *model.RegisterTransactionReq) error {
-	tx := s.db.Begin()
-	accountBook := model.AccountBook{}
-	// 判断用户是否存在
-	if err := tx.Model(&model.User{}).Where("id = ?", transactionSeq.CreatorID).First(&model.User{}).Error; err != nil {
-		tx.Rollback() // 回滚事务
-		return errors.New("用户不存在" + err.Error())
+func (s *TransactionStore) Register(transactionReq *model.RegisterTransactionReq) (transaction model.Transaction, err error) {
+	if err = ParamsJudge(s.db, transactionReq.AccountBookID, transactionReq.RelatedUserIDs,
+		transactionReq.CreatorID, transactionReq.CategoryID, nil); err != nil {
+		return transaction, err
 	}
-	// 判断图标是否存在
-	if err := tx.Model(&model.Category{}).Where("id = ?", transactionSeq.CategoryID).First(&model.Category{}).Error; err != nil {
-		tx.Rollback() // 回滚事务
-		return errors.New("图标不存在" + err.Error())
+	if err = ParamsJudge(s.db, nil, nil, transactionReq.PayUserID, nil, nil); err != nil {
+		return transaction, err
 	}
-	// 加锁
-	if err := tx.Model(&model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id = ?", transactionSeq.AccountBookID).
-		First(&accountBook).Error; err != nil {
-		tx.Rollback() // 回滚事务
-		return errors.New("账本不存在" + err.Error())
+	if err = copier.Copy(&transaction, &transactionReq); err != nil {
+		return transaction, http_error_code.Internal("服务内异常",
+			http_error_code.WithInternal(err))
 	}
-	// 新建交易记录
-	transaction := model.Transaction{
-		Date:           transactionSeq.Date,
-		Type:           transactionSeq.Type,
-		Amount:         transactionSeq.Amount,
-		CreatorID:      transactionSeq.CreatorID,
-		CategoryID:     transactionSeq.CategoryID,
-		Description:    transactionSeq.Description,
-		AccountBookID:  transactionSeq.AccountBookID,
-		RelatedUserIDs: transactionSeq.RelatedUserIDs,
+	if err = s.db.Model(&model.Transaction{}).Create(&transaction).Error; err != nil {
+		return
 	}
-	if err := tx.Model(&model.Transaction{}).Create(&transaction).Error; err != nil {
-		tx.Rollback() // 回滚事务
-		return err
-	}
-	// 更新账本数值
-	if transactionSeq.Type == model.IncomeType {
-		if err := tx.Model(&model.AccountBook{}).
-			Where("id = ?", accountBook.ID).
-			Update("income", accountBook.Income+transactionSeq.Amount).Error; err != nil {
-			tx.Rollback() // 回滚事务
-			return err
-		}
-	} else {
-		if err := tx.Model(&model.AccountBook{}).
-			Where("id = ?", accountBook.ID).
-			Update("spending", accountBook.Spending+transactionSeq.Amount).Error; err != nil {
-			tx.Rollback() // 回滚事务
-			return err
-		}
-	}
-	return tx.Commit().Error
+	return
 }
 
 // Get -
 func (s *TransactionStore) Get(transactionReq *model.GetTransactionReq) (resp []model.Transaction, err error) {
+	if err = ParamsJudge(s.db, &transactionReq.AccountBookID, nil,
+		nil, nil, transactionReq.ID); err != nil {
+		return resp, err
+	}
 	sql := s.db.Model(&model.Transaction{})
 	if transactionReq.BeginTime != nil {
 		sql.Where("date >= ?", &transactionReq.BeginTime)
@@ -82,141 +50,32 @@ func (s *TransactionStore) Get(transactionReq *model.GetTransactionReq) (resp []
 	if transactionReq.EndTime != nil {
 		sql.Where("date <= ?", &transactionReq.EndTime)
 	}
-	if transactionReq.UserID != 0 {
-		sql.Where("? = ANY(related_user_ids)", &transactionReq.UserID)
+	if transactionReq.ID != nil {
+		sql.Where("id = ？", &transactionReq.ID)
 	}
-	if sql.Where("account_book_id = ?", transactionReq.AccountBookID).Find(&resp).Error != nil {
-		return nil, err
-	} else {
-		return
-	}
+	err = sql.Where("account_book_id = ?", transactionReq.AccountBookID).Find(&resp).Error
+	return
 }
 
 // Modify -
-func (s *TransactionStore) Modify(modifyTransaction *model.ModifyTransactionReq) error {
-	tx := s.db.Begin()
-	accountBook := model.AccountBook{}
-	transaction := model.Transaction{}
-	// 判断图标是否存在
-	if modifyTransaction.CategoryID != 0 {
-		if err := tx.Model(&model.Category{}).Where("id = ?", modifyTransaction.CategoryID).First(&model.Category{}).Error; err != nil {
-			tx.Rollback() // 回滚事务
-			return errors.New("图标不存在" + err.Error())
-		}
-	}
-	if modifyTransaction.AccountBookID != 0 {
-		if err := tx.Model(&model.AccountBook{}).Where("id = ?", modifyTransaction.AccountBookID).First(&model.AccountBook{}).Error; err != nil {
-			tx.Rollback() // 回滚事务
-			return errors.New("更新账本不存在" + err.Error())
-		}
-	}
-	// 交易记录查询
-	if err := tx.Model(&model.Transaction{}).Where("id = ?", modifyTransaction.ID).
-		First(&transaction).Error; err != nil {
-		tx.Rollback()
-		return errors.New("交易记录不存在" + err.Error())
-	}
-	// 账本加锁
-	if err := tx.Model(&model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id = ?", transaction.AccountBookID).
-		First(&accountBook).Error; err != nil {
-		tx.Rollback() // 回滚事务
-		return errors.New("账本不存在" + err.Error())
-	}
-	// TODO 用户判断
-	if modifyTransaction.Amount > 0 {
-		// 重新查询，避免脏读
-		if err := tx.Model(&model.Transaction{}).Where("id = ?", modifyTransaction.ID).
-			First(&transaction).Error; err != nil {
-			tx.Rollback()
-			return errors.New("交易记录不存在" + err.Error())
-		}
-		// 更新后的交易信息入账
-		if modifyTransaction.Type == model.IncomeType {
-			// 如果修改前后都是收入
-			if transaction.Type == model.IncomeType {
-				if err := tx.Model(&model.AccountBook{}).
-					Where("id = ?", accountBook.ID).
-					Update("income", accountBook.Income+modifyTransaction.Amount-transaction.Amount).Error; err != nil {
-					tx.Rollback() // 回滚事务
-					return err
-				}
-			} else { // 如果支出变收入
-				if err := tx.Model(&model.AccountBook{}).
-					Where("id = ?", accountBook.ID).
-					Update("spending", accountBook.Spending-transaction.Amount).
-					Update("income", accountBook.Income+modifyTransaction.Amount).Error; err != nil {
-					tx.Rollback() // 回滚事务
-					return err
-				}
-			}
-		} else {
-			// 收入变支出
-			if transaction.Type == model.IncomeType {
-				if err := tx.Model(&model.AccountBook{}).
-					Where("id = ?", accountBook.ID).
-					Update("income", accountBook.Income-transaction.Amount).
-					Update("spending", accountBook.Spending+modifyTransaction.Amount).Error; err != nil {
-					tx.Rollback() // 回滚事务
-					return err
-				}
-			} else {
-				// 一直是支出
-				if err := tx.Model(&model.AccountBook{}).
-					Where("id = ?", accountBook.ID).
-					Update("spending", accountBook.Spending+modifyTransaction.Amount-transaction.Amount).Error; err != nil {
-					tx.Rollback() // 回滚事务
-					return err
-				}
-			}
-		}
+func (s *TransactionStore) Modify(modifyTransaction *model.ModifyTransactionReq) (transaction model.Transaction, err error) {
+	if err = ParamsJudge(s.db, modifyTransaction.AccountBookID, modifyTransaction.RelatedUserIDs,
+		modifyTransaction.PayUserID, modifyTransaction.CategoryID, &modifyTransaction.ID); err != nil {
+		return
 	}
 	// 交易信息更新
-	if err := tx.Model(&model.Transaction{}).Where("id = ?", modifyTransaction.ID).Updates(modifyTransaction).Error; err != nil {
-		tx.Rollback()
-		return err
+	if err = copier.Copy(&transaction, &modifyTransaction); err != nil {
+		return transaction, http_error_code.Internal("服务内异常",
+			http_error_code.WithInternal(err))
 	}
-	return tx.Commit().Error
+	err = s.db.Model(&model.Transaction{}).Where("id = ?", modifyTransaction.ID).Updates(&transaction).Find(&transaction).Error
+	return
 }
 
 // Delete -
-func (s *TransactionStore) Delete(transaction *model.DeleteTransactionReq) error {
-	tx := s.db.Begin()
-	accountBook := model.AccountBook{}
-	// 加锁
-	if err := tx.Model(&model.AccountBook{}).Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id = ?", transaction.AccountBookID).
-		First(&accountBook).Error; err != nil {
-		tx.Rollback() // 回滚事务
-		return errors.New("账本不存在" + err.Error())
-	}
-	// 更新账本数值
-	tmpTransaction := model.Transaction{}
-	if err := tx.Model(&model.Transaction{}).
-		Where(transaction).First(&tmpTransaction).Error; err != nil {
-		tx.Rollback()
-		return errors.New("记录信息有误，账本和交易记录不匹配" + err.Error())
-	}
-	// 把修改前的信息，从账本退去
-	if tmpTransaction.Type == model.IncomeType {
-		if err := tx.Model(&model.AccountBook{}).
-			Where("id = ?", accountBook.ID).
-			Update("income", accountBook.Income-tmpTransaction.Amount).Error; err != nil {
-			tx.Rollback() // 回滚事务
-			return err
-		}
-	} else {
-		if err := tx.Model(&model.AccountBook{}).
-			Where("id = ?", accountBook.ID).
-			Update("spending", accountBook.Spending-tmpTransaction.Amount).Error; err != nil {
-			tx.Rollback() // 回滚事务
-			return err
-		}
-	}
-
-	if err := tx.Model(&model.Transaction{}).Where(transaction).Delete(&model.Transaction{}).Error; err != nil {
-		tx.Rollback()
+func (s *TransactionStore) Delete(transactionReq *model.DeleteTransactionReq) error {
+	if err := ParamsJudge(s.db, nil, nil, nil, nil, &transactionReq.ID); err != nil {
 		return err
 	}
-	return tx.Commit().Error
+	return s.db.Model(&model.Transaction{}).Where("id = ?", transactionReq.ID).Delete(&model.Transaction{}).Error
 }

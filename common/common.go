@@ -16,6 +16,16 @@ func ContainsInt(arr []int, target int) bool {
 	return false
 }
 
+// ContainsUint 判断一个int是否在int数组中
+func ContainsUint(arr []uint, target uint) bool {
+	for _, value := range arr {
+		if value == target {
+			return true
+		}
+	}
+	return false
+}
+
 // String2Uint -
 func String2Uint(str string) (uint, error) {
 	u64, err := strconv.ParseUint(str, 10, 64)

@@ -440,8 +440,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "账本结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBook"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -489,8 +492,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "注册结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBook"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -539,44 +545,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/account-book/:id": {
-            "get": {
-                "tags": [
-                    "账本"
-                ],
-                "summary": "获取账本",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "format": "uint",
-                        "description": "账本id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "账本结果",
-                        "schema": {
-                            "$ref": "#/definitions/model.AccountBookResp"
-                        }
-                    },
-                    "400": {
-                        "description": "请求体异常",
-                        "schema": {
-                            "$ref": "#/definitions/http_error_code.AppError"
-                        }
-                    },
-                    "500": {
-                        "description": "服务端异常",
-                        "schema": {
-                            "$ref": "#/definitions/http_error_code.AppError"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/account-book/merge": {
             "post": {
                 "tags": [
@@ -584,6 +552,13 @@ const docTemplate = `{
                 ],
                 "summary": "合并账本",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "创建人(只能合并自己创建的账本)",
+                        "name": "creator_id",
+                        "in": "query",
+                        "required": true
+                    },
                     {
                         "type": "integer",
                         "description": "合并的账本id  A",
@@ -600,8 +575,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "账本结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBookResp"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -681,12 +659,6 @@ const docTemplate = `{
                         "description": "分类名称的中文示意",
                         "name": "name",
                         "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "用户id",
-                        "name": "user_id",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -739,8 +711,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "图标信息",
+                        "schema": {
+                            "$ref": "#/definitions/model.Category"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -853,8 +828,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "用户信息",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -894,8 +872,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "用户信息",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -942,7 +923,8 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "对应的账本id",
                         "name": "account_book_id",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -958,8 +940,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "用户id",
-                        "name": "user_id",
+                        "description": "交易id",
+                        "name": "id",
                         "in": "query"
                     }
                 ],
@@ -967,10 +949,7 @@ const docTemplate = `{
                     "200": {
                         "description": "交易记录",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Transaction"
-                            }
+                            "$ref": "#/definitions/model.TransactionResp"
                         }
                     },
                     "400": {
@@ -1012,12 +991,6 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "description": "记录账户id",
-                        "name": "creator_id",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "description": "交易日期",
                         "name": "date",
@@ -1037,6 +1010,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "description": "付款人id",
+                        "name": "pay_user_id",
+                        "in": "query"
+                    },
+                    {
                         "type": "array",
                         "items": {
                             "type": "integer"
@@ -1047,6 +1026,10 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "enum": [
+                            1,
+                            2
+                        ],
                         "type": "integer",
                         "description": "类型:收入/支出,交易类型必须是0或者1",
                         "name": "type",
@@ -1054,8 +1037,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "交易信息",
+                        "schema": {
+                            "$ref": "#/definitions/model.Transaction"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -1118,6 +1104,14 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "付款人id",
+                        "name": "pay_user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minItems": 1,
                         "type": "array",
                         "items": {
                             "type": "integer"
@@ -1125,7 +1119,8 @@ const docTemplate = `{
                         "collectionFormat": "csv",
                         "description": "RelatedUserIDs 涉及那些人",
                         "name": "related_user_ids",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "enum": [
@@ -1140,8 +1135,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "交易记录",
+                        "schema": {
+                            "$ref": "#/definitions/model.Transaction"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -1163,13 +1161,6 @@ const docTemplate = `{
                 ],
                 "summary": "删除交易记录",
                 "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "账本id",
-                        "name": "account_book_id",
-                        "in": "query",
-                        "required": true
-                    },
                     {
                         "type": "integer",
                         "description": "交易记录id",
@@ -1206,10 +1197,21 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "用户id",
+                        "description": "用户id(id,昵称，手机号至少一个)",
                         "name": "id",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账号名称，昵称，全局唯一",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "phone_number",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1274,6 +1276,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "phone_number",
+                        "in": "query"
+                    },
+                    {
                         "type": "object",
                         "description": "余额详情",
                         "name": "balance_detail",
@@ -1311,6 +1319,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "账号名称，昵称，全局唯一",
                         "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "phone_number",
                         "in": "query",
                         "required": true
                     },
@@ -1497,7 +1512,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "creator_id": {
-                    "description": "创建人",
+                    "description": "创建人,不允许修改",
                     "type": "integer"
                 },
                 "deleted_at": {
@@ -1637,6 +1652,10 @@ const docTemplate = `{
                     "description": "主键id",
                     "type": "integer"
                 },
+                "pay_user_id": {
+                    "description": "付款人id",
+                    "type": "integer"
+                },
                 "related_user_ids": {
                     "description": "RelatedUserIDs 涉及那些人",
                     "type": "array",
@@ -1651,6 +1670,32 @@ const docTemplate = `{
                 "updated_at": {
                     "description": "更新时间",
                     "type": "string"
+                }
+            }
+        },
+        "model.TransactionResp": {
+            "type": "object",
+            "properties": {
+                "categorys": {
+                    "description": "图标信息",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Category"
+                    }
+                },
+                "transactions": {
+                    "description": "账本列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Transaction"
+                    }
+                },
+                "users": {
+                    "description": "涉及的用户信息",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
                 }
             }
         },
@@ -1701,6 +1746,10 @@ const docTemplate = `{
                     "description": "账号名称，昵称，全局唯一",
                     "type": "string"
                 },
+                "phone_number": {
+                    "description": "手机号",
+                    "type": "string"
+                },
                 "updated_at": {
                     "description": "更新时间",
                     "type": "string"
@@ -1720,7 +1769,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "182.92.152.108:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Lumino",

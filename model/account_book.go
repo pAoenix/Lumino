@@ -7,7 +7,7 @@ const AccountBookTableName = "account_books"
 // AccountBook -
 type AccountBook struct {
 	Model
-	CreatorID uint          `json:"creator_id" form:"creator_id"`                                               // 创建人
+	CreatorID uint          `json:"creator_id" form:"creator_id"`                                               // 创建人,不允许修改
 	UserIDs   pq.Int32Array `gorm:"type:integer[]" json:"user_ids" form:"user_ids" swaggertype:"array,integer"` // 账本用户列表
 	Name      string        `json:"name" form:"name"`                                                           // 账本名称
 	Spending  float64       `json:"spending" form:"spending"`                                                   // 账本花费
@@ -16,22 +16,23 @@ type AccountBook struct {
 
 // RegisterAccountBookReq -
 type RegisterAccountBookReq struct {
-	Name      string        `json:"name" form:"name" binding:"required"`                                        // 账本名称
+	Name      string        `json:"name" form:"name" binding:"required,notblank"`                               // 账本名称
 	UserIDs   pq.Int32Array `gorm:"type:integer[]" json:"user_ids" form:"user_ids" swaggertype:"array,integer"` // 账本用户列表
 	CreatorID uint          `json:"creator_id" form:"creator_id" binding:"required"`                            // 创建人
 }
 
 // GetAccountBookReq -
 type GetAccountBookReq struct {
-	UserID   uint `json:"user_id" form:"user_id" binding:"required"` // 用户
-	ID       uint `json:"id" form:"id" swaggerignore:"true"`         // 账本id
-	SortType int  `json:"sort_type" form:"sort_type"`                // 排序模式  0: 创建时间升序，1:创建时间降序
+	CreatorID uint  `json:"user_id" form:"user_id" binding:"required"` // 用户
+	ID        *uint `json:"id" form:"id" swaggerignore:"true"`         // 账本id
+	SortType  int   `json:"sort_type" form:"sort_type"`                // 排序模式  0: 创建时间升序，1:创建时间降序
 }
 
 // MergeAccountBookReq -
 type MergeAccountBookReq struct {
 	MergeAccountBookID  uint `json:"merge_account_book_id" form:"merge_account_book_id" binding:"required"`   // 合并的账本id  A
 	MergedAccountBookID uint `json:"merged_account_book_id" form:"merged_account_book_id" binding:"required"` // 被合并的账本id B -> A，B的记录全部合入到A
+	CreatorID           uint `json:"creator_id" form:"creator_id" binding:"required"`                         // 创建人(只能合并自己创建的账本)
 }
 
 // AccountBookResp -
@@ -44,7 +45,7 @@ type AccountBookResp struct {
 // ModifyAccountBookReq -
 type ModifyAccountBookReq struct {
 	ID      uint           `json:"id" form:"id" binding:"required"`                                            // 账本id
-	Name    *string        `json:"name" form:"name"`                                                           // 账本名称
+	Name    string         `json:"name" form:"name" binding:"omitempty,notblank"`                              // 账本名称
 	UserIDs *pq.Int32Array `gorm:"type:integer[]" json:"user_ids" form:"user_ids" swaggertype:"array,integer"` // 账本用户列表
 }
 

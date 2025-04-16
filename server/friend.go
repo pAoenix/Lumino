@@ -24,7 +24,7 @@ func NewFriendServer(friendService *service.FriendService) *FriendServer {
 // @Summary	邀请朋友
 // @Tags 朋友
 // @Param        friend  query      model.Friend  true  "邀请信息"
-// @Success	204
+// @Success	200 {object}  model.User                  "用户信息"
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/friend/invite [post]
@@ -34,11 +34,11 @@ func (s *FriendServer) Invite(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	if err := s.FriendService.Invite(&req); err != nil {
+	if resp, err := s.FriendService.Invite(&req); err != nil {
 		c.Error(err)
-		return
+	} else {
+		c.JSON(http.StatusOK, resp)
 	}
-	c.JSON(http.StatusNoContent, nil)
 	return
 }
 
@@ -46,7 +46,7 @@ func (s *FriendServer) Invite(c *gin.Context) {
 // @Summary	删除朋友
 // @Tags 朋友
 // @Param        friend  query      model.Friend  true  "删除信息"
-// @Success	204
+// @Success	200 {object}  model.User                    "用户信息"
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/friend [delete]
@@ -56,10 +56,10 @@ func (s *FriendServer) Delete(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	if err := s.FriendService.Delete(&req); err != nil {
+	if resp, err := s.FriendService.Delete(&req); err != nil {
 		c.Error(err)
-		return
+	} else {
+		c.JSON(http.StatusOK, resp)
 	}
-	c.JSON(http.StatusNoContent, nil)
 	return
 }

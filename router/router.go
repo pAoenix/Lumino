@@ -14,6 +14,8 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 	"net/http"
+	"reflect"
+	"regexp"
 	"strings"
 )
 
@@ -78,7 +80,6 @@ func (r *Router) Handler() http.Handler {
 
 	accountBook := e.Group("api/v1/account-book")
 	{
-		accountBook.GET(":id", r.AccountBookServer.GetByID)
 		accountBook.GET("", r.AccountBookServer.Get)
 		accountBook.POST("", r.AccountBookServer.Register)
 		accountBook.POST("/merge", r.AccountBookServer.Merge)
@@ -111,5 +112,58 @@ func setupValidator() {
 			value := fl.Field().String()
 			return len(strings.TrimSpace(value)) > 0
 		})
+		_ = v.RegisterValidation("phone", func(fl validator.FieldLevel) bool {
+			phone := fl.Field().String()
+			matched, _ := regexp.MatchString(`^1[3-9]\d{9}$`, phone)
+			return matched
+		})
+		_ = v.RegisterValidation("require_at_least_one", validateRequireAtLeastOne)
+	}
+}
+
+// 自定义验证函数
+func validateRequireAtLeastOne(fl validator.FieldLevel) bool {
+	// 获取结构体实例
+	structValue := fl.Parent()
+
+	// 获取要检查的字段列表
+	fieldsToCheck := strings.Split(fl.Param(), " ")
+
+	// 检查当前字段是否有值
+	currentField := fl.Field()
+	if !isZero(currentField) {
+		return true
+	}
+
+	// 检查其他字段是否至少有一个有值
+	for _, fieldName := range fieldsToCheck {
+		field := structValue.FieldByName(fieldName)
+		if !isZero(field) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// 检查零值
+func isZero(field reflect.Value) bool {
+	switch field.Kind() {
+	case reflect.Slice, reflect.Map, reflect.Array:
+		return field.Len() == 0
+	case reflect.String:
+		return field.String() == ""
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return field.Int() == 0
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return field.Uint() == 0
+	case reflect.Float32, reflect.Float64:
+		return field.Float() == 0
+	case reflect.Bool:
+		return !field.Bool()
+	case reflect.Ptr, reflect.Interface:
+		return field.IsNil()
+	default:
+		return false
 	}
 }
