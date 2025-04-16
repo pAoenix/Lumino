@@ -545,44 +545,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/account-book/:id": {
-            "get": {
-                "tags": [
-                    "账本"
-                ],
-                "summary": "获取账本",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "format": "uint",
-                        "description": "账本id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "账本结果",
-                        "schema": {
-                            "$ref": "#/definitions/model.AccountBookResp"
-                        }
-                    },
-                    "400": {
-                        "description": "请求体异常",
-                        "schema": {
-                            "$ref": "#/definitions/http_error_code.AppError"
-                        }
-                    },
-                    "500": {
-                        "description": "服务端异常",
-                        "schema": {
-                            "$ref": "#/definitions/http_error_code.AppError"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/account-book/merge": {
             "post": {
                 "tags": [

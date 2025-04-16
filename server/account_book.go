@@ -92,28 +92,6 @@ func (s *AccountBookServer) Get(c *gin.Context) {
 	return
 }
 
-// GetByID -
-// @Summary	获取账本
-// @Tags 账本
-// @Param        id  path      int  true  "账本id" format(uint)
-// @Success	200 {object}  model.AccountBookResp "账本结果"
-// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
-// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
-// @Router		/api/v1/account-book/:id [get]
-func (s *AccountBookServer) GetByID(c *gin.Context) {
-	req := model.GetAccountBookReq{}
-	if err := middleware.BindURI(c, &req); err != nil {
-		c.Error(err)
-		return
-	}
-	if resp, err := s.AccountBookService.Get(&req); err != nil {
-		c.Error(err)
-	} else {
-		c.JSON(http.StatusOK, resp)
-	}
-	return
-}
-
 // Modify -
 // @Summary	修改账本
 // @Tags 账本

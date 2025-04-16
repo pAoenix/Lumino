@@ -577,31 +577,6 @@ paths:
       summary: 修改账本
       tags:
       - 账本
-  /api/v1/account-book/:id:
-    get:
-      parameters:
-      - description: 账本id
-        format: uint
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: 账本结果
-          schema:
-            $ref: '#/definitions/model.AccountBookResp'
-        "400":
-          description: 请求体异常
-          schema:
-            $ref: '#/definitions/http_error_code.AppError'
-        "500":
-          description: 服务端异常
-          schema:
-            $ref: '#/definitions/http_error_code.AppError'
-      summary: 获取账本
-      tags:
-      - 账本
   /api/v1/account-book/merge:
     post:
       parameters:

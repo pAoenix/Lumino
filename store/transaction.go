@@ -24,6 +24,9 @@ func (s *TransactionStore) Register(transactionReq *model.RegisterTransactionReq
 		transactionReq.CreatorID, transactionReq.CategoryID, nil); err != nil {
 		return transaction, err
 	}
+	if err = ParamsJudge(s.db, nil, nil, transactionReq.PayUserID, nil, nil); err != nil {
+		return transaction, err
+	}
 	if err = copier.Copy(&transaction, &transactionReq); err != nil {
 		return transaction, http_error_code.Internal("服务内异常",
 			http_error_code.WithInternal(err))
