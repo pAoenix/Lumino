@@ -46,7 +46,7 @@ func (s *FriendServer) Invite(c *gin.Context) {
 // @Summary	删除朋友
 // @Tags 朋友
 // @Param        friend  query      model.Friend  true  "删除信息"
-// @Success	200 {object}  model.Friend                  "用户信息"
+// @Success	200 {object}  model.User                    "用户信息"
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/friend [delete]

@@ -130,18 +130,6 @@ definitions:
         description: 用户id
         type: integer
     type: object
-  model.Friend:
-    properties:
-      invitee:
-        description: 被邀请人
-        type: integer
-      inviter:
-        description: 邀请人
-        type: integer
-    required:
-    - invitee
-    - inviter
-    type: object
   model.Transaction:
     properties:
       account_book_id:
@@ -803,7 +791,7 @@ paths:
         "200":
           description: 用户信息
           schema:
-            $ref: '#/definitions/model.Friend'
+            $ref: '#/definitions/model.User'
         "400":
           description: 请求体异常
           schema:

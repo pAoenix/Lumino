@@ -869,7 +869,7 @@ const docTemplate = `{
                     "200": {
                         "description": "用户信息",
                         "schema": {
-                            "$ref": "#/definitions/model.Friend"
+                            "$ref": "#/definitions/model.User"
                         }
                     },
                     "400": {
@@ -1649,23 +1649,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "用户id",
-                    "type": "integer"
-                }
-            }
-        },
-        "model.Friend": {
-            "type": "object",
-            "required": [
-                "invitee",
-                "inviter"
-            ],
-            "properties": {
-                "invitee": {
-                    "description": "被邀请人",
-                    "type": "integer"
-                },
-                "inviter": {
-                    "description": "邀请人",
                     "type": "integer"
                 }
             }
