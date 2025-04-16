@@ -440,8 +440,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "账本结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.AccountBook"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -694,12 +697,6 @@ const docTemplate = `{
                         "description": "分类名称的中文示意",
                         "name": "name",
                         "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "用户id",
-                        "name": "user_id",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -752,8 +749,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "图标信息",
+                        "schema": {
+                            "$ref": "#/definitions/model.Category"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -866,8 +866,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "用户信息",
+                        "schema": {
+                            "$ref": "#/definitions/model.Friend"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -907,8 +910,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "用户信息",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -1072,8 +1078,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "交易信息",
+                        "schema": {
+                            "$ref": "#/definitions/model.Transaction"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -1640,6 +1649,23 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "用户id",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Friend": {
+            "type": "object",
+            "required": [
+                "invitee",
+                "inviter"
+            ],
+            "properties": {
+                "invitee": {
+                    "description": "被邀请人",
+                    "type": "integer"
+                },
+                "inviter": {
+                    "description": "邀请人",
                     "type": "integer"
                 }
             }

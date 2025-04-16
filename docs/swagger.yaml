@@ -130,6 +130,18 @@ definitions:
         description: 用户id
         type: integer
     type: object
+  model.Friend:
+    properties:
+      invitee:
+        description: 被邀请人
+        type: integer
+      inviter:
+        description: 邀请人
+        type: integer
+    required:
+    - invitee
+    - inviter
+    type: object
   model.Transaction:
     properties:
       account_book_id:
@@ -562,8 +574,10 @@ paths:
         name: user_ids
         type: array
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: 账本结果
+          schema:
+            $ref: '#/definitions/model.AccountBook'
         "400":
           description: 请求体异常
           schema:
@@ -703,8 +717,10 @@ paths:
         required: true
         type: file
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: 图标信息
+          schema:
+            $ref: '#/definitions/model.Category'
         "400":
           description: 请求体异常
           schema:
@@ -727,10 +743,6 @@ paths:
         in: query
         name: name
         type: string
-      - description: 用户id
-        in: query
-        name: user_id
-        type: integer
       responses:
         "200":
           description: 图标结果
@@ -788,8 +800,10 @@ paths:
         required: true
         type: integer
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: 用户信息
+          schema:
+            $ref: '#/definitions/model.Friend'
         "400":
           description: 请求体异常
           schema:
@@ -815,8 +829,10 @@ paths:
         required: true
         type: integer
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: 用户信息
+          schema:
+            $ref: '#/definitions/model.User'
         "400":
           description: 请求体异常
           schema:
@@ -1013,8 +1029,10 @@ paths:
         name: type
         type: integer
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: 交易信息
+          schema:
+            $ref: '#/definitions/model.Transaction'
         "400":
           description: 请求体异常
           schema:

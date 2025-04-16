@@ -69,7 +69,7 @@ func (s *TransactionServer) Get(c *gin.Context) {
 // @Summary	修改交易记录
 // @Tags 交易记录
 // @Param        transaction  query      model.ModifyTransactionReq  true  "交易信息"
-// @Success	204
+// @Success	200 {object}  model.Transaction             "交易信息"
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/transaction [put]

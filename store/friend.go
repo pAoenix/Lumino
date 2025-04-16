@@ -21,42 +21,42 @@ func NewFriendStore(db *DB) *FriendStore {
 }
 
 // Invite -
-func (s *FriendStore) Invite(friend *model.Friend) error {
-	if err := ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil, nil); err != nil {
-		return err
+func (s *FriendStore) Invite(friend *model.Friend) (user model.User, err error) {
+	if err = ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil, nil); err != nil {
+		return user, err
 	}
-	user := model.User{}
-	if err := s.db.Model(&model.User{}).Where("? = ANY(friend) and id = ?", friend.Invitee, friend.Inviter).First(&user).Error; err != nil {
+	if err = s.db.Model(&model.User{}).Where("? = ANY(friend) and id = ?", friend.Invitee, friend.Inviter).First(&user).Error; err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return http_error_code.Internal("服务内部错误",
+			return user, http_error_code.Internal("服务内部错误",
 				http_error_code.WithInternal(err))
 		}
 	} else {
-		return http_error_code.Conflict("你已存在该好友",
+		return user, http_error_code.Conflict("你已存在该好友",
 			http_error_code.WithInternal(err))
 	}
-	return s.db.Model(&model.User{}).
+	err = s.db.Model(&model.User{}).
 		Where("id = ?", friend.Inviter).
 		Update("friend", gorm.Expr("array_append(friend, ?)", friend.Invitee)).
-		Error
+		Find(&user).Error
+	return
 }
 
 // Delete -
-func (s *FriendStore) Delete(friend *model.Friend) error {
-	if err := ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil, nil); err != nil {
-		return err
+func (s *FriendStore) Delete(friend *model.Friend) (user model.User, err error) {
+	if err = ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil, nil); err != nil {
+		return user, err
 	}
-	user := model.User{}
-	if err := s.db.Model(&model.User{}).Where("? = ANY(friend) and id = ?", friend.Invitee, friend.Inviter).First(&user).Error; err != nil {
+	if err = s.db.Model(&model.User{}).Where("? = ANY(friend) and id = ?", friend.Invitee, friend.Inviter).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return http_error_code.BadRequest("对方不是你好友",
+			return user, http_error_code.BadRequest("对方不是你好友",
 				http_error_code.WithInternal(err))
 		}
-		return http_error_code.Internal("服务内部错误",
+		return user, http_error_code.Internal("服务内部错误",
 			http_error_code.WithInternal(err))
 	}
-	return s.db.Model(&model.User{}).
+	err = s.db.Model(&model.User{}).
 		Where("id = ?", friend.Inviter).
 		Update("friend", gorm.Expr("array_remove(friend, ?)", friend.Invitee)).
-		Error
+		Find(&user).Error
+	return
 }
