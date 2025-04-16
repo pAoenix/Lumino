@@ -122,5 +122,15 @@ func (s *UserStore) Delete(userReq *model.DeleteUserReq) error {
 	if err := ParamsJudge(s.db, nil, nil, &userReq.ID, nil, nil); err != nil {
 		return err
 	}
-	return s.db.Model(&model.User{}).Delete(&model.User{Model: model.Model{ID: userReq.ID}}).Error
+	tx := s.db.Begin()
+	if err := tx.Model(&model.User{}).Delete(&model.User{Model: model.Model{ID: userReq.ID}}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Model(&model.User{}).Where("? = ANY(friend)", userReq.ID).
+		Update("friend", gorm.Expr("array_remove(friend, ?)", userReq.ID)).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit().Error
 }
