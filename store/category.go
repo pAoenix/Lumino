@@ -75,6 +75,14 @@ func (s *CategoryStore) Get(categoryReq *model.GetCategoryReq) (resp []model.Cat
 	return
 }
 
+// BatchGetByIDs 仅内部使用。数据已经经过校验
+func (s *CategoryStore) BatchGetByIDs(categoryIDs []uint) (categorys []model.Category, err error) {
+	if err = s.db.Model(&model.Category{}).Where("id in ?", categoryIDs).Find(&categorys).Error; err != nil {
+		return nil, err
+	}
+	return
+}
+
 // Modify -
 func (s *CategoryStore) Modify(categoryReq *model.ModifyCategoryReq) (resp model.Category, err error) {
 	if err = ParamsJudge(s.db, nil, nil, nil, &categoryReq.ID, nil); err != nil {

@@ -46,6 +46,13 @@ type GetTransactionReq struct {
 	EndTime       *time.Time `json:"end_time" form:"end_time"`                                  // 结束时间
 }
 
+// TransactionResp -
+type TransactionResp struct {
+	Transactions []Transaction `json:"transactions" form:"transactions"` //账本列表
+	Users        []User        `json:"users" form:"users"`               // 涉及的用户信息
+	Categorys    []Category    `json:"categorys" form:"categorys"`       // 图标信息
+}
+
 // DeleteTransactionReq -
 type DeleteTransactionReq struct {
 	ID uint `json:"id" form:"id" binding:"required"` //交易记录id

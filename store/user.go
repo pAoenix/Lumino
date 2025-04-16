@@ -109,8 +109,8 @@ func (s *UserStore) Get(userReq *model.GetUserReq) (user model.User, err error) 
 	return
 }
 
-// BatchGetByIDs -
-func (s *UserStore) BatchGetByIDs(userIDs []int) (users []model.User, err error) {
+// BatchGetByIDs 仅内部使用。数据已经经过校验
+func (s *UserStore) BatchGetByIDs(userIDs []uint) (users []model.User, err error) {
 	if err = s.db.Model(&model.User{}).Where("id in ?", userIDs).Find(&users).Error; err != nil {
 		return nil, err
 	}

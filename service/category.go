@@ -43,16 +43,29 @@ func (s *CategoryService) Get(categoryReq *model.GetCategoryReq) (resp []model.C
 	if resp, err = s.CategoryStore.Get(categoryReq); err != nil {
 		return nil, err
 	}
+	if len(resp) == 0 {
+		return
+	}
+	return s.DownloadCategoryIcon(nil, resp)
+}
+
+// DownloadCategoryIcon -
+func (s *CategoryService) DownloadCategoryIcon(CategoryIDs []uint, categoryInit []model.Category) (categorys []model.Category, err error) {
+	if categoryInit != nil {
+		categorys = categoryInit
+	} else {
+		categorys, err = s.CategoryStore.BatchGetByIDs(CategoryIDs)
+	}
 	const maxConcurrency = 20 // 最大并发数
 	sem := make(chan struct{}, maxConcurrency)
-	errCh := make(chan error, len(resp))
+	errCh := make(chan error, len(categorys))
 	var wg sync.WaitGroup
 
 	defer func() {
 		close(errCh)
 		close(sem)
 	}()
-	for idx, _ := range resp {
+	for idx, _ := range categorys {
 		wg.Add(1) // 计数器加1
 		go func(i int) {
 			sem <- struct{}{} // 获取信号量
@@ -60,10 +73,10 @@ func (s *CategoryService) Get(categoryReq *model.GetCategoryReq) (resp []model.C
 				<-sem // 释放信号量
 				wg.Done()
 			}()
-			if ossUrl, err := s.ossClient.DownloadFile(resp[i].IconUrl); err != nil {
+			if ossUrl, err := s.ossClient.DownloadFile(categorys[i].IconUrl); err != nil {
 				errCh <- fmt.Errorf("处理 %d 失败: %v", i, err)
 			} else {
-				resp[i].IconUrl = ossUrl
+				categorys[i].IconUrl = ossUrl
 			}
 		}(idx)
 	}
@@ -72,7 +85,7 @@ func (s *CategoryService) Get(categoryReq *model.GetCategoryReq) (resp []model.C
 		for len(errCh) > 0 {
 			logger.Error(<-errCh)
 		}
-		return resp, http_error_code.Internal("下载图标异常",
+		return categorys, http_error_code.Internal("下载图标异常",
 			http_error_code.WithInternal(err))
 	}
 	return
