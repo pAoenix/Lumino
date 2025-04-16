@@ -112,6 +112,7 @@ func (s *AccountBookService) Merge(mergeAccountBookReq *model.MergeAccountBookRe
 		return resp, err
 	}
 	return s.Get(&model.GetAccountBookReq{
-		ID: &mergeAccountBookReq.MergeAccountBookID,
+		ID:        &mergeAccountBookReq.MergeAccountBookID,
+		CreatorID: mergeAccountBookReq.CreatorID,
 	})
 }
