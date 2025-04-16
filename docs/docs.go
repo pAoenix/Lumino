@@ -949,10 +949,7 @@ const docTemplate = `{
                     "200": {
                         "description": "交易记录",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Transaction"
-                            }
+                            "$ref": "#/definitions/model.TransactionResp"
                         }
                     },
                     "400": {
@@ -1673,6 +1670,32 @@ const docTemplate = `{
                 "updated_at": {
                     "description": "更新时间",
                     "type": "string"
+                }
+            }
+        },
+        "model.TransactionResp": {
+            "type": "object",
+            "properties": {
+                "categorys": {
+                    "description": "图标信息",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Category"
+                    }
+                },
+                "transactions": {
+                    "description": "账本列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Transaction"
+                    }
+                },
+                "users": {
+                    "description": "涉及的用户信息",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
                 }
             }
         },

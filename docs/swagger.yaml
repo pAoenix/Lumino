@@ -175,6 +175,24 @@ definitions:
         description: 更新时间
         type: string
     type: object
+  model.TransactionResp:
+    properties:
+      categorys:
+        description: 图标信息
+        items:
+          $ref: '#/definitions/model.Category'
+        type: array
+      transactions:
+        description: 账本列表
+        items:
+          $ref: '#/definitions/model.Transaction'
+        type: array
+      users:
+        description: 涉及的用户信息
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+    type: object
   model.User:
     properties:
       balance:
@@ -864,9 +882,7 @@ paths:
         "200":
           description: 交易记录
           schema:
-            items:
-              $ref: '#/definitions/model.Transaction'
-            type: array
+            $ref: '#/definitions/model.TransactionResp'
         "400":
           description: 请求体异常
           schema:

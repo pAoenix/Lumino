@@ -47,7 +47,7 @@ func (s *TransactionServer) Register(c *gin.Context) {
 // @Summary	获取交易记录
 // @Tags 交易记录
 // @Param        transaction  query      model.GetTransactionReq  true  "交易信息"
-// @Success	200 {object}  []model.Transaction "交易记录"
+// @Success	200 {object}  model.TransactionResp "交易记录"
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/transaction [get]
