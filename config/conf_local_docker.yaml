@@ -1,0 +1,17 @@
+env: dev
+port: 8080
+
+postgres:
+  dbname: lumino_dev
+  host: "host.docker.internal"
+  port: 5433
+  user: postgres
+  passwd: 6666
+  maxOpenConns: 50
+
+
+gracefulShutdown:
+  timeoutSeconds: 30
+
+log:
+  level: info
