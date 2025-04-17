@@ -5,6 +5,7 @@ import (
 	"Lumino/common/http_error_code"
 	"Lumino/model"
 	"Lumino/store"
+	"sort"
 	"time"
 )
 
@@ -97,7 +98,7 @@ func (s *TransactionService) Delete(transactionReq *model.DeleteTransactionReq) 
 func groupByDay(items []model.Transaction) (dailyTransaction []model.DailyTransaction) {
 	// 按天分组
 	dailyMap := make(map[string]model.DailyTransaction)
-
+	var keys []string
 	for _, item := range items {
 		dateDayStr := item.Date.Format("2006-01-02")
 		if daily, exists := dailyMap[dateDayStr]; exists {
@@ -113,10 +114,10 @@ func groupByDay(items []model.Transaction) (dailyTransaction []model.DailyTransa
 			income := 0.
 			if item.Type == model.IncomeType {
 				income = item.Amount
-				spending = item.Amount
 			} else {
 				spending = item.Amount
 			}
+			keys = append(keys, dateDayStr)
 			dailyMap[dateDayStr] = model.DailyTransaction{
 				Date:     dateDayStr,
 				Items:    []model.Transaction{item},
@@ -125,9 +126,12 @@ func groupByDay(items []model.Transaction) (dailyTransaction []model.DailyTransa
 			}
 		}
 	}
+	sort.Slice(keys, func(i, j int) bool {
+		return keys[i] < keys[j]
+	})
 	// 将map转换为slice
-	for _, daily := range dailyMap {
-		dailyTransaction = append(dailyTransaction, daily)
+	for _, key := range keys {
+		dailyTransaction = append(dailyTransaction, dailyMap[key])
 	}
 	return
 }
