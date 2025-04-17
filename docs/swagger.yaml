@@ -130,6 +130,23 @@ definitions:
         description: 用户id
         type: integer
     type: object
+  model.DailyTransaction:
+    properties:
+      date:
+        description: 日期，格式如 "2023-03-15"
+        type: string
+      income:
+        description: 当天总收入
+        type: number
+      items:
+        description: 当天的记账条目
+        items:
+          $ref: '#/definitions/model.Transaction'
+        type: array
+      spending:
+        description: 当天总支持
+        type: number
+    type: object
   model.Transaction:
     properties:
       account_book_id:
@@ -185,7 +202,7 @@ definitions:
       transactions:
         description: 账本列表
         items:
-          $ref: '#/definitions/model.Transaction'
+          $ref: '#/definitions/model.DailyTransaction'
         type: array
       users:
         description: 涉及的用户信息
@@ -237,7 +254,7 @@ definitions:
         description: 更新时间
         type: string
     type: object
-host: 182.92.152.108:8080
+host: localhost:8080
 info:
   contact: {}
   description: lumino 记账本服务

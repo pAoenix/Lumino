@@ -1612,6 +1612,30 @@ const docTemplate = `{
                 }
             }
         },
+        "model.DailyTransaction": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "description": "日期，格式如 \"2023-03-15\"",
+                    "type": "string"
+                },
+                "income": {
+                    "description": "当天总收入",
+                    "type": "number"
+                },
+                "items": {
+                    "description": "当天的记账条目",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Transaction"
+                    }
+                },
+                "spending": {
+                    "description": "当天总支持",
+                    "type": "number"
+                }
+            }
+        },
         "model.Transaction": {
             "type": "object",
             "properties": {
@@ -1687,7 +1711,7 @@ const docTemplate = `{
                     "description": "账本列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.Transaction"
+                        "$ref": "#/definitions/model.DailyTransaction"
                     }
                 },
                 "users": {
@@ -1769,7 +1793,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "182.92.152.108:8080",
+	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Lumino",

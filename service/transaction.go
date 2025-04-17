@@ -2,6 +2,7 @@ package service
 
 import (
 	"Lumino/common"
+	"Lumino/common/http_error_code"
 	"Lumino/model"
 	"Lumino/store"
 	"time"
@@ -33,11 +34,23 @@ func (s *TransactionService) Register(transactionReq *model.RegisterTransactionR
 
 // Get -
 func (s *TransactionService) Get(transactionReq *model.GetTransactionReq) (resp model.TransactionResp, err error) {
+	// 如果没有时间范围，那么默认为本月
+	if transactionReq.BeginTime == nil {
+		firstDay := common.GetFirstDayOfMonth(time.Now())
+		transactionReq.BeginTime = &firstDay
+	}
+	if transactionReq.EndTime == nil {
+		LastDay := common.GetLastDayOfMonth(time.Now()).AddDate(0, 0, 1)
+		transactionReq.EndTime = &LastDay
+	}
+	if transactionReq.EndTime.Before(*transactionReq.BeginTime) {
+		return resp, http_error_code.BadRequest("时间范围异常")
+	}
 	transactions, err := s.TransactionStore.Get(transactionReq)
 	if err != nil {
 		return
 	}
-	resp.Transactions = transactions
+	resp.Transactions = groupByDay(transactions)
 	// 获取全量用户信息
 	var userIDs []uint
 	var categoryIDs []uint
@@ -78,4 +91,43 @@ func (s *TransactionService) Modify(transactionReq *model.ModifyTransactionReq) 
 // Delete -
 func (s *TransactionService) Delete(transactionReq *model.DeleteTransactionReq) error {
 	return s.TransactionStore.Delete(transactionReq)
+}
+
+// 按天分组记账数据
+func groupByDay(items []model.Transaction) (dailyTransaction []model.DailyTransaction) {
+	// 按天分组
+	dailyMap := make(map[string]model.DailyTransaction)
+
+	for _, item := range items {
+		dateDayStr := item.Date.Format("2006-01-02")
+		if daily, exists := dailyMap[dateDayStr]; exists {
+			daily.Items = append(daily.Items, item)
+			if item.Type == model.IncomeType {
+				daily.Income += item.Amount
+			} else {
+				daily.Spending += item.Amount
+			}
+			dailyMap[dateDayStr] = daily
+		} else {
+			spending := 0.
+			income := 0.
+			if item.Type == model.IncomeType {
+				income = item.Amount
+				spending = item.Amount
+			} else {
+				spending = item.Amount
+			}
+			dailyMap[dateDayStr] = model.DailyTransaction{
+				Date:     dateDayStr,
+				Items:    []model.Transaction{item},
+				Spending: spending,
+				Income:   income,
+			}
+		}
+	}
+	// 将map转换为slice
+	for _, daily := range dailyMap {
+		dailyTransaction = append(dailyTransaction, daily)
+	}
+	return
 }
