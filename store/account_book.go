@@ -108,7 +108,16 @@ func (s *AccountBookStore) Delete(accountBookReq *model.DeleteAccountBookReq) er
 	if err := ParamsJudge(s.db, &accountBookReq.ID, nil, nil, nil, nil); err != nil {
 		return err
 	}
-	return s.db.Model(&model.AccountBook{}).Delete(&model.AccountBook{Model: model.Model{ID: accountBookReq.ID}}).Error
+	tx := s.db.Begin()
+	if err := tx.Model(&model.AccountBook{}).Delete(&model.AccountBook{Model: model.Model{ID: accountBookReq.ID}}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Model(&model.Transaction{}).Where("account_book_id = ?", accountBookReq.ID).Delete(&model.Transaction{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit().Error
 }
 
 // Merge -
