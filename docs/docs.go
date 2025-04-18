@@ -805,6 +805,73 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/chart": {
+            "get": {
+                "tags": [
+                    "图表"
+                ],
+                "summary": "统计看板",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "起始时间",
+                        "name": "begin_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "类别",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "end_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "周期:周，月，年",
+                        "name": "Period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "类型:收入/支出",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "图表信息",
+                        "schema": {
+                            "$ref": "#/definitions/model.ChartResp"
+                        }
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "$ref": "#/definitions/http_error_code.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "$ref": "#/definitions/http_error_code.AppError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/friend": {
             "delete": {
                 "tags": [
@@ -1612,6 +1679,57 @@ const docTemplate = `{
                 }
             }
         },
+        "model.CategoryChart": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "交易数额",
+                    "type": "number"
+                },
+                "category_id": {
+                    "description": "关联消费场景分类ID",
+                    "type": "integer"
+                },
+                "percent": {
+                    "description": "占比",
+                    "type": "number"
+                },
+                "transaction": {
+                    "description": "交易记录,全部的",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Transaction"
+                    }
+                }
+            }
+        },
+        "model.ChartResp": {
+            "type": "object",
+            "properties": {
+                "average_amount": {
+                    "description": "平均费用",
+                    "type": "number"
+                },
+                "category_chart": {
+                    "description": "分类详情",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.CategoryChart"
+                    }
+                },
+                "date_chart": {
+                    "description": "时间详情",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.DateChart"
+                    }
+                },
+                "total_amount": {
+                    "description": "总费用",
+                    "type": "number"
+                }
+            }
+        },
         "model.DailyTransaction": {
             "type": "object",
             "properties": {
@@ -1633,6 +1751,26 @@ const docTemplate = `{
                 "spending": {
                     "description": "当天总支持",
                     "type": "number"
+                }
+            }
+        },
+        "model.DateChart": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "交易数额",
+                    "type": "number"
+                },
+                "date_str": {
+                    "description": "报表粒度，月 or 天",
+                    "type": "string"
+                },
+                "transaction": {
+                    "description": "交易记录，top3",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Transaction"
+                    }
                 }
             }
         },
