@@ -45,7 +45,7 @@ func (s *TransactionService) Get(transactionReq *model.GetTransactionReq) (resp 
 		transactionReq.EndTime = &LastDay
 	}
 	if transactionReq.EndTime.Before(*transactionReq.BeginTime) {
-		return resp, http_error_code.BadRequest("时间范围异常")
+		return resp, http_error_code.BadRequest("时间范围异常, end需要>begin")
 	}
 	transactions, err := s.TransactionStore.Get(transactionReq)
 	if err != nil {

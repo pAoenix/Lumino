@@ -39,9 +39,16 @@ func (s *TransactionStore) Register(transactionReq *model.RegisterTransactionReq
 
 // Get -
 func (s *TransactionStore) Get(transactionReq *model.GetTransactionReq) (resp []model.Transaction, err error) {
-	if err = ParamsJudge(s.db, &transactionReq.AccountBookID, nil,
-		nil, nil, transactionReq.ID); err != nil {
+	if err = ParamsJudge(s.db, transactionReq.AccountBookID, nil,
+		transactionReq.UserID, transactionReq.CategoryID, transactionReq.ID); err != nil {
 		return resp, err
+	}
+	if err = s.db.Model(&model.AccountBook{}).
+		Where("? = any(user_ids)", transactionReq.UserID).
+		Where("id = ?", transactionReq.AccountBookID).
+		First(&model.AccountBook{}).Error; err != nil {
+		return nil, http_error_code.BadRequest("账本不存在本人名下",
+			http_error_code.WithInternal(err))
 	}
 	sql := s.db.Model(&model.Transaction{})
 	if transactionReq.BeginTime != nil {
@@ -50,10 +57,13 @@ func (s *TransactionStore) Get(transactionReq *model.GetTransactionReq) (resp []
 	if transactionReq.EndTime != nil {
 		sql.Where("date <= ?", &transactionReq.EndTime)
 	}
-	if transactionReq.ID != nil {
-		sql.Where("id = ？", &transactionReq.ID)
+	transactionReq2 := model.GetTransactionReq{
+		ID:            transactionReq.ID,
+		Type:          transactionReq.Type,
+		AccountBookID: transactionReq.AccountBookID,
+		CategoryID:    transactionReq.CategoryID,
 	}
-	err = sql.Where("account_book_id = ?", transactionReq.AccountBookID).Find(&resp).Error
+	err = sql.Where(&transactionReq2).Find(&resp).Error
 	return
 }
 

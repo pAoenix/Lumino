@@ -813,6 +813,13 @@ const docTemplate = `{
                 "summary": "统计看板",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "对应的账本id",
+                        "name": "account_book_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "type": "string",
                         "description": "起始时间",
                         "name": "begin_time",
@@ -831,16 +838,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "周期:周，月，年",
-                        "name": "Period",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "description": "类型:收入/支出",
                         "name": "type",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "integer",
@@ -1000,6 +1002,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "类别",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "结束时间",
                         "name": "end_time",
@@ -1010,6 +1018,23 @@ const docTemplate = `{
                         "description": "交易id",
                         "name": "id",
                         "in": "query"
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2
+                        ],
+                        "type": "integer",
+                        "description": "类型:收入/支出",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
