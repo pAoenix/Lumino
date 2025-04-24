@@ -4,12 +4,14 @@ import "time"
 
 // ChartReq 获取图表请求
 type ChartReq struct {
-	UserID     uint       `json:"user_id" form:"user_id" binding:"required"` // 用户id
-	BeginTime  *time.Time `json:"begin_time" form:"begin_time"`              // 起始时间
-	EndTime    *time.Time `json:"end_time" form:"end_time"`                  // 结束时间
-	Type       int        `json:"type" form:"type"`                          // 类型:收入/支出
-	CategoryID uint       `json:"category_id" form:"category_id"`            // 类别
-	Period     string     `json:"period" form:"Period"`                      // 周期:周，月，年
+	UserID        uint       `json:"user_id" form:"user_id" binding:"required"`                 // 用户id
+	AccountBookID uint       `json:"account_book_id" form:"account_book_id" binding:"required"` // 对应的账本id
+	Type          int        `json:"type" form:"type" binding:"required"`                       // 类型:收入/支出
+	BeginTime     *time.Time `json:"begin_time" form:"begin_time"`                              // 起始时间
+	EndTime       *time.Time `json:"end_time" form:"end_time"`                                  // 结束时间
+	CategoryID    uint       `json:"category_id" form:"category_id"`                            // 类别
+	// Period 周期:周，月，年;如果时间范围<1个月，按天输出，如果>1个月，按月输出
+	Period string `json:"period" form:"period" swaggerignore:"true"`
 }
 
 // CategoryChart -

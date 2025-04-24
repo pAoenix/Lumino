@@ -97,7 +97,7 @@ func (r *Router) Handler() http.Handler {
 	}
 	chart := e.Group("/api/v1/chart")
 	{
-		chart.GET("", r.ChartServer.GetUserChart)
+		chart.GET("", r.ChartServer.GetNormalChart)
 	}
 	return e
 }

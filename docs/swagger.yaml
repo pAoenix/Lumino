@@ -854,10 +854,16 @@ paths:
         in: query
         name: end_time
         type: string
+      - description: 交易id
+        in: query
+        name: id
+        type: integer
       - description: 类型:收入/支出
+        enum:
+        - 1
+        - 2
         in: query
         name: type
-        required: true
         type: integer
       - description: 用户id
         in: query

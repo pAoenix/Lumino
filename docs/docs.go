@@ -839,10 +839,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "description": "交易id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            1,
+                            2
+                        ],
+                        "type": "integer",
                         "description": "类型:收入/支出",
                         "name": "type",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",

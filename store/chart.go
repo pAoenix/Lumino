@@ -11,8 +11,3 @@ func NewChartStore(db *DB) *ChartStore {
 		db: db,
 	}
 }
-
-// UserTotalChart -
-func (s *ChartStore) UserTotalChart() error {
-	return nil
-}
