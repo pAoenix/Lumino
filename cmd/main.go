@@ -40,7 +40,7 @@ func HttpServerLifetimeHook(lc fx.Lifecycle, srv *http.Server) {
 // @title						Lumino
 // @version					1.0
 // @description				lumino 记账本服务
-// @host						182.92.152.108:8080
+// @host						101.201.34.183:8080
 // @BasePath					/api/v1
 // @securityDefinitions.apikey	ApiKeyAuth
 // @in							header
@@ -58,4 +58,4 @@ func main() {
 	app.Run()
 }
 
-// 182.92.152.108
+// http://101.201.34.183/
