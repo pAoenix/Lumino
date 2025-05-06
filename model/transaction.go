@@ -14,7 +14,7 @@ type Transaction struct {
 	Model
 	Type          int       `json:"type" form:"type"`                       // 类型:收入/支出
 	Amount        float64   `json:"amount" form:"amount"`                   // 交易数额
-	Date          time.Time `json:"date" form:"date"`                       // 日期
+	Date          time.Time `json:"date" form:"date" gorm:"index"`          // 日期
 	CreatorID     uint      `json:"creator_id" form:"creator_id"`           // 创建人id
 	PayUserID     uint      `json:"pay_user_id" form:"pay_user_id"`         // 付款人id
 	CategoryID    uint      `json:"category_id" form:"category_id"`         // 关联消费场景分类ID
@@ -41,16 +41,27 @@ type RegisterTransactionReq struct {
 // GetTransactionReq -
 type GetTransactionReq struct {
 	ID            *uint      `json:"id" form:"id"`                                              // 交易id
-	AccountBookID uint       `json:"account_book_id" form:"account_book_id" binding:"required"` // 对应的账本id
+	UserID        *uint      `json:"user_id" form:"user_id" binding:"required"`                 // 用户id
+	AccountBookID *uint      `json:"account_book_id" form:"account_book_id" binding:"required"` // 对应的账本id
 	BeginTime     *time.Time `json:"begin_time" form:"begin_time"`                              // 起始时间
 	EndTime       *time.Time `json:"end_time" form:"end_time"`                                  // 结束时间
+	Type          *int       `json:"type" form:"type" binding:"omitempty,oneof=1 2"`            // 类型:收入/支出
+	CategoryID    *uint      `json:"category_id" form:"category_id"`                            // 类别
+}
+
+// DailyTransaction 按天分组的消费数据
+type DailyTransaction struct {
+	Date     string        // 日期，格式如 "2023-03-15"
+	Items    []Transaction // 当天的记账条目
+	Spending float64       // 当天总支持
+	Income   float64       // 当天总收入
 }
 
 // TransactionResp -
 type TransactionResp struct {
-	Transactions []Transaction `json:"transactions" form:"transactions"` //账本列表
-	Users        []User        `json:"users" form:"users"`               // 涉及的用户信息
-	Categorys    []Category    `json:"categorys" form:"categorys"`       // 图标信息
+	Transactions []DailyTransaction `json:"transactions" form:"transactions"` //账本列表
+	Users        []User             `json:"users" form:"users"`               // 涉及的用户信息
+	Categorys    []Category         `json:"categorys" form:"categorys"`       // 图标信息
 }
 
 // DeleteTransactionReq -

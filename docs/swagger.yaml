@@ -130,6 +130,73 @@ definitions:
         description: 用户id
         type: integer
     type: object
+  model.CategoryChart:
+    properties:
+      amount:
+        description: 交易数额
+        type: number
+      category_id:
+        description: 关联消费场景分类ID
+        type: integer
+      percent:
+        description: 占比
+        type: number
+      transactions:
+        description: 交易记录,全部的
+        items:
+          $ref: '#/definitions/model.Transaction'
+        type: array
+    type: object
+  model.ChartResp:
+    properties:
+      average_amount:
+        description: 平均费用
+        type: number
+      category_chart:
+        description: 分类详情
+        items:
+          $ref: '#/definitions/model.CategoryChart'
+        type: array
+      date_chart:
+        description: 时间详情
+        items:
+          $ref: '#/definitions/model.DateChart'
+        type: array
+      total_amount:
+        description: 总费用
+        type: number
+    type: object
+  model.DailyTransaction:
+    properties:
+      date:
+        description: 日期，格式如 "2023-03-15"
+        type: string
+      income:
+        description: 当天总收入
+        type: number
+      items:
+        description: 当天的记账条目
+        items:
+          $ref: '#/definitions/model.Transaction'
+        type: array
+      spending:
+        description: 当天总支持
+        type: number
+    type: object
+  model.DateChart:
+    properties:
+      amount:
+        description: 交易数额
+        type: number
+      date_str:
+        description: 报表粒度，月 or 天
+        type: string
+      transactions:
+        description: 交易记录，top3
+        items:
+          $ref: '#/definitions/model.Transaction'
+        type: array
+    type: object
   model.Transaction:
     properties:
       account_book_id:
@@ -185,7 +252,7 @@ definitions:
       transactions:
         description: 账本列表
         items:
-          $ref: '#/definitions/model.Transaction'
+          $ref: '#/definitions/model.DailyTransaction'
         type: array
       users:
         description: 涉及的用户信息
@@ -237,7 +304,7 @@ definitions:
         description: 更新时间
         type: string
     type: object
-host: 182.92.152.108:8080
+host: https://happyall.xyz
 info:
   contact: {}
   description: lumino 记账本服务
@@ -767,6 +834,56 @@ paths:
       summary: 修改图标文件
       tags:
       - 图标
+  /api/v1/chart:
+    get:
+      parameters:
+      - description: 对应的账本id
+        in: query
+        name: account_book_id
+        required: true
+        type: integer
+      - description: 起始时间
+        in: query
+        name: begin_time
+        type: string
+      - description: 类别
+        in: query
+        name: category_id
+        type: integer
+      - description: 结束时间
+        in: query
+        name: end_time
+        type: string
+      - description: 交易id
+        in: query
+        name: id
+        type: integer
+      - description: 类型:收入/支出
+        in: query
+        name: type
+        required: true
+        type: integer
+      - description: 用户id
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: 图表信息
+          schema:
+            $ref: '#/definitions/model.ChartResp'
+        "400":
+          description: 请求体异常
+          schema:
+            $ref: '#/definitions/http_error_code.AppError'
+        "500":
+          description: 服务端异常
+          schema:
+            $ref: '#/definitions/http_error_code.AppError'
+      summary: 统计看板
+      tags:
+      - 图表
   /api/v1/friend:
     delete:
       parameters:
@@ -870,6 +987,10 @@ paths:
         in: query
         name: begin_time
         type: string
+      - description: 类别
+        in: query
+        name: category_id
+        type: integer
       - description: 结束时间
         in: query
         name: end_time
@@ -877,6 +998,18 @@ paths:
       - description: 交易id
         in: query
         name: id
+        type: integer
+      - description: 类型:收入/支出
+        enum:
+        - 1
+        - 2
+        in: query
+        name: type
+        type: integer
+      - description: 用户id
+        in: query
+        name: user_id
+        required: true
         type: integer
       responses:
         "200":

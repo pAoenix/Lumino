@@ -30,6 +30,7 @@ type Router struct {
 	AccountBookServer *server.AccountBookServer
 	FriendServer      *server.FriendServer
 	AccountServer     *server.AccountServer
+	ChartServer       *server.ChartServer
 }
 
 // Handler -
@@ -93,6 +94,10 @@ func (r *Router) Handler() http.Handler {
 		account.PUT("", r.AccountServer.Modify)
 		account.GET("", r.AccountServer.Get)
 		account.DELETE("", r.AccountServer.Delete)
+	}
+	chart := e.Group("/api/v1/chart")
+	{
+		chart.GET("", r.ChartServer.GetNormalChart)
 	}
 	return e
 }

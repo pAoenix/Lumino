@@ -11,5 +11,6 @@ var Module = fx.Options(
 		NewAccountBookStore,
 		NewFriendStore,
 		NewAccountStore,
+		NewChartStore,
 	),
 )

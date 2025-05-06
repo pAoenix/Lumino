@@ -6,6 +6,7 @@ import (
 	"Lumino/model"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm/clause"
+	"strconv"
 )
 
 // AccountBookStore -
@@ -51,9 +52,30 @@ func (s *AccountBookStore) Get(accountBookReq *model.GetAccountBookReq) (resp []
 	}
 	if sql.Find(&resp).Error != nil {
 		return nil, err
-	} else {
-		return
 	}
+	var abIDs []uint
+	for _, accountBook := range resp {
+		abIDs = append(abIDs, accountBook.ID)
+	}
+	var abTemp []model.Transaction
+	if err = s.db.Model(&model.Transaction{}).
+		Select("account_book_id, type,sum(amount) as amount").
+		Group("account_book_id, type").Find(&abTemp).Error; err != nil {
+		return nil, err
+	}
+	abTempMap := make(map[string]model.Transaction)
+	for _, ab := range abTemp {
+		abTempMap[strconv.Itoa(int(ab.AccountBookID))+strconv.Itoa(ab.Type)] = ab
+	}
+	for i, x := range resp {
+		if analysis, exists := abTempMap[strconv.Itoa(int(x.ID))+strconv.Itoa(model.SpendingType)]; exists {
+			resp[i].Spending = analysis.Amount
+		}
+		if analysis, exists := abTempMap[strconv.Itoa(int(x.ID))+strconv.Itoa(model.IncomeType)]; exists {
+			resp[i].Income = analysis.Amount
+		}
+	}
+	return
 }
 
 // Modify -
@@ -86,7 +108,16 @@ func (s *AccountBookStore) Delete(accountBookReq *model.DeleteAccountBookReq) er
 	if err := ParamsJudge(s.db, &accountBookReq.ID, nil, nil, nil, nil); err != nil {
 		return err
 	}
-	return s.db.Model(&model.AccountBook{}).Delete(&model.AccountBook{Model: model.Model{ID: accountBookReq.ID}}).Error
+	tx := s.db.Begin()
+	if err := tx.Model(&model.AccountBook{}).Delete(&model.AccountBook{Model: model.Model{ID: accountBookReq.ID}}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Model(&model.Transaction{}).Where("account_book_id = ?", accountBookReq.ID).Delete(&model.Transaction{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit().Error
 }
 
 // Merge -
