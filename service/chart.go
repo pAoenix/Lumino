@@ -25,10 +25,13 @@ func NewChartService(transactionStore *store.TransactionStore) *ChartService {
 func (s *ChartService) GetNormalChart(chartReq *model.GetTransactionReq) (resp model.ChartResp, err error) {
 	// 如果不传时间范围，默认最近7天
 	if chartReq.EndTime == nil {
-		*chartReq.EndTime = time.Now().AddDate(0, 0, 1)
+		endTime := time.Now()
+		chartReq.EndTime = &endTime
 	}
 	if chartReq.BeginTime == nil {
-		*chartReq.BeginTime = time.Now().Truncate(24*time.Hour).AddDate(0, 0, -6)
+		now := time.Now()
+		beginTime := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()).AddDate(0, 0, -6)
+		chartReq.BeginTime = &beginTime
 	}
 	if chartReq.EndTime.Before(*chartReq.BeginTime) {
 		return resp, http_error_code.BadRequest("时间范围异常, end需要>begin")
@@ -38,7 +41,7 @@ func (s *ChartService) GetNormalChart(chartReq *model.GetTransactionReq) (resp m
 		return
 	}
 	period := model.DayPeriod
-	subDays := chartReq.EndTime.Sub(*chartReq.BeginTime)
+	subDays := chartReq.EndTime.Sub(*chartReq.BeginTime).Hours() / 24
 	if subDays > 31 {
 		period = model.MonthPeriod
 	}
@@ -100,7 +103,7 @@ func (s *ChartService) GetNormalChart(chartReq *model.GetTransactionReq) (resp m
 		})
 	}
 	if period == model.DayPeriod {
-		if ok, addDate := common.CheckDailyCoverage(*chartReq.BeginTime, *chartReq.EndTime, dateList); ok {
+		if ok, addDate := common.CheckDailyCoverage(*chartReq.BeginTime, *chartReq.EndTime, dateList); !ok {
 			for _, ad := range addDate {
 				resp.DateChart = append(resp.DateChart, model.DateChart{
 					DateStr:      ad,
@@ -110,7 +113,7 @@ func (s *ChartService) GetNormalChart(chartReq *model.GetTransactionReq) (resp m
 			}
 		}
 	} else if period == model.MonthPeriod {
-		if ok, addDate := common.CheckMonthlyCoverage(*chartReq.BeginTime, *chartReq.EndTime, dateList); ok {
+		if ok, addDate := common.CheckMonthlyCoverage(*chartReq.BeginTime, *chartReq.EndTime, dateList); !ok {
 			for _, ad := range addDate {
 				resp.DateChart = append(resp.DateChart, model.DateChart{
 					DateStr:      ad,

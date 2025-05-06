@@ -36,7 +36,7 @@ func (s *ChartServer) GetNormalChart(c *gin.Context) {
 		return
 	}
 	var transactionReq model.GetTransactionReq
-	if err := copier.Copy(&req, &transactionReq); err != nil {
+	if err := copier.Copy(&transactionReq, &req); err != nil {
 		c.Error(err)
 	}
 	if resp, err := s.ChartService.GetNormalChart(&transactionReq); err != nil {
