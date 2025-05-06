@@ -2,8 +2,13 @@ package model
 
 import "time"
 
+const DayPeriod = 0
+const WeekPeriod = 1
+const MonthPeriod = 2
+
 // ChartReq 获取图表请求
 type ChartReq struct {
+	ID            *uint      `json:"id" form:"id"`                                              // 交易id
 	UserID        uint       `json:"user_id" form:"user_id" binding:"required"`                 // 用户id
 	AccountBookID uint       `json:"account_book_id" form:"account_book_id" binding:"required"` // 对应的账本id
 	Type          int        `json:"type" form:"type" binding:"required"`                       // 类型:收入/支出
@@ -16,17 +21,17 @@ type ChartReq struct {
 
 // CategoryChart -
 type CategoryChart struct {
-	CategoryID  uint          `json:"category_id" form:"category_id"` // 关联消费场景分类ID
-	Amount      float64       `json:"amount" form:"amount"`           // 交易数额
-	Percent     float64       `json:"percent" form:"percent"`         // 占比
-	Transaction []Transaction `json:"transaction" form:"transaction"` // 交易记录,全部的
+	CategoryID   uint          `json:"category_id" form:"category_id"`   // 关联消费场景分类ID
+	Amount       float64       `json:"amount" form:"amount"`             // 交易数额
+	Percent      float64       `json:"percent" form:"percent"`           // 占比
+	Transactions []Transaction `json:"transactions" form:"transactions"` // 交易记录,全部的
 }
 
 // DateChart -
 type DateChart struct {
-	DateStr     string        `json:"date_str" form:"date_str"`       // 报表粒度，月 or 天
-	Amount      float64       `json:"amount" form:"amount"`           // 交易数额
-	Transaction []Transaction `json:"transaction" form:"transaction"` // 交易记录，top3
+	DateStr      string        `json:"date_str" form:"date_str"`         // 报表粒度，月 or 天
+	Amount       float64       `json:"amount" form:"amount"`             // 交易数额
+	Transactions []Transaction `json:"transactions" form:"transactions"` // 交易记录，top3
 }
 
 // ChartResp -

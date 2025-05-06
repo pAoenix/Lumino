@@ -141,7 +141,7 @@ definitions:
       percent:
         description: 占比
         type: number
-      transaction:
+      transactions:
         description: 交易记录,全部的
         items:
           $ref: '#/definitions/model.Transaction'
@@ -191,7 +191,7 @@ definitions:
       date_str:
         description: 报表粒度，月 or 天
         type: string
-      transaction:
+      transactions:
         description: 交易记录，top3
         items:
           $ref: '#/definitions/model.Transaction'
@@ -859,11 +859,9 @@ paths:
         name: id
         type: integer
       - description: 类型:收入/支出
-        enum:
-        - 1
-        - 2
         in: query
         name: type
+        required: true
         type: integer
       - description: 用户id
         in: query

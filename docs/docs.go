@@ -844,14 +844,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "enum": [
-                            1,
-                            2
-                        ],
                         "type": "integer",
                         "description": "类型:收入/支出",
                         "name": "type",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "integer",
@@ -1728,7 +1725,7 @@ const docTemplate = `{
                     "description": "占比",
                     "type": "number"
                 },
-                "transaction": {
+                "transactions": {
                     "description": "交易记录,全部的",
                     "type": "array",
                     "items": {
@@ -1799,7 +1796,7 @@ const docTemplate = `{
                     "description": "报表粒度，月 or 天",
                     "type": "string"
                 },
-                "transaction": {
+                "transactions": {
                     "description": "交易记录，top3",
                     "type": "array",
                     "items": {

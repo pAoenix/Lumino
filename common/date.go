@@ -25,10 +25,44 @@ func GetLastDayOfMonth(t time.Time) (lastDay time.Time) {
 	return lastDay
 }
 
-// 使用示例
-/*
-now := time.Now()
-first, last := GetFirstAndLastDayOfMonth(now)
-fmt.Println("First day:", first.Format("2006-01-02"))
-fmt.Println("Last day:", last.Format("2006-01-02"))
-*/
+// CheckDailyCoverage 检查日期列表是否包含时间范围内的所有天数
+func CheckDailyCoverage(beginDate, endDate time.Time, dateList []string) (bool, []string) {
+	var missingDates []string
+
+	// 创建日期集合便于快速查找
+	dateSet := make(map[string]struct{})
+	for _, date := range dateList {
+		dateSet[date] = struct{}{}
+	}
+
+	// 遍历时间范围内的每一天
+	for d := beginDate; !d.After(endDate); d = d.AddDate(0, 0, 1) {
+		dateStr := d.Format("2006-01-02")
+		if _, exists := dateSet[dateStr]; !exists {
+			missingDates = append(missingDates, dateStr)
+		}
+	}
+
+	return len(missingDates) == 0, missingDates
+}
+
+// CheckMonthlyCoverage 检查日期列表是否包含时间范围内的所有月份
+func CheckMonthlyCoverage(beginDate, endDate time.Time, dateList []string) (bool, []string) {
+	var missingMonths []string
+
+	// 创建月份集合便于快速查找
+	monthSet := make(map[string]struct{})
+	for _, date := range dateList {
+		monthSet[date] = struct{}{}
+	}
+
+	// 遍历时间范围内的每个月
+	for d := beginDate; !d.After(endDate); d = d.AddDate(0, 1, 0) {
+		monthStr := d.Format("2006-01")
+		if _, exists := monthSet[monthStr]; !exists {
+			missingMonths = append(missingMonths, monthStr)
+		}
+	}
+
+	return len(missingMonths) == 0, missingMonths
+}
