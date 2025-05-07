@@ -40,7 +40,7 @@ func HttpServerLifetimeHook(lc fx.Lifecycle, srv *http.Server) {
 // @title						Lumino
 // @version					1.0
 // @description				lumino 记账本服务
-// @host						https://happyall.xyz
+// @host						happyall.xyz
 // @BasePath					/api/v1
 // @securityDefinitions.apikey	ApiKeyAuth
 // @in							header

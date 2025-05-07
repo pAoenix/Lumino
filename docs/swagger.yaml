@@ -304,7 +304,7 @@ definitions:
         description: 更新时间
         type: string
     type: object
-host: https://happyall.xyz
+host: happyall.xyz
 info:
   contact: {}
   description: lumino 记账本服务
