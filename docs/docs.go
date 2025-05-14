@@ -23,39 +23,20 @@ const docTemplate = `{
                 "summary": "获取账户",
                 "parameters": [
                     {
-                        "type": "number",
-                        "description": "账户余额",
-                        "name": "balance",
+                        "type": "integer",
+                        "description": "货币类型",
+                        "name": "currency_type",
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "created_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "2025-03-26T00:00:00Z",
-                        "description": "DeletedAt 删除时间",
-                        "name": "deleted_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "账户描述",
-                        "name": "description",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
+                        "type": "integer",
                         "description": "账户图标",
                         "name": "icon",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "主键id",
+                        "description": "账户id",
                         "name": "id",
                         "in": "query"
                     },
@@ -72,16 +53,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "更新时间",
-                        "name": "updated_at",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "description": "创建人",
                         "name": "user_id",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -121,16 +97,9 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "created_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "2025-03-26T00:00:00Z",
-                        "description": "DeletedAt 删除时间",
-                        "name": "deleted_at",
+                        "type": "integer",
+                        "description": "货币类型",
+                        "name": "currency_type",
                         "in": "query"
                     },
                     {
@@ -140,16 +109,17 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "账户图标",
                         "name": "icon",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "主键id",
+                        "description": "账户id",
                         "name": "id",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -164,21 +134,19 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "更新时间",
-                        "name": "updated_at",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "description": "创建人",
                         "name": "user_id",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "修改结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.Account"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -202,22 +170,17 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "number",
-                        "description": "账户余额",
+                        "description": "账户余额，默认为0",
                         "name": "balance",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "created_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "2025-03-26T00:00:00Z",
-                        "description": "DeletedAt 删除时间",
-                        "name": "deleted_at",
-                        "in": "query"
+                        "type": "integer",
+                        "description": "货币类型",
+                        "name": "currency_type",
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -226,45 +189,40 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "账户图标",
-                        "name": "icon",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
-                        "description": "主键id",
-                        "name": "id",
-                        "in": "query"
+                        "description": "账户图标,不支持自定义，从已有的里面选",
+                        "name": "icon",
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "description": "账户名称",
                         "name": "name",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "integer",
                         "description": "账户类型",
                         "name": "type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "更新时间",
-                        "name": "updated_at",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "integer",
                         "description": "创建人",
                         "name": "user_id",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "注册结果",
+                        "schema": {
+                            "$ref": "#/definitions/model.Account"
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -287,65 +245,18 @@ const docTemplate = `{
                 "summary": "删除账户",
                 "parameters": [
                     {
-                        "type": "number",
-                        "description": "账户余额",
-                        "name": "balance",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "created_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "2025-03-26T00:00:00Z",
-                        "description": "DeletedAt 删除时间",
-                        "name": "deleted_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "账户描述",
-                        "name": "description",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "账户图标",
-                        "name": "icon",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
-                        "description": "主键id",
+                        "description": "账户id",
                         "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "账户名称",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "账户类型",
-                        "name": "type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "更新时间",
-                        "name": "updated_at",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "integer",
                         "description": "创建人",
                         "name": "user_id",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1567,6 +1478,10 @@ const docTemplate = `{
                     "description": "创建时间",
                     "type": "string"
                 },
+                "currency_type": {
+                    "description": "货币类型",
+                    "type": "integer"
+                },
                 "deleted_at": {
                     "description": "DeletedAt 删除时间",
                     "type": "string",
@@ -1578,7 +1493,7 @@ const docTemplate = `{
                 },
                 "icon": {
                     "description": "账户图标",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "id": {
                     "description": "主键id",

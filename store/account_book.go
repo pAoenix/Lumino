@@ -23,7 +23,7 @@ func NewAccountBookStore(db *DB) *AccountBookStore {
 
 // Register -
 func (s *AccountBookStore) Register(accountBookReq *model.RegisterAccountBookReq) (accountBook model.AccountBook, err error) {
-	if err = ParamsJudge(s.db, nil, &accountBookReq.UserIDs, &accountBookReq.CreatorID, nil, nil); err != nil {
+	if err = ParamsJudge(s.db, nil, &accountBookReq.UserIDs, &accountBookReq.CreatorID, nil, nil, nil); err != nil {
 		return
 	}
 	if err = copier.Copy(&accountBook, &accountBookReq); err != nil {
@@ -43,7 +43,7 @@ func (s *AccountBookStore) Get(accountBookReq *model.GetAccountBookReq) (resp []
 	if accountBookReq.SortType == 0 {
 		sort = "id"
 	}
-	if err = ParamsJudge(s.db, accountBookReq.ID, nil, &accountBookReq.CreatorID, nil, nil); err != nil {
+	if err = ParamsJudge(s.db, accountBookReq.ID, nil, &accountBookReq.CreatorID, nil, nil, nil); err != nil {
 		return
 	}
 	sql := s.db.Model(&model.AccountBook{}).Order(sort).Where("? = any(user_ids)", accountBookReq.CreatorID)
@@ -80,7 +80,7 @@ func (s *AccountBookStore) Get(accountBookReq *model.GetAccountBookReq) (resp []
 
 // Modify -
 func (s *AccountBookStore) Modify(accountBookReq *model.ModifyAccountBookReq) (accountBook model.AccountBook, err error) {
-	if err = ParamsJudge(s.db, &accountBookReq.ID, accountBookReq.UserIDs, nil, nil, nil); err != nil {
+	if err = ParamsJudge(s.db, &accountBookReq.ID, accountBookReq.UserIDs, nil, nil, nil, nil); err != nil {
 		return
 	}
 	if accountBookReq.UserIDs != nil {
@@ -105,7 +105,7 @@ func (s *AccountBookStore) Modify(accountBookReq *model.ModifyAccountBookReq) (a
 
 // Delete -
 func (s *AccountBookStore) Delete(accountBookReq *model.DeleteAccountBookReq) error {
-	if err := ParamsJudge(s.db, &accountBookReq.ID, nil, nil, nil, nil); err != nil {
+	if err := ParamsJudge(s.db, &accountBookReq.ID, nil, nil, nil, nil, nil); err != nil {
 		return err
 	}
 	tx := s.db.Begin()

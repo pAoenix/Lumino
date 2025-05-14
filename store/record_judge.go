@@ -9,7 +9,7 @@ import (
 )
 
 // ParamsJudge 判断输入参数的数据是否存在，不允许无中生有的东西存在
-func ParamsJudge(db *DB, AccountBookID *uint, userIDs *pq.Int32Array, userID *uint, categoryID *uint, transactionID *uint) error {
+func ParamsJudge(db *DB, AccountBookID *uint, userIDs *pq.Int32Array, userID *uint, categoryID *uint, transactionID *uint, accountID *uint) error {
 	if AccountBookID != nil {
 		accountBook := model.AccountBook{}
 		if err := db.Model(&model.AccountBook{}).Where("id = ?", *AccountBookID).First(&accountBook).Error; err != nil {
@@ -55,6 +55,16 @@ func ParamsJudge(db *DB, AccountBookID *uint, userIDs *pq.Int32Array, userID *ui
 		if err := db.Model(&model.Transaction{}).Where("id = ?", *transactionID).First(&transaction).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return http_error_code.BadRequest("交易记录不存在")
+			}
+			return http_error_code.Internal("服务内部错误",
+				http_error_code.WithInternal(err))
+		}
+	}
+	if accountID != nil {
+		account := model.Account{}
+		if err := db.Model(&model.Account{}).Where("id = ?", *accountID).First(&account).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return http_error_code.BadRequest("账户不存在")
 			}
 			return http_error_code.Internal("服务内部错误",
 				http_error_code.WithInternal(err))

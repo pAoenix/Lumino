@@ -22,7 +22,7 @@ func NewFriendStore(db *DB) *FriendStore {
 
 // Invite -
 func (s *FriendStore) Invite(friend *model.Friend) (user model.User, err error) {
-	if err = ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil, nil); err != nil {
+	if err = ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil, nil, nil); err != nil {
 		return user, err
 	}
 	if err = s.db.Model(&model.User{}).Where("? = ANY(friend) and id = ?", friend.Invitee, friend.Inviter).First(&user).Error; err != nil {
@@ -43,7 +43,7 @@ func (s *FriendStore) Invite(friend *model.Friend) (user model.User, err error) 
 
 // Delete -
 func (s *FriendStore) Delete(friend *model.Friend) (user model.User, err error) {
-	if err = ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil, nil); err != nil {
+	if err = ParamsJudge(s.db, nil, &pq.Int32Array{int32(friend.Invitee)}, &friend.Inviter, nil, nil, nil); err != nil {
 		return user, err
 	}
 	if err = s.db.Model(&model.User{}).Where("? = ANY(friend) and id = ?", friend.Invitee, friend.Inviter).First(&user).Error; err != nil {

@@ -21,10 +21,10 @@ func NewTransactionStore(db *DB) *TransactionStore {
 // Register -
 func (s *TransactionStore) Register(transactionReq *model.RegisterTransactionReq) (transaction model.Transaction, err error) {
 	if err = ParamsJudge(s.db, transactionReq.AccountBookID, transactionReq.RelatedUserIDs,
-		transactionReq.CreatorID, transactionReq.CategoryID, nil); err != nil {
+		transactionReq.CreatorID, transactionReq.CategoryID, nil, nil); err != nil {
 		return transaction, err
 	}
-	if err = ParamsJudge(s.db, nil, nil, transactionReq.PayUserID, nil, nil); err != nil {
+	if err = ParamsJudge(s.db, nil, nil, transactionReq.PayUserID, nil, nil, nil); err != nil {
 		return transaction, err
 	}
 	if err = copier.Copy(&transaction, &transactionReq); err != nil {
@@ -40,7 +40,7 @@ func (s *TransactionStore) Register(transactionReq *model.RegisterTransactionReq
 // Get -
 func (s *TransactionStore) Get(transactionReq *model.GetTransactionReq) (resp []model.Transaction, err error) {
 	if err = ParamsJudge(s.db, transactionReq.AccountBookID, nil,
-		transactionReq.UserID, transactionReq.CategoryID, transactionReq.ID); err != nil {
+		transactionReq.UserID, transactionReq.CategoryID, transactionReq.ID, nil); err != nil {
 		return resp, err
 	}
 	if err = s.db.Model(&model.AccountBook{}).
@@ -70,7 +70,7 @@ func (s *TransactionStore) Get(transactionReq *model.GetTransactionReq) (resp []
 // Modify -
 func (s *TransactionStore) Modify(modifyTransaction *model.ModifyTransactionReq) (transaction model.Transaction, err error) {
 	if err = ParamsJudge(s.db, modifyTransaction.AccountBookID, modifyTransaction.RelatedUserIDs,
-		modifyTransaction.PayUserID, modifyTransaction.CategoryID, &modifyTransaction.ID); err != nil {
+		modifyTransaction.PayUserID, modifyTransaction.CategoryID, &modifyTransaction.ID, nil); err != nil {
 		return
 	}
 	// 交易信息更新
@@ -84,7 +84,7 @@ func (s *TransactionStore) Modify(modifyTransaction *model.ModifyTransactionReq)
 
 // Delete -
 func (s *TransactionStore) Delete(transactionReq *model.DeleteTransactionReq) error {
-	if err := ParamsJudge(s.db, nil, nil, nil, nil, &transactionReq.ID); err != nil {
+	if err := ParamsJudge(s.db, nil, nil, nil, nil, &transactionReq.ID, nil); err != nil {
 		return err
 	}
 	return s.db.Model(&model.Transaction{}).Where("id = ?", transactionReq.ID).Delete(&model.Transaction{}).Error

@@ -26,6 +26,9 @@ definitions:
       created_at:
         description: 创建时间
         type: string
+      currency_type:
+        description: 货币类型
+        type: integer
       deleted_at:
         description: DeletedAt 删除时间
         example: "2025-03-26T00:00:00Z"
@@ -35,7 +38,7 @@ definitions:
         type: string
       icon:
         description: 账户图标
-        type: string
+        type: integer
       id:
         description: 主键id
         type: integer
@@ -314,46 +317,15 @@ paths:
   /api/v1/account:
     delete:
       parameters:
-      - description: 账户余额
-        in: query
-        name: balance
-        type: number
-      - description: 创建时间
-        in: query
-        name: created_at
-        type: string
-      - description: DeletedAt 删除时间
-        example: "2025-03-26T00:00:00Z"
-        in: query
-        name: deleted_at
-        type: string
-      - description: 账户描述
-        in: query
-        name: description
-        type: string
-      - description: 账户图标
-        in: query
-        name: icon
-        type: string
-      - description: 主键id
+      - description: 账户id
         in: query
         name: id
+        required: true
         type: integer
-      - description: 账户名称
-        in: query
-        name: name
-        type: string
-      - description: 账户类型
-        in: query
-        name: type
-        type: integer
-      - description: 更新时间
-        in: query
-        name: updated_at
-        type: string
       - description: 创建人
         in: query
         name: user_id
+        required: true
         type: integer
       responses:
         "204":
@@ -371,28 +343,15 @@ paths:
       - 账户
     get:
       parameters:
-      - description: 账户余额
+      - description: 货币类型
         in: query
-        name: balance
-        type: number
-      - description: 创建时间
-        in: query
-        name: created_at
-        type: string
-      - description: DeletedAt 删除时间
-        example: "2025-03-26T00:00:00Z"
-        in: query
-        name: deleted_at
-        type: string
-      - description: 账户描述
-        in: query
-        name: description
-        type: string
+        name: currency_type
+        type: integer
       - description: 账户图标
         in: query
         name: icon
-        type: string
-      - description: 主键id
+        type: integer
+      - description: 账户id
         in: query
         name: id
         type: integer
@@ -404,13 +363,10 @@ paths:
         in: query
         name: type
         type: integer
-      - description: 更新时间
-        in: query
-        name: updated_at
-        type: string
       - description: 创建人
         in: query
         name: user_id
+        required: true
         type: integer
       responses:
         "200":
@@ -432,50 +388,45 @@ paths:
       - 账户
     post:
       parameters:
-      - description: 账户余额
+      - description: 账户余额，默认为0
         in: query
         name: balance
+        required: true
         type: number
-      - description: 创建时间
+      - description: 货币类型
         in: query
-        name: created_at
-        type: string
-      - description: DeletedAt 删除时间
-        example: "2025-03-26T00:00:00Z"
-        in: query
-        name: deleted_at
-        type: string
+        name: currency_type
+        required: true
+        type: integer
       - description: 账户描述
         in: query
         name: description
         type: string
-      - description: 账户图标
+      - description: 账户图标,不支持自定义，从已有的里面选
         in: query
         name: icon
-        type: string
-      - description: 主键id
-        in: query
-        name: id
+        required: true
         type: integer
       - description: 账户名称
         in: query
         name: name
+        required: true
         type: string
       - description: 账户类型
         in: query
         name: type
+        required: true
         type: integer
-      - description: 更新时间
-        in: query
-        name: updated_at
-        type: string
       - description: 创建人
         in: query
         name: user_id
+        required: true
         type: integer
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: 注册结果
+          schema:
+            $ref: '#/definitions/model.Account'
         "400":
           description: 请求体异常
           schema:
@@ -493,15 +444,10 @@ paths:
         in: query
         name: balance
         type: number
-      - description: 创建时间
+      - description: 货币类型
         in: query
-        name: created_at
-        type: string
-      - description: DeletedAt 删除时间
-        example: "2025-03-26T00:00:00Z"
-        in: query
-        name: deleted_at
-        type: string
+        name: currency_type
+        type: integer
       - description: 账户描述
         in: query
         name: description
@@ -509,10 +455,11 @@ paths:
       - description: 账户图标
         in: query
         name: icon
-        type: string
-      - description: 主键id
+        type: integer
+      - description: 账户id
         in: query
         name: id
+        required: true
         type: integer
       - description: 账户名称
         in: query
@@ -522,17 +469,16 @@ paths:
         in: query
         name: type
         type: integer
-      - description: 更新时间
-        in: query
-        name: updated_at
-        type: string
       - description: 创建人
         in: query
         name: user_id
+        required: true
         type: integer
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: 修改结果
+          schema:
+            $ref: '#/definitions/model.Account'
         "400":
           description: 请求体异常
           schema:

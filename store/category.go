@@ -26,7 +26,7 @@ func NewCategoryStore(db *DB, ossClient *common.OssClient) *CategoryStore {
 
 // Register -
 func (s *CategoryStore) Register(categoryReq *model.RegisterCategoryReq, file multipart.File) (category model.Category, err error) {
-	if err = ParamsJudge(s.db, nil, nil, &categoryReq.UserID, nil, nil); err != nil {
+	if err = ParamsJudge(s.db, nil, nil, &categoryReq.UserID, nil, nil, nil); err != nil {
 		return category, err
 	}
 	if err = copier.Copy(&category, &categoryReq); err != nil {
@@ -68,7 +68,7 @@ func (s *CategoryStore) Register(categoryReq *model.RegisterCategoryReq, file mu
 
 // Get -
 func (s *CategoryStore) Get(categoryReq *model.GetCategoryReq) (resp []model.Category, err error) {
-	if err = ParamsJudge(s.db, nil, nil, categoryReq.UserID, categoryReq.ID, nil); err != nil {
+	if err = ParamsJudge(s.db, nil, nil, categoryReq.UserID, categoryReq.ID, nil, nil); err != nil {
 		return resp, err
 	}
 	err = s.db.Model(&model.Category{}).Where(categoryReq).Find(&resp).Error
@@ -85,7 +85,7 @@ func (s *CategoryStore) BatchGetByIDs(categoryIDs []uint) (categorys []model.Cat
 
 // Modify -
 func (s *CategoryStore) Modify(categoryReq *model.ModifyCategoryReq) (resp model.Category, err error) {
-	if err = ParamsJudge(s.db, nil, nil, nil, &categoryReq.ID, nil); err != nil {
+	if err = ParamsJudge(s.db, nil, nil, nil, &categoryReq.ID, nil, nil); err != nil {
 		return resp, err
 	}
 	category := model.Category{}
@@ -99,7 +99,7 @@ func (s *CategoryStore) Modify(categoryReq *model.ModifyCategoryReq) (resp model
 
 // ModifyProfilePhoto -
 func (s *CategoryStore) ModifyProfilePhoto(categoryReq *model.ModifyCategoryIconReq, file multipart.File) error {
-	if err := ParamsJudge(s.db, nil, nil, nil, &categoryReq.ID, nil); err != nil {
+	if err := ParamsJudge(s.db, nil, nil, nil, &categoryReq.ID, nil, nil); err != nil {
 		return err
 	}
 	// 2.数据上传
@@ -109,7 +109,7 @@ func (s *CategoryStore) ModifyProfilePhoto(categoryReq *model.ModifyCategoryIcon
 
 // Delete -
 func (s *CategoryStore) Delete(category *model.DeleteCategoryReq) error {
-	if err := ParamsJudge(s.db, nil, nil, nil, &category.ID, nil); err != nil {
+	if err := ParamsJudge(s.db, nil, nil, nil, &category.ID, nil, nil); err != nil {
 		return err
 	}
 	return s.db.Model(&model.Category{}).Delete(&model.Category{Model: model.Model{ID: category.ID}}).Error
