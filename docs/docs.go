@@ -426,6 +426,47 @@ const docTemplate = `{
                 "tags": [
                     "账本"
                 ],
+                "summary": "删除账本",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "账本id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "请求体异常",
+                        "schema": {
+                            "$ref": "#/definitions/http_error_code.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "服务端异常",
+                        "schema": {
+                            "$ref": "#/definitions/http_error_code.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/account-book/AA": {
+            "get": {
+                "tags": [
+                    "账本"
+                ],
                 "summary": "AA分账",
                 "parameters": [
                     {

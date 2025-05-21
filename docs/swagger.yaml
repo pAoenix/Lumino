@@ -515,12 +515,8 @@ paths:
         required: true
         type: integer
       responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.AAResult'
-            type: array
+        "204":
+          description: No Content
         "400":
           description: 请求体异常
           schema:
@@ -529,7 +525,7 @@ paths:
           description: 服务端异常
           schema:
             $ref: '#/definitions/http_error_code.AppError'
-      summary: AA分账
+      summary: 删除账本
       tags:
       - 账本
     get:
@@ -626,6 +622,37 @@ paths:
           schema:
             $ref: '#/definitions/http_error_code.AppError'
       summary: 修改账本
+      tags:
+      - 账本
+  /api/v1/account-book/AA:
+    get:
+      parameters:
+      - description: 账本id
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: 用户id
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AAResult'
+            type: array
+        "400":
+          description: 请求体异常
+          schema:
+            $ref: '#/definitions/http_error_code.AppError'
+        "500":
+          description: 服务端异常
+          schema:
+            $ref: '#/definitions/http_error_code.AppError'
+      summary: AA分账
       tags:
       - 账本
   /api/v1/account-book/merge:

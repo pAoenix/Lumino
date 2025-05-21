@@ -143,7 +143,7 @@ func (s *AccountBookServer) Delete(c *gin.Context) {
 // @Success	200 {object}  []model.AAResult
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
-// @Router		/api/v1/account-book [delete]
+// @Router		/api/v1/account-book/AA [get]
 func (s *AccountBookServer) AA(c *gin.Context) {
 	req := model.AAAccountBookReq{}
 	if err := middleware.Bind(c, &req); err != nil {
