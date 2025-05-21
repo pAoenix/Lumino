@@ -86,6 +86,7 @@ func (r *Router) Handler() http.Handler {
 		accountBook.POST("/merge", r.AccountBookServer.Merge)
 		accountBook.PUT("", r.AccountBookServer.Modify)
 		accountBook.DELETE("", r.AccountBookServer.Delete)
+		accountBook.GET("/AA", r.AccountBookServer.AA)
 	}
 
 	account := e.Group("/api/v1/account")

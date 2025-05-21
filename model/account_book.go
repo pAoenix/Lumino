@@ -51,5 +51,18 @@ type ModifyAccountBookReq struct {
 
 // DeleteAccountBookReq -
 type DeleteAccountBookReq struct {
-	ID uint `json:"id" form:"id" binding:"required"` // 账本id
+	ID     uint `json:"id" form:"id" binding:"required"`           // 账本id
+	UserID uint `json:"user_id" form:"user_id" binding:"required"` // 用户id
+}
+
+// AAAccountBookReq -
+type AAAccountBookReq struct {
+	ID     uint `json:"id" form:"id" binding:"required"`           // 账本id
+	UserID uint `json:"user_id" form:"user_id" binding:"required"` // 用户id
+}
+
+type AAResult struct {
+	DebtorID   uint    `json:"debtor_id" form:"debtor_id"`     // 付款人
+	CreditorID uint    `json:"creditor_id" form:"creditor_id"` // 收款人
+	Amount     float64 `json:"amount" form:"amount"`           // 金额
 }

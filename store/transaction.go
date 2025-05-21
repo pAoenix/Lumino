@@ -27,6 +27,7 @@ func (s *TransactionStore) Register(transactionReq *model.RegisterTransactionReq
 	if err = ParamsJudge(s.db, nil, nil, transactionReq.PayUserID, nil, nil, nil); err != nil {
 		return transaction, err
 	}
+	// todo 需要判断操作人在不在账本用户里
 	if err = copier.Copy(&transaction, &transactionReq); err != nil {
 		return transaction, http_error_code.Internal("服务内异常",
 			http_error_code.WithInternal(err))

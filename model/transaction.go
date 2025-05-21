@@ -8,6 +8,7 @@ import (
 const TransactionTableName = "transactions"
 const IncomeType = 1
 const SpendingType = 2 //
+const Epsilon = 1e-6
 
 // Transaction 交易记录
 type Transaction struct {
@@ -36,6 +37,7 @@ type RegisterTransactionReq struct {
 	AccountBookID *uint     `json:"account_book_id" form:"account_book_id" binding:"required"` // 对应的账本id
 	//  RelatedUserIDs 涉及那些人
 	RelatedUserIDs *pq.Int32Array `json:"related_user_ids" form:"related_user_ids" binding:"required,min=1" gorm:"type:integer[]" swaggertype:"array,integer"`
+	AccountID      *uint          `json:"account_id" form:"account_id"` // 对应的账户，可不填
 }
 
 // GetTransactionReq -

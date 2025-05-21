@@ -108,7 +108,6 @@ func (s *AccountBookServer) Modify(c *gin.Context) {
 	}
 	if resp, err := s.AccountBookService.Modify(&req); err != nil {
 		c.Error(err)
-		return
 	} else {
 		c.JSON(http.StatusOK, resp)
 	}
@@ -134,5 +133,27 @@ func (s *AccountBookServer) Delete(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)
+	return
+}
+
+// AA -
+// @Summary	AA分账
+// @Tags 账本
+// @Param        account_book  query      model.AAAccountBookReq  true  "账本信息"
+// @Success	200 {object}  ***
+// @Failure	400 {object}  http_error_code.AppError      "请求体异常"
+// @Failure	500 {object}  http_error_code.AppError      "服务端异常"
+// @Router		/api/v1/account-book [delete]
+func (s *AccountBookServer) AA(c *gin.Context) {
+	req := model.AAAccountBookReq{}
+	if err := middleware.Bind(c, &req); err != nil {
+		c.Error(err)
+		return
+	}
+	if resp, err := s.AccountBookService.AA(&req); err != nil {
+		c.Error(err)
+	} else {
+		c.JSON(http.StatusOK, resp)
+	}
 	return
 }
