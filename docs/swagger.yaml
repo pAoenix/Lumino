@@ -18,6 +18,18 @@ definitions:
         description: 错误类型
         type: string
     type: object
+  model.AAResult:
+    properties:
+      amount:
+        description: 金额
+        type: number
+      creditor_id:
+        description: 收款人
+        type: integer
+      debtor_id:
+        description: 付款人
+        type: integer
+    type: object
   model.Account:
     properties:
       balance:
@@ -497,9 +509,18 @@ paths:
         name: id
         required: true
         type: integer
+      - description: 用户id
+        in: query
+        name: user_id
+        required: true
+        type: integer
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AAResult'
+            type: array
         "400":
           description: 请求体异常
           schema:
@@ -508,7 +529,7 @@ paths:
           description: 服务端异常
           schema:
             $ref: '#/definitions/http_error_code.AppError'
-      summary: 删除账本
+      summary: AA分账
       tags:
       - 账本
     get:
@@ -978,6 +999,10 @@ paths:
         in: query
         name: account_book_id
         required: true
+        type: integer
+      - description: 对应的账户，可不填
+        in: query
+        name: account_id
         type: integer
       - description: 交易数额
         in: query

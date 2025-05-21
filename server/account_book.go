@@ -140,7 +140,7 @@ func (s *AccountBookServer) Delete(c *gin.Context) {
 // @Summary	AA分账
 // @Tags 账本
 // @Param        account_book  query      model.AAAccountBookReq  true  "账本信息"
-// @Success	200 {object}  ***
+// @Success	200 {object}  []model.AAResult
 // @Failure	400 {object}  http_error_code.AppError      "请求体异常"
 // @Failure	500 {object}  http_error_code.AppError      "服务端异常"
 // @Router		/api/v1/account-book [delete]

@@ -426,7 +426,7 @@ const docTemplate = `{
                 "tags": [
                     "账本"
                 ],
-                "summary": "删除账本",
+                "summary": "AA分账",
                 "parameters": [
                     {
                         "type": "integer",
@@ -434,11 +434,24 @@ const docTemplate = `{
                         "name": "id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.AAResult"
+                            }
+                        }
                     },
                     "400": {
                         "description": "请求体异常",
@@ -1079,6 +1092,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "description": "对应的账户，可不填",
+                        "name": "account_id",
+                        "in": "query"
+                    },
+                    {
                         "type": "number",
                         "description": "交易数额",
                         "name": "amount",
@@ -1463,6 +1482,23 @@ const docTemplate = `{
                 "type": {
                     "description": "错误类型",
                     "type": "string"
+                }
+            }
+        },
+        "model.AAResult": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "金额",
+                    "type": "number"
+                },
+                "creditor_id": {
+                    "description": "收款人",
+                    "type": "integer"
+                },
+                "debtor_id": {
+                    "description": "付款人",
+                    "type": "integer"
                 }
             }
         },
