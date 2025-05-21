@@ -18,7 +18,7 @@ type Account struct {
 type RegisterAccountReq struct {
 	UserID       uint    `json:"user_id" form:"user_id" binding:"required"`             // 创建人
 	Name         string  `json:"name" form:"name" binding:"required,notblank"`          // 账户名称
-	Balance      float64 `json:"balance" form:"balance" binding:"required"`             // 账户余额，默认为0
+	Balance      float64 `json:"balance" form:"balance"`                                // 账户余额，默认为0
 	CurrencyType uint    `json:"currency_type" form:"currency_type" binding:"required"` // 货币类型
 	Type         uint    `json:"type" form:"type" binding:"required"`                   // 账户类型
 	Icon         uint    `json:"icon" form:"icon" binding:"required"`                   // 账户图标,不支持自定义，从已有的里面选

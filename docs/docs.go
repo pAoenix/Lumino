@@ -172,8 +172,7 @@ const docTemplate = `{
                         "type": "number",
                         "description": "账户余额，默认为0",
                         "name": "balance",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",

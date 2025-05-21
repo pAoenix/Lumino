@@ -391,7 +391,6 @@ paths:
       - description: 账户余额，默认为0
         in: query
         name: balance
-        required: true
         type: number
       - description: 货币类型
         in: query
