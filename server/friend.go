@@ -32,6 +32,7 @@ func (s *FriendServer) Invite(c *gin.Context) {
 	req := model.Friend{}
 	if err := middleware.Bind(c, &req); err != nil {
 		c.Error(err)
+
 		return
 	}
 	if resp, err := s.FriendService.Invite(&req); err != nil {
