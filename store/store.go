@@ -2,7 +2,6 @@ package store
 
 import (
 	"Lumino/common"
-	"Lumino/common/logger"
 	"Lumino/model"
 	"errors"
 	"fmt"
@@ -55,13 +54,15 @@ func newDB(driver, connectStr string, logLevel pgLogger.LogLevel) *DB {
 		Logger: pgLogger.Default.LogMode(logLevel),
 	})
 	if err != nil {
-		logger.Fatalf("gorm open error, %s, connect: %s", err, connectStr)
+		print(1)
+		//logger.Fatalf("gorm open error, %s, connect: %s", err, connectStr)
 	}
 	sqlDB, err := db.DB()
 	sqlDB.SetMaxOpenConns(viper.GetInt("postgresql.maxOpenConns")) //最大连接数
 	sqlDB.SetConnMaxLifetime(time.Minute * 5)
 	if err != nil {
-		logger.Fatalf("set maxOpenConns and connMaxLifetime error, %s, connect: %s", err, connectStr)
+		print(1)
+		//logger.Fatalf("set maxOpenConns and connMaxLifetime error, %s, connect: %s", err, connectStr)
 	}
 	return &DB{
 		DB:     db,
