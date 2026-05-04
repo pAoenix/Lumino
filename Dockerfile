@@ -1,32 +1,17 @@
-# 构建阶段
 FROM golang:1.23.3-alpine AS builder
 
-ENV GO111MODULE=on \
-    GOSUMDB=off \
-    CGO_ENABLED=0 \
-    TZ=Asia/Shanghai
-
-WORKDIR /
+WORKDIR /src
+COPY go.mod ./
 COPY . .
-RUN go build -ldflags '-w -s' -o /cmd/main ./cmd/main.go
+RUN go build -ldflags "-w -s" -o /lumino ./cmd/lumino
 
-# 运行阶段
-FROM alpine:3.19
+FROM alpine:3.20
 
-# 1. 设置运行时环境变量
-ENV TZ=Asia/Shanghai \
-    APP_ENV=production
+WORKDIR /app
+COPY --from=builder /lumino /app/lumino
 
-# 2. 安装时区数据（如需）
-RUN apk add --no-cache tzdata && \
-    cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
-    echo "${TZ}" > /etc/timezone && \
-    apk del tzdata
+ENV LUMINO_ADDR=:8080
+ENV LUMINO_DATA_DIR=/app/data
 
-WORKDIR /
-COPY --from=builder /cmd/main /lumino
-
-COPY config/ /config/
-ENV GIN_MODE=release
 EXPOSE 8080
-CMD ["/lumino"]
+CMD ["/app/lumino"]

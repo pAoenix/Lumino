@@ -1,4 +1,24 @@
-# Lumino
-记账
+# Lumino 数据管理平台
 
-// 生成swagger文件 swag init -g cmd/main.go
+一个从零开始的 Go 数据管理平台 MVP，支持数据上传、数据列表、CSV 预览统计和文件下载。
+
+## 运行
+
+```bash
+go run ./cmd/lumino
+```
+
+默认监听 `:8080`，浏览器访问 `http://localhost:8080`。
+
+## 环境变量
+
+- `LUMINO_ADDR`: 服务监听地址，默认 `:8080`
+- `LUMINO_DATA_DIR`: 数据存储目录，默认 `data`
+
+## API
+
+- `GET /api/health`: 健康检查
+- `GET /api/datasets`: 数据列表
+- `POST /api/datasets`: 上传数据，multipart 字段为 `file`、`name`、`description`
+- `GET /api/datasets/{id}`: 数据详情和 CSV 预览
+- `GET /api/datasets/{id}/download`: 下载原始文件

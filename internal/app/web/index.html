@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lumino 数据管理平台</title>
+    <link rel="stylesheet" href="/web/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero" aria-labelledby="pageTitle">
+        <div class="hero-copy">
+          <p class="eyebrow">Lumino Data Cloud</p>
+          <h1 id="pageTitle">轻量数据管理平台</h1>
+          <p class="hero-text">面向数据上传、资产管理、CSV 预览分析和原始文件分发的本地化工作台。</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#uploadForm">上传数据</a>
+            <button id="refreshButton" class="button secondary" type="button">刷新数据</button>
+          </div>
+        </div>
+        <div class="hero-panel" aria-label="平台状态">
+          <div class="hero-panel-header">
+            <span>数据资产概览</span>
+            <span class="system-status"><span class="status-dot"></span>本地运行</span>
+          </div>
+          <div class="hero-metrics">
+            <article>
+              <span>数据集</span>
+              <strong id="summaryDatasets">0</strong>
+            </article>
+            <article>
+              <span>总行数</span>
+              <strong id="summaryRows">0</strong>
+            </article>
+            <article>
+              <span>总字段</span>
+              <strong id="summaryColumns">0</strong>
+            </article>
+            <article>
+              <span>文件体积</span>
+              <strong id="summarySize">0 B</strong>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="capability-grid" aria-label="核心能力">
+        <article class="capability-card">
+          <span class="capability-index">01</span>
+          <h2>上传接入</h2>
+          <p>保留源文件，CSV 自动读取字段、样例和基础统计。</p>
+        </article>
+        <article class="capability-card">
+          <span class="capability-index">02</span>
+          <h2>资产列表</h2>
+          <p>按数据集维度查看行列数、体积、创建时间和描述。</p>
+        </article>
+        <article class="capability-card">
+          <span class="capability-index">03</span>
+          <h2>预览下载</h2>
+          <p>查看样例数据和数值字段概览，随时下载原始文件。</p>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <form id="uploadForm" class="panel upload-panel">
+          <div class="panel-header">
+            <div>
+              <p class="section-kicker">Upload</p>
+              <h2>上传数据</h2>
+            </div>
+            <p>单文件最大 100MB。CSV 文件会生成可视化预览。</p>
+          </div>
+
+          <label class="field">
+            <span>数据名称</span>
+            <input name="name" type="text" placeholder="例如：五月销售明细" />
+          </label>
+
+          <label class="field">
+            <span>描述</span>
+            <textarea name="description" rows="4" placeholder="记录数据来源、口径或用途"></textarea>
+          </label>
+
+          <label class="file-drop" for="fileInput">
+            <input id="fileInput" name="file" type="file" required />
+            <span class="file-drop-title">选择文件或拖入数据文件</span>
+            <span id="selectedFileName" class="file-drop-meta">支持 CSV 预览，其他格式可作为原始文件管理</span>
+          </label>
+
+          <button id="uploadButton" class="button primary block" type="submit">上传数据</button>
+          <p id="uploadStatus" class="status-message" role="status" aria-live="polite"></p>
+        </form>
+
+        <section class="panel list-panel" aria-labelledby="listTitle">
+          <div class="panel-header inline">
+            <div>
+              <p class="section-kicker">Datasets</p>
+              <h2 id="listTitle">数据资产</h2>
+            </div>
+            <p id="datasetCount">0 个数据集</p>
+          </div>
+          <div id="datasetList" class="dataset-list"></div>
+        </section>
+      </section>
+
+      <section id="detailPanel" class="panel detail-panel hidden" aria-labelledby="detailTitle">
+        <div class="panel-header inline detail-heading">
+          <div>
+            <p class="section-kicker">Asset Detail</p>
+            <h2 id="detailTitle">数据详情</h2>
+            <p id="detailMeta"></p>
+          </div>
+          <a id="downloadLink" class="button secondary" href="#">下载原始文件</a>
+        </div>
+        <div id="profileGrid" class="profile-grid"></div>
+        <div class="preview-header">
+          <h3>样例数据</h3>
+          <p>最多展示前 50 行</p>
+        </div>
+        <div class="table-wrap">
+          <table id="previewTable"></table>
+        </div>
+      </section>
+    </main>
+    <script src="/web/app.js"></script>
+  </body>
+</html>
