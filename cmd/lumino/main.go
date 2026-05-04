@@ -12,7 +12,7 @@ import (
 
 	"lumino/internal/config"
 	"lumino/internal/httpserver"
-	sqliterepo "lumino/internal/repository/sqlite"
+	postgresrepo "lumino/internal/repository/postgres"
 	"lumino/internal/service"
 	"lumino/internal/storage"
 )
@@ -28,7 +28,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	repo, err := sqliterepo.NewDatasetRepository(context.Background(), cfg.DBPath, cfg.DataDir)
+	repo, err := postgresrepo.NewDatasetRepository(context.Background(), cfg.DatabaseURL, cfg.DataDir)
 	if err != nil {
 		logger.Error("failed to create dataset repository", "error", err)
 		os.Exit(1)
@@ -46,7 +46,7 @@ func main() {
 
 	errs := make(chan error, 1)
 	go func() {
-		logger.Info("lumino data platform started", "addr", cfg.Addr, "data_dir", cfg.DataDir, "db_path", cfg.DBPath)
+		logger.Info("lumino data platform started", "addr", cfg.Addr, "data_dir", cfg.DataDir, "database", "postgres")
 		errs <- httpServer.ListenAndServe()
 	}()
 

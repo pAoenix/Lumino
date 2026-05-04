@@ -1,4 +1,4 @@
-package sqlite
+package postgres
 
 import (
 	"context"
@@ -12,21 +12,22 @@ import (
 
 	"lumino/internal/domain"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type DatasetRepository struct {
 	db *sql.DB
 }
 
-func NewDatasetRepository(ctx context.Context, dbPath string, dataDir string) (*DatasetRepository, error) {
-	if err := os.MkdirAll(filepath.Dir(dbPath), 0o755); err != nil {
-		return nil, err
-	}
-	db, err := sql.Open("sqlite", dbPath)
+func NewDatasetRepository(ctx context.Context, databaseURL string, dataDir string) (*DatasetRepository, error) {
+	db, err := sql.Open("pgx", databaseURL)
 	if err != nil {
 		return nil, err
 	}
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(5)
+	db.SetConnMaxLifetime(30 * time.Minute)
+
 	repo := &DatasetRepository{db: db}
 	if err := repo.init(ctx); err != nil {
 		_ = db.Close()
@@ -46,7 +47,7 @@ func (r *DatasetRepository) Close() error {
 func (r *DatasetRepository) List(ctx context.Context) ([]domain.Dataset, error) {
 	rows, err := r.db.QueryContext(ctx, `
 		SELECT id, name, description, original_file_name, stored_file_name, content_type,
-		       size, rows, columns_json, profile_json, created_at, updated_at
+		       size, row_count, columns_json, profile_json, created_at, updated_at
 		FROM datasets
 		ORDER BY created_at DESC
 	`)
@@ -69,9 +70,9 @@ func (r *DatasetRepository) List(ctx context.Context) ([]domain.Dataset, error) 
 func (r *DatasetRepository) Get(ctx context.Context, id string) (domain.Dataset, error) {
 	row := r.db.QueryRowContext(ctx, `
 		SELECT id, name, description, original_file_name, stored_file_name, content_type,
-		       size, rows, columns_json, profile_json, created_at, updated_at
+		       size, row_count, columns_json, profile_json, created_at, updated_at
 		FROM datasets
-		WHERE id = ?
+		WHERE id = $1
 	`, id)
 	dataset, err := scanDataset(row)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -85,7 +86,7 @@ func (r *DatasetRepository) Create(ctx context.Context, dataset domain.Dataset) 
 }
 
 func (r *DatasetRepository) Delete(ctx context.Context, id string) error {
-	result, err := r.db.ExecContext(ctx, `DELETE FROM datasets WHERE id = ?`, id)
+	result, err := r.db.ExecContext(ctx, `DELETE FROM datasets WHERE id = $1`, id)
 	if err != nil {
 		return err
 	}
@@ -109,12 +110,12 @@ func (r *DatasetRepository) init(ctx context.Context) error {
 		  stored_file_name TEXT NOT NULL,
 		  relative_path TEXT NOT NULL,
 		  content_type TEXT NOT NULL,
-		  size INTEGER NOT NULL,
-		  rows INTEGER NOT NULL DEFAULT 0,
-		  columns_json TEXT NOT NULL DEFAULT '[]',
-		  profile_json TEXT NOT NULL DEFAULT '{"numeric":[]}',
-		  created_at TEXT NOT NULL,
-		  updated_at TEXT NOT NULL
+		  size BIGINT NOT NULL,
+		  row_count INTEGER NOT NULL DEFAULT 0,
+		  columns_json JSONB NOT NULL DEFAULT '[]'::jsonb,
+		  profile_json JSONB NOT NULL DEFAULT '{"numeric":[]}'::jsonb,
+		  created_at TIMESTAMPTZ NOT NULL,
+		  updated_at TIMESTAMPTZ NOT NULL
 		);
 		CREATE INDEX IF NOT EXISTS idx_datasets_created_at ON datasets(created_at DESC);
 	`)
@@ -183,25 +184,25 @@ func (r *DatasetRepository) upsert(ctx context.Context, dataset domain.Dataset) 
 	_, err = r.db.ExecContext(ctx, `
 		INSERT INTO datasets (
 			id, name, description, original_file_name, stored_file_name, relative_path,
-			content_type, size, rows, columns_json, profile_json, created_at, updated_at
+			content_type, size, row_count, columns_json, profile_json, created_at, updated_at
 		)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10::jsonb, $11::jsonb, $12, $13)
 		ON CONFLICT(id) DO UPDATE SET
-			name = excluded.name,
-			description = excluded.description,
-			original_file_name = excluded.original_file_name,
-			stored_file_name = excluded.stored_file_name,
-			relative_path = excluded.relative_path,
-			content_type = excluded.content_type,
-			size = excluded.size,
-			rows = excluded.rows,
-			columns_json = excluded.columns_json,
-			profile_json = excluded.profile_json,
-			created_at = excluded.created_at,
-			updated_at = excluded.updated_at
+			name = EXCLUDED.name,
+			description = EXCLUDED.description,
+			original_file_name = EXCLUDED.original_file_name,
+			stored_file_name = EXCLUDED.stored_file_name,
+			relative_path = EXCLUDED.relative_path,
+			content_type = EXCLUDED.content_type,
+			size = EXCLUDED.size,
+			row_count = EXCLUDED.row_count,
+			columns_json = EXCLUDED.columns_json,
+			profile_json = EXCLUDED.profile_json,
+			created_at = EXCLUDED.created_at,
+			updated_at = EXCLUDED.updated_at
 	`, dataset.ID, dataset.Name, dataset.Description, dataset.FileName, dataset.StorageName(), relativePath,
 		dataset.ContentType, dataset.Size, dataset.Rows, string(columnsJSON), string(profileJSON),
-		createdAt.Format(time.RFC3339Nano), updatedAt.Format(time.RFC3339Nano))
+		createdAt, updatedAt)
 	return err
 }
 
@@ -211,10 +212,8 @@ type datasetScanner interface {
 
 func scanDataset(scanner datasetScanner) (domain.Dataset, error) {
 	var dataset domain.Dataset
-	var columnsJSON string
-	var profileJSON string
-	var createdAt string
-	var updatedAt string
+	var columnsJSON []byte
+	var profileJSON []byte
 	if err := scanner.Scan(
 		&dataset.ID,
 		&dataset.Name,
@@ -226,24 +225,15 @@ func scanDataset(scanner datasetScanner) (domain.Dataset, error) {
 		&dataset.Rows,
 		&columnsJSON,
 		&profileJSON,
-		&createdAt,
-		&updatedAt,
+		&dataset.CreatedAt,
+		&dataset.UpdatedAt,
 	); err != nil {
 		return domain.Dataset{}, err
 	}
-	if err := json.Unmarshal([]byte(columnsJSON), &dataset.Columns); err != nil {
+	if err := json.Unmarshal(columnsJSON, &dataset.Columns); err != nil {
 		return domain.Dataset{}, err
 	}
-	if err := json.Unmarshal([]byte(profileJSON), &dataset.Profile); err != nil {
-		return domain.Dataset{}, err
-	}
-	var err error
-	dataset.CreatedAt, err = time.Parse(time.RFC3339Nano, createdAt)
-	if err != nil {
-		return domain.Dataset{}, err
-	}
-	dataset.UpdatedAt, err = time.Parse(time.RFC3339Nano, updatedAt)
-	if err != nil {
+	if err := json.Unmarshal(profileJSON, &dataset.Profile); err != nil {
 		return domain.Dataset{}, err
 	}
 	return dataset, nil

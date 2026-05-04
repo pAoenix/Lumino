@@ -1,4 +1,4 @@
-package sqlite
+package postgres
 
 import (
 	"context"
@@ -12,14 +12,10 @@ import (
 )
 
 func TestDatasetRepositoryCreateListGetDelete(t *testing.T) {
-	ctx := context.Background()
-	dataDir := t.TempDir()
-	repo, err := NewDatasetRepository(ctx, filepath.Join(dataDir, "lumino.db"), dataDir)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer repo.Close()
+	repo, cleanup := newTestRepository(t)
+	defer cleanup()
 
+	ctx := context.Background()
 	dataset := testDataset("dataset-1", "Sales")
 	if err := repo.Create(ctx, dataset); err != nil {
 		t.Fatal(err)
@@ -62,11 +58,16 @@ func TestDatasetRepositoryMigratesMetadataJSON(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	repo, err := NewDatasetRepository(ctx, filepath.Join(dataDir, "lumino.db"), dataDir)
+	resetTestDatabase(t)
+	repo, err := NewDatasetRepository(ctx, testDatabaseURL(t), dataDir)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer repo.Close()
+	cleanup := func() {
+		_, _ = repo.db.ExecContext(context.Background(), `TRUNCATE datasets`)
+		_ = repo.Close()
+	}
+	defer cleanup()
 
 	got, err := repo.Get(ctx, "legacy-1")
 	if err != nil {
@@ -78,6 +79,51 @@ func TestDatasetRepositoryMigratesMetadataJSON(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(dataDir, "metadata.json")); err != nil {
 		t.Fatalf("metadata.json should be kept: %v", err)
 	}
+}
+
+func newTestRepository(t *testing.T) (*DatasetRepository, func()) {
+	t.Helper()
+	return newTestRepositoryWithDataDir(t, t.TempDir())
+}
+
+func newTestRepositoryWithDataDir(t *testing.T, dataDir string) (*DatasetRepository, func()) {
+	t.Helper()
+	ctx := context.Background()
+	repo, err := NewDatasetRepository(ctx, testDatabaseURL(t), dataDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := repo.db.ExecContext(ctx, `TRUNCATE datasets`); err != nil {
+		_ = repo.Close()
+		t.Fatal(err)
+	}
+	cleanup := func() {
+		_, _ = repo.db.ExecContext(context.Background(), `TRUNCATE datasets`)
+		_ = repo.Close()
+	}
+	return repo, cleanup
+}
+
+func resetTestDatabase(t *testing.T) {
+	t.Helper()
+	ctx := context.Background()
+	repo, err := NewDatasetRepository(ctx, testDatabaseURL(t), t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer repo.Close()
+	if _, err := repo.db.ExecContext(ctx, `TRUNCATE datasets`); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func testDatabaseURL(t *testing.T) string {
+	t.Helper()
+	databaseURL := os.Getenv("LUMINO_TEST_DATABASE_URL")
+	if databaseURL == "" {
+		t.Skip("LUMINO_TEST_DATABASE_URL is not set")
+	}
+	return databaseURL
 }
 
 func testDataset(id string, name string) domain.Dataset {

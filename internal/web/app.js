@@ -25,7 +25,7 @@ const previewTable = document.querySelector("#previewTable");
 
 fileInput.addEventListener("change", () => {
   const file = fileInput.files[0];
-  selectedFileName.textContent = file ? `${file.name} · ${formatSize(file.size)}` : "支持 CSV 预览，单文件最大 100MB";
+  selectedFileName.textContent = file ? `${file.name} · ${formatSize(file.size)}` : "单文件最大 100MB，CSV 支持预览";
 });
 
 uploadForm.addEventListener("submit", async (event) => {
@@ -42,8 +42,8 @@ uploadForm.addEventListener("submit", async (event) => {
       throw new Error(body.error || "上传失败");
     }
     uploadForm.reset();
-    selectedFileName.textContent = "支持 CSV 预览，单文件最大 100MB";
-    setUploadState(false, "上传完成，已刷新数据列表。", "success");
+    selectedFileName.textContent = "单文件最大 100MB，CSV 支持预览";
+    setUploadState(false, "上传完成", "success");
     await loadDatasets(body.id);
   } catch (error) {
     setUploadState(false, error.message, "error");
@@ -55,7 +55,7 @@ refreshButton.addEventListener("click", () => loadDatasets(state.selectedId));
 async function loadDatasets(selectId) {
   state.loading = true;
   refreshButton.disabled = true;
-  datasetList.innerHTML = '<p class="empty">正在读取数据列表...</p>';
+  datasetList.innerHTML = '<p class="empty">正在读取...</p>';
 
   try {
     const response = await fetch("/api/datasets");
@@ -103,7 +103,7 @@ function renderList() {
   datasetList.innerHTML = "";
 
   if (state.datasets.length === 0) {
-    datasetList.innerHTML = '<p class="empty">暂无数据。上传 CSV 后，这里会显示字段、行数、体积和创建时间。</p>';
+    datasetList.innerHTML = '<p class="empty">暂无数据，先上传一个 CSV 试试。</p>';
     return;
   }
 
@@ -113,7 +113,7 @@ function renderList() {
     row.innerHTML = `
       <button class="dataset-main" type="button">
         <span class="dataset-title">${escapeHTML(item.name)}</span>
-        <span class="dataset-meta">${formatNumber(item.rows || 0)} 行 / ${formatNumber(item.columns?.length || 0)} 列 / ${formatDate(item.createdAt)}</span>
+        <span class="dataset-meta">${formatNumber(item.rows || 0)} 行 · ${formatNumber(item.columns?.length || 0)} 列 · ${formatDate(item.createdAt)}</span>
         <span class="dataset-desc">${escapeHTML(item.description || item.fileName)}</span>
       </button>
       <div class="dataset-actions">
@@ -173,7 +173,7 @@ async function loadDetail(id) {
 
   detailPanel.classList.remove("hidden");
   detailTitle.textContent = dataset.name;
-  detailMeta.textContent = `${dataset.fileName} / ${formatSize(dataset.size)} / ${formatNumber(dataset.rows || 0)} 行 / ${formatNumber(dataset.columns?.length || 0)} 列`;
+  detailMeta.textContent = `${dataset.fileName} · ${formatSize(dataset.size)} · ${formatNumber(dataset.rows || 0)} 行 · ${formatNumber(dataset.columns?.length || 0)} 列`;
   downloadLink.href = `/api/datasets/${id}/download`;
 
   renderProfile(dataset);

@@ -12,23 +12,23 @@
 
 ## 技术选择
 
-数据库建议使用 SQLite。
+数据库使用 PostgreSQL。
 
 理由：
 
-- 当前项目是本地化轻量数据管理平台，不需要先引入独立数据库服务
-- SQLite 是真实数据库，支持 SQL 查询、事务、索引和后续迁移
-- 部署成本比 PostgreSQL/MySQL 低，适合当前阶段
-- 数据本体仍在文件系统，SQLite 只保存 metadata 和文件路径
+- 项目已安装 PostgreSQL，不再使用 SQLite 运行时文件
+- PostgreSQL 是正式服务型数据库，便于后续支持多用户、权限、查询、迁移和部署
+- 数据本体仍在文件系统，PostgreSQL 只保存 metadata 和文件路径
+- 本地开发通过 `DATABASE_URL` 连接 PostgreSQL，避免把数据库文件提交到仓库
 
-新增依赖建议：
+新增依赖：
 
-- `modernc.org/sqlite`
+- `github.com/jackc/pgx/v5/stdlib`
 
 说明：
 
-- 这是纯 Go SQLite driver，不依赖 CGO，Docker 和本地构建更简单
-- 如果你更偏向生产数据库，也可以换成 PostgreSQL，但需要额外部署数据库服务
+- 使用 pgx 的 database/sql driver，保持 repository 实现简单
+- 默认连接串建议为 `postgres://postgres@localhost:5432/lumino?sslmode=disable`
 
 ## 目标目录结构
 
@@ -43,7 +43,7 @@ internal/httpserver/middleware.go
 internal/domain/dataset.go
 internal/service/dataset_service.go
 internal/repository/dataset_repository.go
-internal/repository/sqlite/dataset_repository.go
+internal/repository/postgres/dataset_repository.go
 internal/storage/file_storage.go
 internal/csvutil/profile.go
 internal/web/
@@ -54,7 +54,7 @@ internal/web/
 - `domain`: 业务模型和通用错误
 - `service`: 上传、删除、预览、下载路径等业务编排
 - `repository`: 元数据持久化接口
-- `repository/sqlite`: SQLite 实现
+- `repository/postgres`: PostgreSQL 实现
 - `storage`: 文件系统保存、删除、路径解析
 - `httpserver`: 路由、handler、middleware、静态资源
 - `csvutil`: CSV profile 逻辑
@@ -62,10 +62,10 @@ internal/web/
 
 ## 数据库设计
 
-数据库文件：
+数据库：
 
 ```text
-data/lumino.db
+PostgreSQL database: lumino
 ```
 
 数据表：
@@ -81,10 +81,10 @@ CREATE TABLE IF NOT EXISTS datasets (
   content_type TEXT NOT NULL,
   size INTEGER NOT NULL,
   rows INTEGER NOT NULL DEFAULT 0,
-  columns_json TEXT NOT NULL DEFAULT '[]',
-  profile_json TEXT NOT NULL DEFAULT '{"numeric":[]}',
-  created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
+  columns_json JSONB NOT NULL DEFAULT '[]'::jsonb,
+  profile_json JSONB NOT NULL DEFAULT '{"numeric":[]}'::jsonb,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_datasets_created_at ON datasets(created_at DESC);
@@ -108,7 +108,7 @@ CREATE INDEX IF NOT EXISTS idx_datasets_created_at ON datasets(created_at DESC);
 1. 创建数据库和数据表
 2. 如果存在 `data/metadata.json`
 3. 读取 JSON 元数据
-4. 将记录 upsert 到 SQLite
+4. 将记录 upsert 到 PostgreSQL
 5. 不删除 `metadata.json`，避免误删用户数据；可以保留作为备份
 
 迁移规则：
@@ -146,7 +146,7 @@ CREATE INDEX IF NOT EXISTS idx_datasets_created_at ON datasets(created_at DESC);
 
 ## 实现步骤
 
-1. 新增 SQLite 依赖
+1. 新增 PostgreSQL 依赖
    - 更新 `go.mod`
    - 生成 `go.sum`
 
@@ -194,7 +194,7 @@ CREATE INDEX IF NOT EXISTS idx_datasets_created_at ON datasets(created_at DESC);
 
 新增环境变量：
 
-- `LUMINO_DB_PATH`: SQLite 数据库路径，默认 `data/lumino.db`
+- `DATABASE_URL`: PostgreSQL 连接串，默认 `postgres://postgres@localhost:5432/lumino?sslmode=disable`
 
 保留：
 
@@ -227,20 +227,14 @@ LUMINO_ADDR=127.0.0.1:18080 GOCACHE=/Users/ekko/resp/Lumino/.cache/go-build go r
 4. 数据库验证：
 
 ```bash
-test -f data/lumino.db
-```
-
-如果本机有 sqlite3：
-
-```bash
-sqlite3 data/lumino.db '.schema datasets'
-sqlite3 data/lumino.db 'select id,name,relative_path from datasets;'
+psql "$DATABASE_URL" -c '\d datasets'
+psql "$DATABASE_URL" -c 'select id,name,relative_path from datasets;'
 ```
 
 ## 风险与待确认
 
-- 新增 SQLite driver 需要下载依赖，可能需要网络权限。
-- 如果你希望数据库直接上 PostgreSQL/MySQL，需要先确认连接配置和部署方式。
+- 新增 PostgreSQL driver 需要下载依赖，可能需要网络权限。
+- 本地需要 PostgreSQL 服务可用，并需要提前创建 `lumino` 数据库或提供有效 `DATABASE_URL`。
 - 删除功能目前是硬删除；数据库化后仍按硬删除实现。
 - 迁移会读取 `data/metadata.json`，但不会删除它，避免误删历史元数据。
 - 这次会是较大后端重构，文件移动较多，但前端 API 兼容。
@@ -249,6 +243,6 @@ sqlite3 data/lumino.db 'select id,name,relative_path from datasets;'
 
 请确认：
 
-1. 数据库是否采用 SQLite。
-2. 是否接受新增 `modernc.org/sqlite` 依赖。
+1. 数据库采用 PostgreSQL。
+2. 是否接受新增 `github.com/jackc/pgx/v5/stdlib` 依赖。
 3. 是否保留 `data/metadata.json` 作为迁移备份，不自动删除。

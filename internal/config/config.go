@@ -2,21 +2,20 @@ package config
 
 import (
 	"os"
-	"path/filepath"
 )
 
 type Config struct {
-	Addr    string
-	DataDir string
-	DBPath  string
+	Addr        string
+	DataDir     string
+	DatabaseURL string
 }
 
 func Load() Config {
 	dataDir := env("LUMINO_DATA_DIR", "data")
 	return Config{
-		Addr:    env("LUMINO_ADDR", ":8080"),
-		DataDir: dataDir,
-		DBPath:  env("LUMINO_DB_PATH", filepath.Join(dataDir, "lumino.db")),
+		Addr:        env("LUMINO_ADDR", ":8080"),
+		DataDir:     dataDir,
+		DatabaseURL: env("DATABASE_URL", "postgres://postgres@localhost:5432/lumino?sslmode=disable"),
 	}
 }
 
