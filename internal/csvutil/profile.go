@@ -1,4 +1,4 @@
-package app
+package csvutil
 
 import (
 	"encoding/csv"
@@ -8,14 +8,16 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"lumino/internal/domain"
 )
 
 const previewLimit = 50
 
-func ProfileCSV(path string) ([]string, int, []CSVRow, DataProfile, error) {
+func Profile(path string) ([]string, int, []domain.CSVRow, domain.DataProfile, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, 0, nil, DataProfile{}, err
+		return nil, 0, nil, domain.DataProfile{}, err
 	}
 	defer file.Close()
 
@@ -25,15 +27,15 @@ func ProfileCSV(path string) ([]string, int, []CSVRow, DataProfile, error) {
 
 	headers, err := reader.Read()
 	if errors.Is(err, io.EOF) {
-		return nil, 0, nil, DataProfile{}, nil
+		return nil, 0, nil, domain.DataProfile{}, nil
 	}
 	if err != nil {
-		return nil, 0, nil, DataProfile{}, err
+		return nil, 0, nil, domain.DataProfile{}, err
 	}
 	headers = normalizeHeaders(headers)
 
 	stats := make(map[string]*numericAccumulator)
-	preview := make([]CSVRow, 0, previewLimit)
+	preview := make([]domain.CSVRow, 0, previewLimit)
 	rows := 0
 
 	for {
@@ -42,10 +44,10 @@ func ProfileCSV(path string) ([]string, int, []CSVRow, DataProfile, error) {
 			break
 		}
 		if err != nil {
-			return headers, rows, preview, DataProfile{}, err
+			return headers, rows, preview, domain.DataProfile{}, err
 		}
 		rows++
-		row := make(CSVRow, len(headers))
+		row := make(domain.CSVRow, len(headers))
 		for i, header := range headers {
 			value := ""
 			if i < len(record) {
@@ -66,13 +68,13 @@ func ProfileCSV(path string) ([]string, int, []CSVRow, DataProfile, error) {
 		}
 	}
 
-	profile := DataProfile{Numeric: make([]NumericProfile, 0, len(stats))}
+	profile := domain.DataProfile{Numeric: make([]domain.NumericProfile, 0, len(stats))}
 	for _, header := range headers {
 		acc := stats[header]
 		if acc == nil || acc.count == 0 {
 			continue
 		}
-		profile.Numeric = append(profile.Numeric, NumericProfile{
+		profile.Numeric = append(profile.Numeric, domain.NumericProfile{
 			Column: header,
 			Count:  acc.count,
 			Min:    acc.min,

@@ -1,6 +1,6 @@
 module lumino
 
-go 1.23.3
+go 1.26.2
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect

@@ -1,6 +1,11 @@
-package app
+package domain
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var ErrNotFound = errors.New("dataset not found")
 
 type Dataset struct {
 	ID          string      `json:"id"`
@@ -18,7 +23,7 @@ type Dataset struct {
 	Preview     []CSVRow    `json:"preview,omitempty"`
 }
 
-func (d Dataset) storageName() string {
+func (d Dataset) StorageName() string {
 	if d.StoredName != "" {
 		return d.StoredName
 	}

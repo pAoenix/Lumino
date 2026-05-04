@@ -10,22 +10,33 @@ import (
 	"syscall"
 	"time"
 
-	"lumino/internal/app"
+	"lumino/internal/config"
+	"lumino/internal/httpserver"
+	sqliterepo "lumino/internal/repository/sqlite"
+	"lumino/internal/service"
+	"lumino/internal/storage"
 )
 
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 
-	cfg := app.Config{
-		Addr:    env("LUMINO_ADDR", ":8080"),
-		DataDir: env("LUMINO_DATA_DIR", "data"),
-	}
+	cfg := config.Load()
 
-	server, err := app.NewServer(cfg, logger)
+	fileStorage, err := storage.NewFileStorage(cfg.DataDir)
 	if err != nil {
-		logger.Error("failed to create server", "error", err)
+		logger.Error("failed to create file storage", "error", err)
 		os.Exit(1)
 	}
+
+	repo, err := sqliterepo.NewDatasetRepository(context.Background(), cfg.DBPath, cfg.DataDir)
+	if err != nil {
+		logger.Error("failed to create dataset repository", "error", err)
+		os.Exit(1)
+	}
+	defer repo.Close()
+
+	datasetService := service.NewDatasetService(repo, fileStorage)
+	server := httpserver.NewServer(datasetService, logger)
 
 	httpServer := &http.Server{
 		Addr:              cfg.Addr,
@@ -35,7 +46,7 @@ func main() {
 
 	errs := make(chan error, 1)
 	go func() {
-		logger.Info("lumino data platform started", "addr", cfg.Addr, "data_dir", cfg.DataDir)
+		logger.Info("lumino data platform started", "addr", cfg.Addr, "data_dir", cfg.DataDir, "db_path", cfg.DBPath)
 		errs <- httpServer.ListenAndServe()
 	}()
 
@@ -57,12 +68,4 @@ func main() {
 		}
 		logger.Info("server stopped")
 	}
-}
-
-func env(key, fallback string) string {
-	value := os.Getenv(key)
-	if value == "" {
-		return fallback
-	}
-	return value
 }
